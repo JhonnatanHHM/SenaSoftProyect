@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Búsqueda de Vuelos</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+    <link rel="stylesheet" href="./css/index.css">
+</head>
+
+<body class="bg-background-light dark:bg-background-dark font-display text-text-dark dark:text-gray-200">
+    <div class="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden">
+        <div class="layout-container flex h-full grow flex-col">
+            <header class="bg-white dark:bg-background-dark/80 backdrop-blur-sm sticky top-0 z-50 shadow-sm">
+                <div class="container mx-auto px-4">
+                    <div class="flex items-center justify-between whitespace-nowrap h-20">
+                        <div class="flex items-center gap-4 text-primary">
+                            <span class="material-symbols-outlined text-3xl">flight</span>
+                            <h2 class="text-xl font-bold leading-tight tracking-[-0.015em]">Airline</h2>
+                        </div>
+                        <div class="hidden md:flex items-center gap-9">
+                        </div>
+                        <div class="flex gap-2">
+                            <button
+                                class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-secondary dark:bg-gray-700 text-text-dark dark:text-gray-200 text-sm font-bold leading-normal tracking-[0.015em] transition-colors hover:bg-gray-200 dark:hover:bg-gray-600">
+                                <span class="truncate"><a href="vuelos.html">Mis Vuelos</a></span>
+                            </button>
+                            <button
+                                class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em] transition-colors hover:bg-primary/90">
+                                <span class="truncate"><a href="registro.html">Registro</a></span>
+                            </button>
+                            <button
+                                class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-secondary dark:bg-gray-700 text-text-dark dark:text-gray-200 text-sm font-bold leading-normal tracking-[0.015em] transition-colors hover:bg-gray-200 dark:hover:bg-gray-600">
+                                <span class="truncate"><a href="login.html">Iniciar Sesión</a></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            <main class="flex-1">
+                <section class="bg-white dark:bg-background-dark py-12 md:py-20">
+                    <div class="container mx-auto px-4">
+                        <div class="flex flex-col gap-8">
+                            <div class="text-center">
+                                <p
+                                    class="text-4xl md:text-5xl font-black leading-tight tracking-[-0.033em] text-text-dark dark:text-white">
+                                    Encuentra tu próximo vuelo</p>
+                                <p class="text-gray-500 dark:text-gray-400 text-lg font-normal leading-normal mt-2">
+                                    Busca las mejores ofertas en vuelos a tus destinos favoritos.</p>
+                            </div>
+                            <div
+                                class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
+                                <form class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 items-end">
+                                    <label class="flex flex-col w-full">
+                                        <p
+                                            class="text-text-dark dark:text-gray-300 text-sm font-medium leading-normal pb-2">
+                                            Origen</p>
+                                        <div class="relative">
+                                            <span
+                                                class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">flight_takeoff</span>
+                                            <input
+                                                class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-text-dark dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-primary border border-gray-300 dark:border-gray-600 bg-background-light dark:bg-gray-700 focus:border-primary h-14 placeholder:text-gray-400 dark:placeholder:text-gray-500 p-3.5 pl-11 text-base font-normal leading-normal"
+                                                placeholder="Ciudad o aeropuerto" value="New York (JFK)" />
+                                        </div>
+                                    </label>
+                                    <label class="flex flex-col w-full">
+                                        <p
+                                            class="text-text-dark dark:text-gray-300 text-sm font-medium leading-normal pb-2">
+                                            Destino</p>
+                                        <div class="relative">
+                                            <span
+                                                class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">flight_land</span>
+                                            <input
+                                                class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-text-dark dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-primary border border-gray-300 dark:border-gray-600 bg-background-light dark:bg-gray-700 focus:border-primary h-14 placeholder:text-gray-400 dark:placeholder:text-gray-500 p-3.5 pl-11 text-base font-normal leading-normal"
+                                                placeholder="Ciudad o aeropuerto" value="London (LHR)" />
+                                        </div>
+                                    </label>
+                                    <label class="flex flex-col w-full">
+                                        <p
+                                            class="text-text-dark dark:text-gray-300 text-sm font-medium leading-normal pb-2">
+                                            Salida</p>
+                                        <div class="relative">
+                                            <span
+                                                class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">calendar_month</span>
+                                            <input
+                                                class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-text-dark dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-primary border border-gray-300 dark:border-gray-600 bg-background-light dark:bg-gray-700 focus:border-primary h-14 placeholder:text-gray-400 dark:placeholder:text-gray-500 p-3.5 pl-11 text-base font-normal leading-normal"
+                                                placeholder="Seleccionar fecha" type="text" value="25/12/2023" />
+                                        </div>
+                                    </label>
+                                    <label class="flex flex-col w-full">
+                                        <p
+                                            class="text-text-dark dark:text-gray-300 text-sm font-medium leading-normal pb-2">
+                                            Regreso</p>
+                                        <div class="relative">
+                                            <span
+                                                class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">calendar_month</span>
+                                            <input
+                                                class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-text-dark dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-primary border border-gray-300 dark:border-gray-600 bg-background-light dark:bg-gray-700 focus:border-primary h-14 placeholder:text-gray-400 dark:placeholder:text-gray-500 p-3.5 pl-11 text-base font-normal leading-normal"
+                                                placeholder="Seleccionar fecha" type="text" value="05/01/2024" />
+                                        </div>
+                                    </label>
+                                    <button
+                                        class="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg h-14 px-4 bg-primary text-white text-base font-bold leading-normal tracking-[0.015em] gap-2 transition-transform hover:scale-105">
+                                        <span class="material-symbols-outlined">search</span>
+                                        <span class="truncate">Buscar</span>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <section class="bg-secondary dark:bg-background-dark/90 py-12">
+                    <div class="container mx-auto px-4">
+                        <div class="flex flex-col lg:flex-row gap-8">
+                            <!-- Filters -->
+                            <aside class="w-full lg:w-1/4">
+                                <div
+                                    class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md border border-gray-200 dark:border-gray-700">
+                                    <h3 class="text-lg font-bold text-text-dark dark:text-white mb-4">Filtros</h3>
+                                    <div class="space-y-6">
+                                        <div>
+                                            <h4 class="font-semibold mb-2 text-text-dark dark:text-gray-300">Escalas
+                                            </h4>
+                                            <div class="space-y-2">
+                                                <label class="flex items-center gap-2"><input checked=""
+                                                        class="form-checkbox rounded text-primary focus:ring-primary/50"
+                                                        type="checkbox" /><span>Directo</span></label>
+                                                <label class="flex items-center gap-2"><input
+                                                        class="form-checkbox rounded text-primary focus:ring-primary/50"
+                                                        type="checkbox" /><span>1 escala</span></label>
+                                                <label class="flex items-center gap-2"><input
+                                                        class="form-checkbox rounded text-primary focus:ring-primary/50"
+                                                        type="checkbox" /><span>2+ escalas</span></label>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-semibold mb-2 text-text-dark dark:text-gray-300">Aerolíneas
+                                            </h4>
+                                            <div class="space-y-2">
+                                                <label class="flex items-center gap-2"><input checked=""
+                                                        class="form-checkbox rounded text-primary focus:ring-primary/50"
+                                                        type="checkbox" /><span>Airline A</span></label>
+                                                <label class="flex items-center gap-2"><input
+                                                        class="form-checkbox rounded text-primary focus:ring-primary/50"
+                                                        type="checkbox" /><span>Airline B</span></label>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-semibold mb-2 text-text-dark dark:text-gray-300">Rango de
+                                                Precios</h4>
+                                            <input
+                                                class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
+                                                type="range" />
+                                            <div
+                                                class="flex justify-between text-sm text-gray-500 dark:text-gray-400 mt-1">
+                                                <span>$100</span>
+                                                <span>$2000</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </aside>
+                            <!-- Flight Results -->
+                            <div class="w-full lg:w-3/4">
+                                <div class="flex justify-between items-center mb-6">
+                                    <h2 class="text-2xl font-bold text-text-dark dark:text-white">Vuelos encontrados
+                                        para London</h2>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-sm text-gray-600 dark:text-gray-400">Ordenar por:</span>
+                                        <select
+                                            class="form-select rounded-lg border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-text-dark dark:text-gray-200 focus:ring-primary focus:border-primary text-sm">
+                                            <option>Precio (más bajo)</option>
+                                            <option>Duración</option>
+                                            <option>Salida</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="space-y-4">
+                                    <!-- Flight Card 1 -->
+                                    <div
+                                        class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-md border border-gray-200 dark:border-gray-700 flex flex-col md:flex-row items-center gap-4 transition-all hover:shadow-lg hover:border-primary/50">
+                                        <img class="w-16 h-16 object-contain rounded-md" data-alt="Airline A logo"
+                                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuBbnLwqdnp18GOwUic_WbUvJ2WFGIRMY43Vc7D7qtBN1bjHcWO3ipaoTcaQUkhoDtsW8MtwezqzCiF5ym74T5ffIc-7IZ5piMUTHKqjww0ElwLpDnabDr8cMlvhq0MWFbpuFbaAYfGiMZC2Ngi9QFy5DiAR8Tf7xyXFUexrCTG2g8KRFui5ivuLnBMnnvPn4chhWmqGi3fLyB5CZGunh7FExT_lUluY11E7ShesWwLbGbJLbmQ-gGz9xW-inh8F3GxSf4jMJ40k2ZM" />
+                                        <div
+                                            class="flex-1 grid grid-cols-1 md:grid-cols-3 gap-4 text-center md:text-left w-full">
+                                            <div class="flex-1">
+                                                <p class="font-bold text-lg text-text-dark dark:text-white">06:00 -
+                                                    09:30</p>
+                                                <p class="text-sm text-gray-500 dark:text-gray-400">JFK - LHR</p>
+                                            </div>
+                                            <div class="flex-1">
+                                                <p class="font-semibold text-text-dark dark:text-white">Directo</p>
+                                                <p class="text-sm text-gray-500 dark:text-gray-400">3h 30m</p>
+                                            </div>
+                                            <div class="flex-1">
+                                                <p class="font-bold text-lg text-accent-green">$450</p>
+                                                <p class="text-sm text-gray-500 dark:text-gray-400">Por persona</p>
+                                            </div>
+                                        </div>
+                                        <button
+                                            class="w-full md:w-auto flex-shrink-0 min-w-[120px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-6 bg-accent-orange text-white text-base font-bold leading-normal tracking-[0.015em] transition-transform hover:scale-105">
+                                            <span class="truncate"><a href="asientos.html">Asientos</a></span>
+                                        </button>
+                                    </div>
+                                    <!-- Flight Card 2 -->
+                                    <div
+                                        class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-md border border-gray-200 dark:border-gray-700 flex flex-col md:flex-row items-center gap-4 transition-all hover:shadow-lg hover:border-primary/50">
+                                        <img class="w-16 h-16 object-contain rounded-md" data-alt="Airline B logo"
+                                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuBLd6-pKR_KfoaUZOPX84Sp6X3v1aHoZj478q9HN9dqQCc0obCW59JT8lilrg3s_XPPHcpL51k3xNIv6VrP9TrBdWFKJx0qL9DuIyHKWmVAhstRkbpTJ7VKegZ29vq4xnj9tiEFkixPJHJZrybgEF3-nKSNb3ELTRsWraIRRmbUkbVnbUJcSjsxB-wEMksvnIRCafFreCfLdH8uuh-Fcj-hjxh95msTEQYO4FgCw4K8Eqm0IxsGAuk-eXQWiT9jqW_oSSC97Biaz2E" />
+                                        <div
+                                            class="flex-1 grid grid-cols-1 md:grid-cols-3 gap-4 text-center md:text-left w-full">
+                                            <div class="flex-1">
+                                                <p class="font-bold text-lg text-text-dark dark:text-white">08:15 -
+                                                    12:00</p>
+                                                <p class="text-sm text-gray-500 dark:text-gray-400">JFK - LHR</p>
+                                            </div>
+                                            <div class="flex-1">
+                                                <p class="font-semibold text-text-dark dark:text-white">Directo</p>
+                                                <p class="text-sm text-gray-500 dark:text-gray-400">3h 45m</p>
+                                            </div>
+                                            <div class="flex-1">
+                                                <p class="font-bold text-lg text-accent-green">$480</p>
+                                                <p class="text-sm text-gray-500 dark:text-gray-400">Por persona</p>
+                                            </div>
+                                        </div>
+                                        <button
+                                            class="w-full md:w-auto flex-shrink-0 min-w-[120px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-6 bg-accent-orange text-white text-base font-bold leading-normal tracking-[0.015em] transition-transform hover:scale-105">
+                                            <span class="truncate"><a href="asientos.html">Asientos</a></span>
+                                        </button>
+                                    </div>
+                                    <!-- Loading state example -->
+                                    <div
+                                        class="hidden bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md border border-gray-200 dark:border-gray-700 text-center text-gray-500 dark:text-gray-400">
+                                        <div
+                                            class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4">
+                                        </div>
+                                        Buscando vuelos...
+                                    </div>
+                                    <!-- No results state example -->
+                                    <div
+                                        class="hidden bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md border border-gray-200 dark:border-gray-700 text-center text-gray-500 dark:text-gray-400">
+                                        <span class="material-symbols-outlined text-4xl mb-2">error</span>
+                                        <p>No se encontraron vuelos para la búsqueda especificada.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+</body>
+<script src="./js/index.js"></script>
+</html>

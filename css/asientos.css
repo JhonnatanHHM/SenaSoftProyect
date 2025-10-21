@@ -1,0 +1,36 @@
+.seat {
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 0.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.2s ease-in-out;
+    }
+
+    .seat.available {
+      background-color: #e0e0e0;
+      color: #333;
+    }
+
+    .seat.available:hover {
+      background-color: #d0d0d0;
+    }
+
+    .seat.occupied {
+      background-color: #4a5568;
+      color: #a0aec0;
+      cursor: not-allowed;
+    }
+
+    .seat.selected {
+      background-color: #13a4ec;
+      color: white;
+    }
+
+    .seat.emergency {
+      background-color: #f6ad55;
+      color: white;
+    }

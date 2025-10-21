@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Iniciar Sesión - Vuelos</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&amp;display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+    <link rel="stylesheet" href="./css/login.css">
+</head>
+
+<body class="bg-background-light dark:bg-background-dark font-display">
+    <div
+        class="relative flex min-h-screen w-full flex-col items-center justify-center group/design-root overflow-x-hidden">
+        <div class="layout-container flex h-full grow flex-col w-full max-w-7xl">
+            <div class="flex flex-1 justify-center py-5">
+                <div class="flex w-full">
+                    <div
+                        class="w-1/2 flex items-center justify-center p-8 bg-white dark:bg-background-dark rounded-l-xl">
+                        <div class="w-full max-w-md space-y-8">
+                            <div class="text-center">
+                                <span class="material-symbols-outlined text-primary text-5xl">flight</span>
+                                <h2 class="mt-6 text-3xl font-black text-gray-900 dark:text-white">Bienvenido de nuevo
+                                </h2>
+                                <p class="mt-2 text-sm text-gray-600 dark:text-gray-300">Inicia sesión para continuar
+                                </p>
+                            </div>
+                            <form action="#" class="mt-8 space-y-6">
+                                <div class="rounded-md shadow-sm -space-y-px">
+                                    <div class="flex flex-col gap-4">
+                                        <label class="flex flex-col flex-1">
+                                            <p
+                                                class="text-gray-900 dark:text-white text-base font-medium leading-normal pb-2">
+                                                Nombre de usuario/Correo electrónico</p>
+                                            <input
+                                                class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-gray-900 dark:text-white focus:outline-0 focus:ring-2 focus:ring-secondary border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 h-14 placeholder:text-gray-400 dark:placeholder-gray-500 p-4 text-base font-normal leading-normal"
+                                                placeholder="tunombredeusuario@email.com" required="" type="email"
+                                                value="" id="nombre" />
+                                        </label>
+                                        <label class="flex flex-col flex-1">
+                                            <p
+                                                class="text-gray-900 dark:text-white text-base font-medium leading-normal pb-2">
+                                                Contraseña</p>
+                                            <div class="flex w-full flex-1 items-stretch rounded-lg">
+                                                <input
+                                                    class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-l-lg text-gray-900 dark:text-white focus:outline-0 focus:ring-2 focus:ring-secondary border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 h-14 placeholder:text-gray-400 dark:placeholder-gray-500 p-4 border-r-0 pr-2 text-base font-normal leading-normal"
+                                                    placeholder="Introduce tu contraseña" required="" type="password"
+                                                    value="" id="contraseña"/>
+                                                <button
+                                                    class="text-gray-500 dark:text-gray-400 flex border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 items-center justify-center px-4 rounded-r-lg border-l-0 hover:text-secondary dark:hover:text-secondary"
+                                                    type="submit">
+                                                    <span class="material-symbols-outlined">visibility</span>
+                                                </button>
+                                            </div>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="flex items-center justify-end">
+                                </div>
+                                <div>
+                                    <button type="submit"
+                                        class="flex items-center justify-center w-full h-14 px-6 mt-4 rounded-lg bg-primary text-white text-base font-bold leading-normal shadow-sm hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+                                        Entrar
+                                    </button>
+                                </div>
+                            </form>
+                            <div class="text-center text-sm text-gray-600 dark:text-gray-300">
+                                <p>¿No tienes una cuenta? <a class="font-medium text-primary hover:text-secondary"
+                                        href="registro.html">Regístrate ahora</a></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="w-1/2 flex items-center justify-center bg-gray-50 dark:bg-gray-900 rounded-r-xl">
+                        <div class="w-full h-full bg-center bg-no-repeat bg-cover rounded-r-xl"
+                            data-alt="An abstract image of an airplane wing against a blue sky, representing travel and flights."
+                            style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuArI0SHiMlRNIf2GF9ZpCM4EhdXgXahIvVLY8xoRcVozaeVGAc9w_HAk4VhG-DGIEDRSOZapWwmQzqm0tvwP3F4zGS5ZPUk1TVG4oydWrC7OQir3jkEqMnb1fd-DKDBfW9bkrktpXIyPGHxeWIMH130tpTWmLZY5FuxfS3CNYNiYLQTyYrsaGOiK7-x-tjL_A2Ps6nDu8JA7FI525TIcZjni_goGax0I1k9MBHNoZRHFOyR5snjhvv366EPHMH5yE8x1kUAyC_5gb4');">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="./js/login.js"></script>
+</html>

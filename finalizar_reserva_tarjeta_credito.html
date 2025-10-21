@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Detalles de Pago</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&amp;display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+    <link rel="stylesheet" href="./css/finalizar_reserva_tarjeta_credito.css">
+</head>
+
+<body class="bg-background-light dark:bg-background-dark font-display">
+    <div class="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden">
+        <div class="layout-container flex h-full grow flex-col">
+            <div class="px-4 md:px-10 lg:px-20 xl:px-40 flex flex-1 justify-center py-5">
+                <div class="layout-content-container flex flex-col w-full max-w-7xl flex-1 gap-8">
+                    <div class="flex flex-col gap-3">
+                        <p
+                            class="text-slate-800 dark:text-slate-200 text-4xl font-black leading-tight tracking-[-0.033em]">
+                            Finaliza tu Reserva</p>
+                        <p class="text-slate-500 dark:text-slate-400 text-base font-normal leading-normal">Completa tu
+                            reserva proporcionando tu información de pago.</p>
+                    </div>
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                        <div class="lg:col-span-2">
+                            <div class="flex flex-col gap-6 bg-white dark:bg-background-dark rounded-xl shadow-sm p-6">
+                                <div>
+                                    <h3 class="text-slate-800 dark:text-slate-200 text-lg font-bold pb-2">Selecciona tu
+                                        método de pago</h3>
+                                    <div class="flex border-b border-slate-200 dark:border-slate-700 gap-8">
+                                        <a class="flex flex-col items-center justify-center border-b-[3px] border-b-primary text-primary pb-[13px] pt-4"
+                                            href="#">
+                                            <p class="text-sm font-bold leading-normal tracking-[0.015em]">Tarjeta de
+                                                Crédito/Débito</p>
+                                        </a>
+                                        <a class="flex flex-col items-center justify-center border-b-[3px] border-b-transparent text-slate-500 dark:text-slate-400 pb-[13px] pt-4"
+                                            href="finalizar_reserva_tarjeta_pse.html">
+                                            <p class="text-sm font-bold leading-normal tracking-[0.015em]">Pse</p>
+                                        </a>
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="flex flex-col gap-4">
+                                    <h3 class="text-slate-800 dark:text-slate-200 text-lg font-bold">Introduce los datos
+                                        de tu tarjeta</h3>
+                                    <div class="flex flex-col gap-4">
+                                        <label class="flex flex-col w-full">
+                                            <p
+                                                class="text-slate-800 dark:text-slate-200 text-base font-medium leading-normal pb-2">
+                                                Número de tarjeta</p>
+                                            <div class="flex w-full flex-1 items-stretch rounded-lg">
+                                                <input
+                                                    class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-slate-800 dark:text-slate-200 focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-slate-300 dark:border-slate-700 bg-background-light dark:bg-slate-800 h-14 placeholder:text-slate-400 dark:placeholder-slate-500 p-[15px] rounded-r-none border-r-0 pr-2 text-base font-normal leading-normal"
+                                                    placeholder="0000 0000 0000 0000" value="" />
+                                                <div
+                                                    class="text-slate-400 dark:text-slate-500 flex border border-slate-300 dark:border-slate-700 bg-background-light dark:bg-slate-800 items-center justify-center px-[15px] rounded-r-lg border-l-0">
+                                                    <span class="material-symbols-outlined">credit_card</span>
+                                                </div>
+                                            </div>
+                                        </label>
+                                        <div class="flex flex-col sm:flex-row gap-4">
+                                            <label class="flex flex-col min-w-40 flex-1">
+                                                <p
+                                                    class="text-slate-800 dark:text-slate-200 text-base font-medium leading-normal pb-2">
+                                                    Fecha de caducidad</p>
+                                                <input
+                                                    class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-slate-800 dark:text-slate-200 focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-slate-300 dark:border-slate-700 bg-background-light dark:bg-slate-800 h-14 placeholder:text-slate-400 dark:placeholder-slate-500 p-[15px] text-base font-normal leading-normal"
+                                                    placeholder="MM/AA" value="" />
+                                            </label>
+                                            <label class="flex flex-col min-w-40 flex-1">
+                                                <div class="flex items-center gap-2 pb-2">
+                                                    <p
+                                                        class="text-slate-800 dark:text-slate-200 text-base font-medium leading-normal">
+                                                        CVV</p>
+                                                    <div class="relative group">
+                                                        <span
+                                                            class="material-symbols-outlined text-slate-400 dark:text-slate-500 cursor-pointer text-base">help</span>
+                                                        <div
+                                                            class="absolute bottom-full mb-2 w-48 bg-slate-800 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                                            Los 3 dígitos al reverso de tu tarjeta.
+                                                            <div
+                                                                class="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-x-4 border-x-transparent border-t-4 border-t-slate-800">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <input
+                                                    class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-slate-800 dark:text-slate-200 focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-slate-300 dark:border-slate-700 bg-background-light dark:bg-slate-800 h-14 placeholder:text-slate-400 dark:placeholder-slate-500 p-[15px] text-base font-normal leading-normal"
+                                                    placeholder="123" value="" />
+                                            </label>
+                                        </div>
+                                        <label class="flex flex-col w-full">
+                                            <p
+                                                class="text-slate-800 dark:text-slate-200 text-base font-medium leading-normal pb-2">
+                                                Nombre en la tarjeta</p>
+                                            <input
+                                                class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-slate-800 dark:text-slate-200 focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-slate-300 dark:border-slate-700 bg-background-light dark:bg-slate-800 h-14 placeholder:text-slate-400 dark:placeholder-slate-500 p-[15px] text-base font-normal leading-normal"
+                                                placeholder="John Doe" value="" />
+                                        </label>
+                                    </div>
+                                </div>
+                                <div
+                                    class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-slate-200 dark:border-slate-700">
+                                    <div class="flex items-center gap-2 text-slate-500 dark:text-slate-400">
+                                        <span class="material-symbols-outlined">lock</span>
+                                        <p class="text-sm font-medium">Pago 100% Seguro</p>
+                                    </div>
+                                    <button
+                                        class="flex items-center justify-center gap-2 w-full sm:w-auto h-14 px-8 rounded-lg bg-primary text-white text-base font-bold leading-normal tracking-wide hover:bg-primary/90 transition-colors duration-200">
+                                        <span><a href="reserva_confirmada.html">Confirmar Pago</a></span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="lg:col-span-1">
+                            <div class="bg-white dark:bg-background-dark rounded-xl shadow-sm p-6 sticky top-5">
+                                <h3
+                                    class="text-xl font-bold text-slate-800 dark:text-slate-200 pb-4 border-b border-slate-200 dark:border-slate-700">
+                                    Resumen de tu vuelo</h3>
+                                <div class="py-4 space-y-4 border-b border-slate-200 dark:border-slate-700">
+                                    <div class="flex justify-between items-center">
+                                        <p class="text-slate-600 dark:text-slate-300">Vuelo</p>
+                                        <p class="font-semibold text-slate-800 dark:text-slate-100">JFK ➝ LHR</p>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <p class="text-slate-600 dark:text-slate-300">Fecha</p>
+                                        <p class="font-semibold text-slate-800 dark:text-slate-100">15 Oct, 2023</p>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <p class="text-slate-600 dark:text-slate-300">Pasajeros</p>
+                                        <p class="font-semibold text-slate-800 dark:text-slate-100">2 Adultos</p>
+                                    </div>
+                                </div>
+                                <div class="py-4 space-y-2 border-b border-slate-200 dark:border-slate-700">
+                                    <div class="flex justify-between">
+                                        <p class="text-slate-600 dark:text-slate-300">Subtotal</p>
+                                        <p class="text-slate-800 dark:text-slate-100">$1250.00</p>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <p class="text-slate-600 dark:text-slate-300">Impuestos y Tasas</p>
+                                        <p class="text-slate-800 dark:text-slate-100">$150.00</p>
+                                    </div>
+                                </div>
+                                <div class="pt-4 flex justify-between items-center">
+                                    <p class="text-lg font-bold text-slate-800 dark:text-slate-100">Total a pagar</p>
+                                    <p class="text-2xl font-extrabold text-primary">$1400.00</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="./js/finalizar_reserva_tarjeta_credito.js"></script>
+</html>

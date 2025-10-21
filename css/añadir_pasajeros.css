@@ -1,0 +1,15 @@
+  body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        .form-input {
+            transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+
+        .form-input:focus {
+            border-color: #00529B;
+            box-shadow: 0 0 0 2px rgba(0, 82, 155, 0.2);
+            outline: none;
+        }
+
+    

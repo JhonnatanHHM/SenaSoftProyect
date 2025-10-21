@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html class="light" lang="es">
+
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>Mis Vuelos</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&amp;display=swap"
+    rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+  <link rel="stylesheet" href="./css/vuelos.css">
+</head>
+
+<body class="bg-background-light dark:bg-background-dark font-display">
+  <div class="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden">
+    <div class="layout-container flex h-full grow flex-col">
+      <div class="px-4 md:px-10 lg:px-40 flex flex-1 justify-center py-5">
+        <div class="layout-content-container flex flex-col max-w-[960px] flex-1">
+          <header
+            class="flex items-center justify-between whitespace-nowrap border-b border-solid border-gray-200 dark:border-gray-700 px-4 sm:px-10 py-3">
+            <div class="flex items-center gap-4 text-text-primary dark:text-white">
+              <div class="size-6 text-primary">
+                <span class="material-symbols-outlined !text-3xl">flight</span>
+              </div>
+              <h2 class="text-text-primary dark:text-white text-xl font-bold leading-tight tracking-[-0.015em]">Mis
+                Vuelos</h2>
+            </div>
+            <div class="flex items-center gap-2">
+
+            </div>
+          </header>
+          <main class="flex-grow p-4 md:p-6 lg:p-8">
+            <div class="flex flex-col gap-6">
+              <h1
+                class="text-text-primary dark:text-white text-3xl md:text-4xl font-black leading-tight tracking-[-0.033em]">
+                Mis Vuelos Comprados</h1>
+              <div class="grid grid-cols-1 gap-4">
+                <div
+                  class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 rounded-lg bg-white dark:bg-background-dark/50 p-4 shadow-sm border border-gray-200 dark:border-gray-700">
+                  <div class="flex items-center gap-4">
+                    <div class="w-16 h-16 bg-center bg-no-repeat aspect-square bg-cover rounded-lg flex-1"
+                      data-location="Nueva York"
+                      style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDv0V6pE06SAnuMZZ1TaNe-5wYNnYzNNZtB_En11D25JY31Q0SbdozeBF0oRDcgAs0aud29MmrScawLnjl291molQWw7EPX8Uob9BlghKG--o05WThY7xSM2oL-y55gaN4y03sBHvY0RTqtYJx_pitPWvdldmT3_KucOuixJxC5kZLUvR1nvhIyuCLrz2IIYFWQ7ZuC7jpn7uMCYVigZfPsbN2pCm1NmfXzmOy34UJ3RBr2AKZNjMXbm0bdw75w1uotEuEYnPLoKMY");'>
+                    </div>
+                    <div class="flex flex-col">
+                      <p class="text-lg font-bold text-text-primary dark:text-white">Madrid (MAD) a Nueva York (JFK)</p>
+                      <p class="text-sm text-text-secondary dark:text-gray-400">25 de Diciembre, 2024</p>
+                      <p class="text-sm text-text-secondary dark:text-gray-400">Iberia</p>
+                    </div>
+                  </div>
+                  <button
+                    class="flex items-center justify-center gap-2 min-w-[84px] cursor-pointer rounded-lg h-10 px-4 bg-primary/10 text-primary hover:bg-primary/20 dark:bg-primary/20 dark:hover:bg-primary/30 transition-colors text-sm font-medium w-full sm:w-auto">
+                    <span class="material-symbols-outlined !text-lg">picture_as_pdf</span>
+                    <span class="truncate">Descargar PDF</span>
+                  </button>
+                </div>
+                <div
+                  class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 rounded-lg bg-white dark:bg-background-dark/50 p-4 shadow-sm border border-gray-200 dark:border-gray-700">
+                  <div class="flex items-center gap-4">
+                    <div class="w-16 h-16 bg-center bg-no-repeat aspect-square bg-cover rounded-lg flex-1"
+                      data-location="Londres"
+                      style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAIf6hcPhBJelOMWks3HVVFcj2vFmT6b55VW8YjGI0f53rpOM-wTBYyShbTJZ1QYq-GeWTDZUhaaKvu6rxht1RIgEO0Y2CNaGMuICjDS4N0nrCkC_Leh7mj9NdqyAVFyIKjrApS2HDSGWPMLL1LIy2yRJLpW8tLOp3vGySoykgvNQrBbDiCkICfSwSjzWnUwcq4RNiGIdzriGsM58101PnPvxspOhyahTpJxi5w8D6Avpm1dOPD9WBb1w7IsGFPSEGoyONJTgZNUzo");'>
+                    </div>
+                    <div class="flex flex-col">
+                      <p class="text-lg font-bold text-text-primary dark:text-white">París (CDG) a Londres (LHR)</p>
+                      <p class="text-sm text-text-secondary dark:text-gray-400">15 de Enero, 2025</p>
+                      <p class="text-sm text-text-secondary dark:text-gray-400">Air France</p>
+                    </div>
+                  </div>
+                  <button
+                    class="flex items-center justify-center gap-2 min-w-[84px] cursor-pointer rounded-lg h-10 px-4 bg-primary/10 text-primary hover:bg-primary/20 dark:bg-primary/20 dark:hover:bg-primary/30 transition-colors text-sm font-medium w-full sm:w-auto">
+                    <span class="material-symbols-outlined !text-lg">picture_as_pdf</span>
+                    <span class="truncate">Descargar PDF</span>
+                  </button>
+                </div>
+                <div
+                  class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 rounded-lg bg-white dark:bg-background-dark/50 p-4 shadow-sm border border-gray-200 dark:border-gray-700">
+                  <div class="flex items-center gap-4">
+                    <div class="w-16 h-16 bg-center bg-no-repeat aspect-square bg-cover rounded-lg flex-1"
+                      style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDdrUikytr7BTi4lVeBfTmSHWHjtzDw9d2yOcUVr1j4IxsSmO5eYEELmWjTfMfb_0OigU_bb9a73ovVO1-1dmupMpJe6jLJP-6Cpxs2bOprrm8tynSkRc5tKyIt8CjVZdBfAPNNWIN0th5f97JbpS4rwbcNznyFO6Zu7c7WnYybY-4Hr0DUU7jat5CvwJNQ6KBaRB-SQfhvjoipPFposywTMbURQyGRQnRXQeKW5Dh8pE0CrivcQekm7mfBo76copZ97WFzY-4veuU");'>
+                    </div>
+                    <div class="flex flex-col">
+                      <p class="text-lg font-bold text-text-primary dark:text-white">Barcelona (BCN) a Roma (FCO)</p>
+                      <p class="text-sm text-text-secondary dark:text-gray-400">10 de Febrero, 2025</p>
+                      <p class="text-sm text-text-secondary dark:text-gray-400">Vueling</p>
+                    </div>
+                  </div>
+                  <button
+                    class="flex items-center justify-center gap-2 min-w-[84px] cursor-pointer rounded-lg h-10 px-4 bg-primary/10 text-primary hover:bg-primary/20 dark:bg-primary/20 dark:hover:bg-primary/30 transition-colors text-sm font-medium w-full sm:w-auto">
+                    <span class="material-symbols-outlined !text-lg">picture_as_pdf</span>
+                    <span class="truncate">Descargar PDF</span>
+                  </button>
+                </div>
+              </div>
+              <div class="text-center p-10 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl mt-6">
+                <div class="flex flex-col items-center gap-4">
+                  <span
+                    class="material-symbols-outlined text-5xl text-text-secondary dark:text-gray-400">flight_takeoff</span>
+                  <p class="text-text-primary dark:text-white font-semibold">No tienes más vuelos comprados.</p>
+                  <p class="text-text-secondary dark:text-gray-400 max-w-sm">¿Listo para tu próxima aventura? Encuentra
+                    las mejores ofertas y vuela a tu destino soñado.</p>
+                  <button
+                    class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-6 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em] mt-4 hover:bg-primary/90 transition-colors">
+                    <span class="truncate"><a href="index.html">Buscar un Nuevo Vuelo</a></span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </main>
+          <footer class="text-center py-6 border-t border-gray-200 dark:border-gray-700 mt-10">
+            <p class="text-text-secondary dark:text-gray-400 text-sm">© 2024 Mis Vuelos. Todos los derechos reservados.
+            </p>
+            <div class="flex justify-center gap-4 mt-2">
+              <a class="text-primary hover:underline text-sm" href="#">Ayuda</a>
+              <a class="text-primary hover:underline text-sm" href="#">Contacto</a>
+              <a class="text-primary hover:underline text-sm" href="#">Política de Privacidad</a>
+            </div>
+          </footer>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+<script src="./js/vuelos.js"></script>
+</html>
