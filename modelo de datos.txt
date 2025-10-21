@@ -41,7 +41,7 @@ pais
 pagos
 ------------------
 id_pago
-metodo
+metodo - {"Tarjeta de credito/debito", "PSE"}
 total
 estado - {"PENDIENTE", "PAGADO", "FALLIDO", "REEMBOLSADO"}
 fecha_pago
@@ -68,12 +68,15 @@ telefono
 vuelos
 ------------------
 id_vuelo
-codigo
-salida
-llegada
+ciudad_salida
+ciudad_llegada
+hora_salida
+hora_llegada
+lugar_salida
+lugar_llegada
 duracion
 aerolinea	OBJ
-avion
+avion		OBJ
 
 aviones
 ------------------
