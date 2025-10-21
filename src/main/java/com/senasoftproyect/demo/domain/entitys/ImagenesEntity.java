@@ -8,7 +8,8 @@ public class ImagenesEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "id_imagen", nullable = false)
+    private Long idImagen;
 
     @Column(name = "nombre_original", nullable = false)
     private String nombreOriginal;
@@ -16,8 +17,8 @@ public class ImagenesEntity {
     @Column(name = "key_s3", nullable = false, unique = true)
     private String keyS3;
 
-    public ImagenesEntity(Long id, String nombreOriginal, String keyS3) {
-        this.id = id;
+    public ImagenesEntity(Long idImagen, String nombreOriginal, String keyS3) {
+        this.idImagen = idImagen;
         this.nombreOriginal = nombreOriginal;
         this.keyS3 = keyS3;
     }
@@ -26,11 +27,11 @@ public class ImagenesEntity {
     }
 
     public Long getId() {
-        return id;
+        return idImagen;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setId(Long idImagen) {
+        this.idImagen = idImagen;
     }
 
     public String getNombreOriginal() {
