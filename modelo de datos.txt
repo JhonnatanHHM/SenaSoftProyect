@@ -1,0 +1,101 @@
+usuarios
+------------------
+id_usuario
+fecha_registro
+email
+contraseña
+nombres
+primer_apellido
+segundo_apellido (opcional)
+celular
+tickets		OBJ
+reservas	OBJ
+estado
+
+tikets
+------------------
+id_ticket
+reservas	OBJ
+qr_code
+
+pasajeros
+------------------
+nombres
+primer_apellido
+segundo_apellido
+fecha_nacimiento
+genero
+numero_documento
+infante (boolean)
+celular
+email
+asiento		OBJ
+
+ciudades
+------------------
+id_ciudad
+ciudad
+region
+pais
+
+pagos
+------------------
+id_pago
+metodo
+total
+estado - {"PENDIENTE", "PAGADO", "FALLIDO", "REEMBOLSADO"}
+fecha_pago
+nombre_pagador
+tipo_documento
+numero_documento
+email
+telefono
+
+imagenes
+------------------
+id_imagen
+nombre_original
+keyS3
+
+aerolineas
+------------------
+id_aerolinea
+nombre
+imagen		OBJ
+email
+telefono
+
+vuelos
+------------------
+id_vuelo
+codigo
+salida
+llegada
+duracion
+aerolinea	OBJ
+avion
+
+aviones
+------------------
+id_avion
+modelo
+capacidad
+asientos	OBJ
+
+asientos
+------------------
+id_asiento
+nombre
+estado - {"Disponible", "Ocupado", "Seleccionado"}
+precio
+
+reservas - compras (maximo 5)
+------------------
+id_reserva
+numero_reserva
+pasajeros	OBJ
+pago		OBJ
+vuelos		OBJ
+estado - {"Confirmado", "Cancelado", "Pendiente"}
+
+
