@@ -39,7 +39,16 @@
                     </div>
                     <div class="md:col-span-1">
                         <label class="block text-sm font-medium leading-6 text-text-dark dark:text-text-light"
-                            for="lastName">Apellido</label>
+                            for="lastName">Primer Apellido</label>
+                        <div class="mt-2">
+                            <input
+                                class="form-input block w-full rounded-lg border-border-color bg-background-light dark:bg-gray-800 dark:border-gray-600 dark:text-text-light px-4 py-3 text-text-dark placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
+                                id="lastName" name="lastName" placeholder="Introduce tu apellido" type="text" />
+                        </div>
+                    </div>
+                    <div class="md:col-span-1">
+                        <label class="block text-sm font-medium leading-6 text-text-dark dark:text-text-light"
+                            for="lastName">Segundo Apellido</label>
                         <div class="mt-2">
                             <input
                                 class="form-input block w-full rounded-lg border-border-color bg-background-light dark:bg-gray-800 dark:border-gray-600 dark:text-text-light px-4 py-3 text-text-dark placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
@@ -82,30 +91,48 @@
                             </label>
                         </div>
                     </div>
-                    <!-- Nationality -->
                     <div class="md:col-span-1">
-                        <label class="block text-sm font-medium leading-6 text-text-dark dark:text-text-light"
-                            for="nationality">Nacionalidad</label>
-                        <div class="mt-2">
-                            <select
-                                class="form-input block w-full rounded-lg border-border-color bg-background-light dark:bg-gray-800 dark:border-gray-600 dark:text-text-light px-4 py-3 text-text-dark focus:ring-0 sm:text-sm sm:leading-6"
-                                id="nationality" name="nationality">
-                                <option>Selecciona tu nacionalidad</option>
-                                <option>Española</option>
-                                <option>Francesa</option>
-                                <option>Alemana</option>
-                                <option>Italiana</option>
-                            </select>
-                        </div>
-                    </div>
+                                            <label
+                                                class="block text-sm font-medium leading-6 text-text-dark dark:text-text-light"
+                                                for="nationality">Documento</label>
+                                            <div class="mt-2">
+                                                <select
+                                                    class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-slate-800 dark:text-slate-200 focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-slate-300 dark:border-slate-700 bg-background-light dark:bg-slate-800 h-14 placeholder:text-slate-400 dark:placeholder-slate-500 p-[15px] text-base font-normal leading-normal"
+                                                    placeholder="MM/AA" value="">
+                                                    <option>tipo de documento</option>
+                                                    <option>Cedula de Ciudadania</option>
+                                                    <option>Tarjeta de identidad</option>
+                                                    <option>Pasaporte</option>
+                                                    <option>Cedula de Extranjeria</option>
+                                                </select>
+                                            </div>
+                                        </div>
                     <!-- Passport/ID -->
                     <div class="md:col-span-1">
                         <label class="block text-sm font-medium leading-6 text-text-dark dark:text-text-light"
-                            for="passport">Pasaporte / Documento de identidad</label>
+                            for="passport">Numero de Identidad</label>
                         <div class="mt-2">
                             <input
                                 class="form-input block w-full rounded-lg border-border-color bg-background-light dark:bg-gray-800 dark:border-gray-600 dark:text-text-light px-4 py-3 text-text-dark placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
                                 id="passport" name="passport" placeholder="Introduce el número" type="text" />
+                        </div>
+                    </div>
+                    <div class="md:col-span-1">
+                        <label class="block text-sm font-medium leading-6 text-text-dark dark:text-text-light"
+                            for="passport">Celular</label>
+                        <div class="mt-2">
+                            <input
+                                class="form-input block w-full rounded-lg border-border-color bg-background-light dark:bg-gray-800 dark:border-gray-600 dark:text-text-light px-4 py-3 text-text-dark placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
+                                id="passport" name="passport" placeholder="Introduce tu numero de telefono" type="text" />
+                        </div>
+                    </div>
+                    <div class="md:col-span-1">
+                        <label class="block text-sm font-medium leading-6 text-text-dark dark:text-text-light"
+                            for="passport">Gmail</label>
+                        <div class="mt-2">
+                            <input
+                                class="form-input block w-full rounded-lg border-border-color bg-background-light dark:bg-gray-800 dark:border-gray-600 dark:text-text-light px-4 py-3 text-text-dark placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
+                                id="passport" name="passport" placeholder="Ingrese su Gmail" type="email" />
                         </div>
                     </div>
                 </form>
@@ -115,12 +142,7 @@
                     <button
                         class="inline-flex justify-center rounded-lg bg-primary px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary transition-colors duration-200"
                         type="button">
-                        <a href="confimacion_de_vuelo.html">Finalizar</a>
-                    </button>
-                    <button
-                        class="inline-flex justify-center rounded-lg bg-white dark:bg-gray-700 px-6 py-3 text-sm font-semibold text-secondary dark:text-text-light shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors duration-200"
-                        type="button">
-                        <a href="añadir_pasajeros.html">Seguir añadiendo pasajeros</a>
+                        <a href="confimacion_de_vuelo.html">Añadir</a>
                     </button>
                 </div>
             </div>
