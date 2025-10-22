@@ -4,9 +4,9 @@ const API_URL = 'http://localhost:8080/api/vuelos';
 // Función para formatear fecha y hora
 function formatearFechaHora(fechaISO) {
   const fecha = new Date(fechaISO);
-  const opciones = { 
-    year: 'numeric', 
-    month: 'short', 
+  const opciones = {
+    year: 'numeric',
+    month: 'short',
     day: 'numeric',
     hour: '2-digit',
     minute: '2-digit'
@@ -29,40 +29,42 @@ function contarAsientos(asientos) {
   const disponibles = asientos.filter(a => a.estado === 'DISPONIBLE').length;
   const ocupados = asientos.filter(a => a.estado === 'OCUPADO').length;
   const seleccionados = asientos.filter(a => a.estado === 'SELECCIONADO').length;
-  
+
   return { disponibles, ocupados, seleccionados };
 }
 
-// Función para crear la tarjeta de vuelo
+// Función para crear la tarjeta de vuelo (sin envoltura de columnas)
 function crearTarjetaVuelo(vuelo) {
-  const { disponibles, ocupados, seleccionados } = contarAsientos(vuelo.avion.asientos);
+  const { disponibles, ocupados, seleccionados } = contarAsientos(vuelo.avion.asientos || []);
   const duracion = calcularDuracion(vuelo.horaSalida, vuelo.horaLlegada);
-  
+  const precio = vuelo.avion.asientos?.[0]?.precio || 150;
+  const imagen = vuelo.aerolinea?.imagen?.keyR2 || '';
+
   return `
-    <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+    <div class="w-full bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
       <!-- Header con aerolínea -->
       <div class="flex items-center justify-between mb-4">
         <div class="flex items-center gap-3">
-          <img src="${vuelo.aerolinea.imagen.keyR2}" 
-               alt="${vuelo.aerolinea.nombre}" 
+          <img src="${imagen}" 
+               alt="${vuelo.aerolinea?.nombre || 'Aerolínea'}" 
                class="w-12 h-12 object-contain rounded">
           <div>
-            <h3 class="font-bold text-lg">${vuelo.aerolinea.nombre}</h3>
-            <p class="text-sm text-gray-600">${vuelo.avion.modelo}</p>
+            <h3 class="font-bold text-lg">${vuelo.aerolinea?.nombre || 'Aerolínea'}</h3>
+            <p class="text-sm text-gray-600">${vuelo.avion?.modelo || ''}</p>
           </div>
         </div>
         <div class="text-right">
           <p class="text-xs text-gray-500">Vuelo #${vuelo.idVuelo}</p>
-          <p class="text-xs text-gray-500">Capacidad: ${vuelo.avion.capacidad}</p>
+          <p class="text-xs text-gray-500">Capacidad: ${vuelo.avion?.capacidad || '-'}</p>
         </div>
       </div>
 
       <!-- Ruta de vuelo -->
-      <div class="grid grid-cols-3 gap-4 items-center mb-4">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center mb-4">
         <!-- Origen -->
         <div>
-          <p class="text-2xl font-bold">${vuelo.ciudadSalida.nombre}</p>
-          <p class="text-sm text-gray-600">${vuelo.lugarSalida}</p>
+          <p class="text-2xl font-bold">${vuelo.ciudadSalida?.nombre || ''}</p>
+          <p class="text-sm text-gray-600">${vuelo.lugarSalida || ''}</p>
           <p class="text-sm font-medium mt-1">${formatearFechaHora(vuelo.horaSalida)}</p>
         </div>
 
@@ -81,15 +83,15 @@ function crearTarjetaVuelo(vuelo) {
 
         <!-- Destino -->
         <div class="text-right">
-          <p class="text-2xl font-bold">${vuelo.ciudadLlegada.nombre}</p>
-          <p class="text-sm text-gray-600">${vuelo.lugarLlegada}</p>
+          <p class="text-2xl font-bold">${vuelo.ciudadLlegada?.nombre || ''}</p>
+          <p class="text-sm text-gray-600">${vuelo.lugarLlegada || ''}</p>
           <p class="text-sm font-medium mt-1">${formatearFechaHora(vuelo.horaLlegada)}</p>
         </div>
       </div>
 
       <!-- Información de asientos -->
       <div class="border-t pt-4 mt-4">
-        <div class="flex justify-between items-center">
+        <div class="flex flex-col md:flex-row justify-between items-center gap-4">
           <div class="flex gap-4 text-sm">
             <div class="flex items-center gap-2">
               <span class="w-3 h-3 bg-green-500 rounded-full"></span>
@@ -104,10 +106,10 @@ function crearTarjetaVuelo(vuelo) {
               <span>${seleccionados} Seleccionados</span>
             </div>
           </div>
-          
+
           <div class="flex items-center gap-3">
-            <p class="text-2xl font-bold text-blue-600">$${vuelo.avion.asientos[0]?.precio || 150}</p>
-            <button onclick="seleccionarVuelo(${vuelo.idVuelo})" 
+            <p class="text-2xl font-bold text-blue-600">$${precio}</p>
+            <button onclick="seleccionarVuelo(${vuelo.idVuelo})"
                     class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors">
               Seleccionar
             </button>
@@ -117,8 +119,8 @@ function crearTarjetaVuelo(vuelo) {
 
       <!-- Contacto aerolínea -->
       <div class="mt-3 text-xs text-gray-500 flex gap-4">
-        <span>📧 ${vuelo.aerolinea.email}</span>
-        <span>📱 ${vuelo.aerolinea.celular}</span>
+        <span>📧 ${vuelo.aerolinea?.email || '-'}</span>
+        <span>📱 ${vuelo.aerolinea?.celular || '-'}</span>
       </div>
     </div>
   `;
@@ -127,7 +129,7 @@ function crearTarjetaVuelo(vuelo) {
 // Función para cargar los vuelos
 async function cargarVuelos() {
   const contenedor = document.getElementById('contenedor-vuelos');
-  
+
   // Mostrar loading
   contenedor.innerHTML = `
     <div class="text-center py-8">
@@ -149,7 +151,7 @@ async function cargarVuelos() {
     }
 
     const vuelos = await response.json();
-    
+
     // Si es un solo vuelo, convertirlo en array
     const vuelosArray = Array.isArray(vuelos) ? vuelos : [vuelos];
 
@@ -162,8 +164,12 @@ async function cargarVuelos() {
       return;
     }
 
-    // Renderizar los vuelos
-    contenedor.innerHTML = vuelosArray.map(vuelo => crearTarjetaVuelo(vuelo)).join('');
+    // Mostrar máximo 5 vuelos
+    const maxVuelos = 5;
+    const vuelosMostrados = vuelosArray.slice(0, maxVuelos);
+
+    // Render carousel (una tarjeta grande + pestañas debajo)
+    renderVuelosCarousel(contenedor, vuelosMostrados);
 
   } catch (error) {
     console.error('Error al cargar vuelos:', error);
@@ -171,7 +177,7 @@ async function cargarVuelos() {
       <div class="text-center py-8 bg-red-50 rounded-lg">
         <p class="text-red-600 font-medium">Error al cargar los vuelos</p>
         <p class="text-sm text-gray-600 mt-2">${error.message}</p>
-        <button onclick="cargarVuelos()" 
+        <button onclick="cargarVuelos()"
                 class="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
           Reintentar
         </button>
@@ -180,12 +186,88 @@ async function cargarVuelos() {
   }
 }
 
+// Renderiza la estructura del carousel y pestañas
+function renderVuelosCarousel(rootEl, vuelos) {
+  rootEl.innerHTML = `
+    <div id="vuelo-card-area" class="w-full"></div>
+    <div id="vuelos-tabs" class="mt-4 flex gap-2 justify-center flex-wrap"></div>
+  `;
+
+  // estado local
+  let activeIndex = 0;
+
+  function renderFlightAt(index) {
+    const cardArea = document.getElementById('vuelo-card-area');
+    cardArea.innerHTML = crearTarjetaVuelo(vuelos[index]);
+    updateTabs(index);
+    activeIndex = index;
+    // opcional: focus en el botón seleccionar dentro de la tarjeta para accesibilidad
+    const selectBtn = cardArea.querySelector('button[onclick^="seleccionarVuelo"]');
+    if (selectBtn) selectBtn.setAttribute('aria-label', `Seleccionar vuelo ${vuelos[index].idVuelo}`);
+  }
+
+  function updateTabs(active) {
+    const tabs = document.getElementById('vuelos-tabs');
+    Array.from(tabs.children).forEach((btn, i) => {
+      if (i === active) {
+        btn.classList.add('bg-blue-600', 'text-white');
+        btn.classList.remove('bg-gray-100', 'text-gray-700');
+        btn.setAttribute('aria-current', 'true');
+      } else {
+        btn.classList.remove('bg-blue-600', 'text-white');
+        btn.classList.add('bg-gray-100', 'text-gray-700');
+        btn.removeAttribute('aria-current');
+      }
+    });
+  }
+
+  function createTabs() {
+    const tabs = document.getElementById('vuelos-tabs');
+    tabs.innerHTML = '';
+    vuelos.forEach((v, i) => {
+      const precio = v.avion?.asientos?.[0]?.precio ? `$${v.avion.asientos[0].precio}` : '';
+      const label = `${v.ciudadSalida?.nombre || ''} → ${v.ciudadLlegada?.nombre || ''}`;
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'px-3 py-2 rounded-full text-sm bg-gray-100 text-gray-700 hover:bg-gray-200 transition';
+      btn.innerText = `${label} ${precio}`;
+      btn.setAttribute('data-index', i);
+      btn.addEventListener('click', () => renderFlightAt(i));
+      btn.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); renderFlightAt(i); }
+      });
+      tabs.appendChild(btn);
+    });
+
+    // Añadir controles prev/next para teclado y accesibilidad
+    const prev = document.createElement('button');
+    prev.type = 'button';
+    prev.className = 'ml-2 px-3 py-2 rounded text-sm bg-transparent text-gray-600 hover:bg-gray-100';
+    prev.innerText = '◀';
+    prev.title = 'Anterior';
+    prev.addEventListener('click', () => renderFlightAt(Math.max(0, activeIndex - 1)));
+
+    const next = document.createElement('button');
+    next.type = 'button';
+    next.className = 'ml-2 px-3 py-2 rounded text-sm bg-transparent text-gray-600 hover:bg-gray-100';
+    next.innerText = '▶';
+    next.title = 'Siguiente';
+    next.addEventListener('click', () => renderFlightAt(Math.min(vuelos.length - 1, activeIndex + 1)));
+
+    // agregar prev/next a los lados (opcional): los insertamos al principio y final
+    tabs.prepend(prev);
+    tabs.appendChild(next);
+  }
+
+  createTabs();
+  renderFlightAt(0);
+}
+
 // Función para manejar la selección de vuelo
 function seleccionarVuelo(idVuelo) {
   console.log('Vuelo seleccionado:', idVuelo);
-  // Aquí puedes agregar la lógica para redirigir o guardar el vuelo seleccionado
-  // Por ejemplo: window.location.href = `/seleccionar-asiento?vuelo=${idVuelo}`;
   alert(`Vuelo #${idVuelo} seleccionado`);
+  // Aquí puedes agregar la lógica para redirigir o guardar el vuelo seleccionado
 }
 
 // Cargar vuelos cuando el DOM esté listo
