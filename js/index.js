@@ -1,125 +1,198 @@
-// Esperar a que el DOM esté completamente cargado
-    document.addEventListener("DOMContentLoaded", function () {
-      // Obtener referencias a los elementos del formulario
-      const departureDateInput = document.getElementById("departure-date");
-      const returnDateInput = document.getElementById("return-date");
-      const enableReturnCheckbox = document.getElementById("enable-return");
+// Configuración de la API
+const API_URL = 'http://localhost:8080/api/vuelos';
 
-      // Establecer la fecha mínima a hoy para ambos campos
-      const today = new Date().toISOString().split("T")[0];
-      departureDateInput.min = today;
-      returnDateInput.min = today;
+// Función para formatear fecha y hora
+function formatearFechaHora(fechaISO) {
+  const fecha = new Date(fechaISO);
+  const opciones = { 
+    year: 'numeric', 
+    month: 'short', 
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  };
+  return fecha.toLocaleDateString('es-ES', opciones);
+}
 
-      // Establecer el estado inicial
-      returnDateInput.disabled = !enableReturnCheckbox.checked;
-      if (!enableReturnCheckbox.checked) {
-        returnDateInput.placeholder = "Deshabilitado";
-      }
+// Función para calcular duración del vuelo
+function calcularDuracion(salida, llegada) {
+  const inicio = new Date(salida);
+  const fin = new Date(llegada);
+  const diff = fin - inicio;
+  const horas = Math.floor(diff / (1000 * 60 * 60));
+  const minutos = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+  return `${horas}h ${minutos}m`;
+}
 
-      // Función para habilitar/deshabilitar la fecha de regreso
-      enableReturnCheckbox.addEventListener("change", function () {
-        returnDateInput.disabled = !this.checked;
-        if (this.checked) {
-          returnDateInput.placeholder = "Seleccionar fecha";
-          returnDateInput.min = departureDateInput.value || today;
-        } else {
-          returnDateInput.placeholder = "Deshabilitado";
-          returnDateInput.value = "";
-        }
-      });
+// Función para contar asientos por estado
+function contarAsientos(asientos) {
+  const disponibles = asientos.filter(a => a.estado === 'DISPONIBLE').length;
+  const ocupados = asientos.filter(a => a.estado === 'OCUPADO').length;
+  const seleccionados = asientos.filter(a => a.estado === 'SELECCIONADO').length;
+  
+  return { disponibles, ocupados, seleccionados };
+}
 
-      // Actualizar las restricciones de la fecha de regreso cuando cambia la fecha de salida
-      departureDateInput.addEventListener("change", function () {
-        if (this.value) {
-          // Establecer la fecha mínima de regreso igual a la fecha de salida
-          returnDateInput.min = this.value;
+// Función para crear la tarjeta de vuelo
+function crearTarjetaVuelo(vuelo) {
+  const { disponibles, ocupados, seleccionados } = contarAsientos(vuelo.avion.asientos);
+  const duracion = calcularDuracion(vuelo.horaSalida, vuelo.horaLlegada);
+  
+  return `
+    <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+      <!-- Header con aerolínea -->
+      <div class="flex items-center justify-between mb-4">
+        <div class="flex items-center gap-3">
+          <img src="${vuelo.aerolinea.imagen.keyR2}" 
+               alt="${vuelo.aerolinea.nombre}" 
+               class="w-12 h-12 object-contain rounded">
+          <div>
+            <h3 class="font-bold text-lg">${vuelo.aerolinea.nombre}</h3>
+            <p class="text-sm text-gray-600">${vuelo.avion.modelo}</p>
+          </div>
+        </div>
+        <div class="text-right">
+          <p class="text-xs text-gray-500">Vuelo #${vuelo.idVuelo}</p>
+          <p class="text-xs text-gray-500">Capacidad: ${vuelo.avion.capacidad}</p>
+        </div>
+      </div>
 
-          // Establecer la fecha máxima de regreso a 2 meses después de la salida
-          const maxDate = new Date(this.value);
-          maxDate.setMonth(maxDate.getMonth() + 2);
-          returnDateInput.max = maxDate.toISOString().split("T")[0];
+      <!-- Ruta de vuelo -->
+      <div class="grid grid-cols-3 gap-4 items-center mb-4">
+        <!-- Origen -->
+        <div>
+          <p class="text-2xl font-bold">${vuelo.ciudadSalida.nombre}</p>
+          <p class="text-sm text-gray-600">${vuelo.lugarSalida}</p>
+          <p class="text-sm font-medium mt-1">${formatearFechaHora(vuelo.horaSalida)}</p>
+        </div>
 
-          // Si la fecha de regreso es anterior a la de salida, limpiarla
-          if (returnDateInput.value && returnDateInput.value < this.value) {
-            returnDateInput.value = "";
-          }
+        <!-- Duración y línea -->
+        <div class="text-center">
+          <p class="text-xs text-gray-500 mb-1">${duracion}</p>
+          <div class="flex items-center justify-center gap-2">
+            <div class="h-px bg-gray-300 flex-1"></div>
+            <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+            </svg>
+            <div class="h-px bg-gray-300 flex-1"></div>
+          </div>
+          <p class="text-xs text-gray-500 mt-1">Vuelo directo</p>
+        </div>
 
-          // Si la fecha de regreso es posterior a la fecha máxima, limpiarla
-          if (
-            returnDateInput.value &&
-            returnDateInput.value > returnDateInput.max
-          ) {
-            returnDateInput.value = "";
-          }
-        }
-      });
-    });
-      document.addEventListener("DOMContentLoaded", () => {
-        const form = document.getElementById("formBusqueda");
-        const contenedorVuelos = document.getElementById("contenedor-vuelos");
+        <!-- Destino -->
+        <div class="text-right">
+          <p class="text-2xl font-bold">${vuelo.ciudadLlegada.nombre}</p>
+          <p class="text-sm text-gray-600">${vuelo.lugarLlegada}</p>
+          <p class="text-sm font-medium mt-1">${formatearFechaHora(vuelo.horaLlegada)}</p>
+        </div>
+      </div>
 
-        form.addEventListener("submit", async (e) => {
-          e.preventDefault();
-          contenedorVuelos.innerHTML = `
-            <div class="text-center text-gray-500">
-              <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-2"></div>
-              Buscando vuelos...
+      <!-- Información de asientos -->
+      <div class="border-t pt-4 mt-4">
+        <div class="flex justify-between items-center">
+          <div class="flex gap-4 text-sm">
+            <div class="flex items-center gap-2">
+              <span class="w-3 h-3 bg-green-500 rounded-full"></span>
+              <span>${disponibles} Disponibles</span>
             </div>
-          `;
+            <div class="flex items-center gap-2">
+              <span class="w-3 h-3 bg-red-500 rounded-full"></span>
+              <span>${ocupados} Ocupados</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="w-3 h-3 bg-yellow-500 rounded-full"></span>
+              <span>${seleccionados} Seleccionados</span>
+            </div>
+          </div>
+          
+          <div class="flex items-center gap-3">
+            <p class="text-2xl font-bold text-blue-600">$${vuelo.avion.asientos[0]?.precio || 150}</p>
+            <button onclick="seleccionarVuelo(${vuelo.idVuelo})" 
+                    class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+              Seleccionar
+            </button>
+          </div>
+        </div>
+      </div>
 
-          const origen = document.getElementById("origen").value.trim();
-          const destino = document.getElementById("destino").value.trim();
+      <!-- Contacto aerolínea -->
+      <div class="mt-3 text-xs text-gray-500 flex gap-4">
+        <span>📧 ${vuelo.aerolinea.email}</span>
+        <span>📱 ${vuelo.aerolinea.celular}</span>
+      </div>
+    </div>
+  `;
+}
 
-          try {
-            const response = await fetch(`http://localhost:8080/api/vuelos`);
-            if (!response.ok) throw new Error("Error al obtener los vuelos");
-            const vuelos = await response.json();
+// Función para cargar los vuelos
+async function cargarVuelos() {
+  const contenedor = document.getElementById('contenedor-vuelos');
+  
+  // Mostrar loading
+  contenedor.innerHTML = `
+    <div class="text-center py-8">
+      <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      <p class="mt-4 text-gray-600">Cargando vuelos disponibles...</p>
+    </div>
+  `;
 
-            // Filtrar por origen/destino (opcional)
-            const vuelosFiltrados = vuelos.filter(v =>
-              (!origen || v.ciudad_salida?.ciudad.toLowerCase().includes(origen.toLowerCase())) &&
-              (!destino || v.ciudad_llegada?.ciudad.toLowerCase().includes(destino.toLowerCase()))
-            );
+  try {
+    const response = await fetch(API_URL, {
+      method: 'GET',
+      headers: {
+        'accept': '*/*'
+      }
+    });
 
-            if (vuelosFiltrados.length === 0) {
-              contenedorVuelos.innerHTML = `
-                <div class="bg-white p-6 rounded-xl shadow-md border text-center text-gray-500">
-                  <span class="material-symbols-outlined text-4xl mb-2">error</span>
-                  <p>No se encontraron vuelos para la búsqueda especificada.</p>
-                </div>`;
-              return;
-            }
+    if (!response.ok) {
+      throw new Error(`Error HTTP: ${response.status}`);
+    }
 
-            contenedorVuelos.innerHTML = vuelosFiltrados.map(vuelo => `
-              <div class="bg-white p-4 rounded-xl shadow-md border flex flex-col md:flex-row items-center gap-4 hover:shadow-lg transition-all">
-                <img class="w-16 h-16 object-contain rounded-md" src="${vuelo.aerolinea?.imagen?.keyS3 || 'https://via.placeholder.com/64'}" alt="Logo Aerolínea">
-                <div class="flex-1 grid grid-cols-1 md:grid-cols-3 gap-4 text-center md:text-left">
-                  <div>
-                    <p class="font-bold text-lg">${vuelo.hora_salida} - ${vuelo.hora_llegada}</p>
-                    <p class="text-sm text-gray-500">${vuelo.ciudad_salida?.ciudad} - ${vuelo.ciudad_llegada?.ciudad}</p>
-                  </div>
-                  <div>
-                    <p class="font-semibold">${vuelo.aerolinea?.nombre || "Aerolínea desconocida"}</p>
-                    <p class="text-sm text-gray-500">${vuelo.duracion || "Duración no disponible"}</p>
-                  </div>
-                  <div>
-                    <p class="font-bold text-lg text-green-600">$${vuelo.asientos?.[0]?.precio || "0"}</p>
-                    <p class="text-sm text-gray-500">Por persona</p>
-                  </div>
-                </div>
-                <a href="asientos.html" class="bg-orange-500 text-white px-6 py-2 rounded-lg font-bold hover:scale-105 transition-transform">Asientos</a>
-              </div>
-            `).join("");
+    const vuelos = await response.json();
+    
+    // Si es un solo vuelo, convertirlo en array
+    const vuelosArray = Array.isArray(vuelos) ? vuelos : [vuelos];
 
-          } catch (error) {
-            console.error(error);
-            contenedorVuelos.innerHTML = `
-              <div class="bg-white p-6 rounded-xl shadow-md border text-center text-red-500">
-                Error al cargar los vuelos. Intenta nuevamente.
-              </div>`;
-          }
-        });
-      });
+    if (vuelosArray.length === 0) {
+      contenedor.innerHTML = `
+        <div class="text-center py-8">
+          <p class="text-gray-600">No hay vuelos disponibles en este momento.</p>
+        </div>
+      `;
+      return;
+    }
+
+    // Renderizar los vuelos
+    contenedor.innerHTML = vuelosArray.map(vuelo => crearTarjetaVuelo(vuelo)).join('');
+
+  } catch (error) {
+    console.error('Error al cargar vuelos:', error);
+    contenedor.innerHTML = `
+      <div class="text-center py-8 bg-red-50 rounded-lg">
+        <p class="text-red-600 font-medium">Error al cargar los vuelos</p>
+        <p class="text-sm text-gray-600 mt-2">${error.message}</p>
+        <button onclick="cargarVuelos()" 
+                class="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+          Reintentar
+        </button>
+      </div>
+    `;
+  }
+}
+
+// Función para manejar la selección de vuelo
+function seleccionarVuelo(idVuelo) {
+  console.log('Vuelo seleccionado:', idVuelo);
+  // Aquí puedes agregar la lógica para redirigir o guardar el vuelo seleccionado
+  // Por ejemplo: window.location.href = `/seleccionar-asiento?vuelo=${idVuelo}`;
+  alert(`Vuelo #${idVuelo} seleccionado`);
+}
+
+// Cargar vuelos cuando el DOM esté listo
+document.addEventListener('DOMContentLoaded', cargarVuelos);
+
+// Opcional: Recargar vuelos cada 30 segundos
+// setInterval(cargarVuelos, 30000);
       tailwind.config = {
             darkMode: "class",
             theme: {

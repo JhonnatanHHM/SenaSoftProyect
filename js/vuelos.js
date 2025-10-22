@@ -18,23 +18,69 @@ tailwind.config = {
       },
     }
 
-    async function validarToken() {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        window.location.href = 'login.html';
-        return;
-      }
+    document.addEventListener('DOMContentLoaded', () => {
+  // Verificar si existe el token en sessionStorage
+  const token = sessionStorage.getItem('token');
 
-      const res = await fetch('http://localhost:8080/api/auth/validate', {
-        method: 'GET',
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
+  if (!token) {
+    // Si no hay token, redirigir al login
+    alert('Debes iniciar sesión para acceder a esta página.');
+    window.location.href = 'login.html';
+    return;
+  }
 
-      if (!res.ok) {
-        localStorage.removeItem('token');
-        window.location.href = 'login.html';
+  // Si el token existe, puedes continuar con tus consultas
+  console.log('✅ Token encontrado, acceso permitido.');
+
+  // Aquí puedes agregar tu lógica para cargar los vuelos
+  cargarVuelos(token);
+});
+
+// Ejemplo de función para cargar vuelos (puedes adaptarla a tu API)
+async function cargarVuelos(token) {
+  try {
+    const response = await fetch('http://localhost:8080/api/vuelos/mis-vuelos', {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/json'
       }
+    });
+
+    if (!response.ok) throw new Error('Error al obtener vuelos.');
+
+    const vuelos = await response.json();
+
+    const container = document.getElementById('vuelosContainer');
+    const sinVuelos = document.getElementById('sinVuelos');
+
+    if (!vuelos || vuelos.length === 0) {
+      sinVuelos.classList.remove('hidden');
+      return;
     }
+
+    // Mostrar los vuelos dinámicamente
+    vuelos.forEach((vuelo) => {
+      const div = document.createElement('div');
+      div.className =
+        'p-4 bg-white dark:bg-gray-800 rounded-lg shadow border border-gray-200 dark:border-gray-700';
+      div.innerHTML = `
+        <p class="text-lg font-semibold text-text-primary dark:text-white">
+          ✈️ ${vuelo.origen} → ${vuelo.destino}
+        </p>
+        <p class="text-sm text-gray-500 dark:text-gray-400">
+          Fecha: ${vuelo.fecha}
+        </p>
+        <p class="text-sm text-gray-500 dark:text-gray-400">
+          Estado: ${vuelo.estado}
+        </p>
+      `;
+      container.appendChild(div);
+    });
+  } catch (error) {
+    console.error('❌ Error al cargar vuelos:', error);
+  }
+}
+
 
     async function cargarVuelos() {
       const token = localStorage.getItem('token');
