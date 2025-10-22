@@ -30,7 +30,7 @@ public class AuthenticatedServiceImple implements AuthenticatedService {
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
         UsuariosEntity user = usuariosRepository.getByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("Propietario no encontrado!"));
+                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado!"));
 
         List<GrantedAuthority> authorities = new ArrayList<>();
 

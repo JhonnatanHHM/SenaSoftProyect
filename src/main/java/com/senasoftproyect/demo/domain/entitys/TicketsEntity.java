@@ -20,8 +20,8 @@ public class TicketsEntity {
     private String qrCode;
 
     @ManyToOne
+    @JoinColumn(name = "id_usuario", nullable = false)
     @JsonIgnore
-    @JoinColumn(name = "usuario")
     private UsuariosEntity usuario;
 
     public TicketsEntity(Long idTicket, ReservasEntity reserva, String qrCode, UsuariosEntity usuario) {

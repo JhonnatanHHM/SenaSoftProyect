@@ -71,13 +71,9 @@ public class SecurityConfig {
         return httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorization -> authorization
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // ⬅️ Permitir preflight CORS
-                        .requestMatchers("/api/recuperacion/solicitar").permitAll()
-                        .requestMatchers("/api/recuperacion/validar").permitAll()
-                        .requestMatchers("/api/recuperacion/cambiar").permitAll()
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/api/login").permitAll()
-                        .requestMatchers("/api/registerUser").permitAll()
-                        .requestMatchers("/api/registerCustomer").permitAll()
+                        .requestMatchers("/api/usuarios/register").permitAll()
                         .requestMatchers(
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
