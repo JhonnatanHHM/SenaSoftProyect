@@ -19,45 +19,58 @@ tailwind.config = {
             },
         },
     },
+}// --- Función para decodificar un JWT ---
+function parseJwt(token) {
+  try {
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(
+      atob(base64)
+        .split('')
+        .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+        .join('')
+    );
+    return JSON.parse(jsonPayload);
+  } catch (error) {
+    console.error("❌ Error al decodificar el token:", error);
+    return null;
+  }
 }
 
-document.getElementById('loginForm').addEventListener('submit', async function(event) {
-  event.preventDefault(); // evitar que el formulario se envíe de forma tradicional
+// --- Manejar el envío del formulario de login ---
+document.getElementById("loginForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
 
-  const email = document.getElementById('emailInput').value.trim();
-  const password = document.getElementById('passwordInput').value;
+  const email = document.getElementById("emailInput").value;
+  const password = document.getElementById("passwordInput").value;
 
   try {
-    const response = await fetch('http://localhost:8080/api/login', {
-      method: 'POST',
-      headers: {
-        'Accept': '*/*',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        email: email,
-        password: password
-      })
-    });
+   
+     const response = await fetch("https://localhost:8080/api/login", {
+       method: "POST",
+       headers: { "Content-Type": "application/json" },
+       body: JSON.stringify({ email, password }),
+     });
+     const data = await response.json();
+    const token = data.token;
 
-    if (!response.ok) {
-      // manejar errores HTTP
-      const errorText = await response.text();
-      throw new Error(`Error al iniciar sesión: ${response.status} ${errorText}`);
+    const decoded = parseJwt(token);
+    if (decoded) {
+      sessionStorage.setItem("token", token);
+      sessionStorage.setItem("id", decoded.id);
+      sessionStorage.setItem("nombre", decoded.nombres);
+      sessionStorage.setItem("correo", decoded.email);
+      sessionStorage.setItem("expira", decoded.exp);
+
+      console.log("✅ Usuario logueado:", decoded);
+
+      // Redirigir al index
+      window.location.href = "/index.html";
+    } else {
+      alert("Token inválido o error al iniciar sesión.");
     }
-
-    const data = await response.json();
-    console.log('Login exitoso, token:', data.accessToken);
-
-    // Aquí puedes guardar el token, por ejemplo en localStorage:
-    localStorage.setItem('accessToken', data.accessToken);
-
-    // Redireccionar al usuario a la página protegida:
-    window.location.href = '/index.html';  // ajusta la ruta
-
   } catch (error) {
-    console.error('Error al iniciar sesión:', error);
-    // Mostrar mensaje de error al usuario:
-    alert('Correo o contraseña incorrectos o no se pudo conectar con el servidor.');
+    console.error("❌ Error en el login:", error);
+    alert("Error al iniciar sesión. Intenta de nuevo.");
   }
 });

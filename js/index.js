@@ -147,3 +147,54 @@
                 },
             },
         }
+
+  // 🧠 Función para decodificar el JWT
+  function parseJwt(token) {
+    try {
+      const base64Url = token.split('.')[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const jsonPayload = decodeURIComponent(
+        atob(base64)
+          .split('')
+          .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+          .join('')
+      );
+      return JSON.parse(jsonPayload);
+    } catch (e) {
+      console.error("❌ Error al decodificar el token:", e);
+      return null;
+    }
+  }
+
+  // 🧩 Verificar si hay un token en sessionStorage
+  const token = sessionStorage.getItem("token");
+
+  if (token) {
+    const data = parseJwt(token);
+    if (data && data.nombres) {
+      // Tomar el nombre del usuario directamente
+      const nombreCompleto = data.nombres;
+
+      // Buscar el enlace al login
+      const loginLink = document.querySelector('a[href="login.html"]');
+      if (loginLink) {
+        const loginButton = loginLink.closest("button");
+
+        // Reemplazar contenido del botón por el nombre del usuario
+        loginButton.innerHTML = `
+          <span class="truncate flex items-center gap-2">
+            <span class="material-symbols-outlined text-lg">person</span>
+            ${nombreCompleto}
+          </span>
+        `;
+
+        // (Opcional) añadir acción para cerrar sesión
+        loginButton.addEventListener("click", () => {
+          if (confirm("¿Deseas cerrar sesión?")) {
+            sessionStorage.clear();
+            window.location.reload();
+          }
+        });
+      }
+    }
+  }

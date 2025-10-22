@@ -23,39 +23,49 @@
     // registro.js
 
 document.addEventListener('DOMContentLoaded', () => {
-  const form = document.getElementById('registerForm');
+  const form = document.getElementById('registroForm');
   const passwordInput = document.getElementById('passwordInput');
   const confirmPasswordInput = document.getElementById('confirmPasswordInput');
   const passwordMismatchError = document.getElementById('passwordMismatchError');
   const togglePassword = document.getElementById('togglePasswordVisibility');
   const toggleConfirmPassword = document.getElementById('toggleConfirmPasswordVisibility');
 
-  // Toggle visibility for password
+  // Alternar visibilidad de contraseña principal
   togglePassword.addEventListener('click', () => {
-    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-    passwordInput.setAttribute('type', type);
-    togglePassword.innerHTML = `<span class="material-symbols-outlined">${type === 'password' ? 'visibility' : 'visibility_off'}</span>`;
+    const type = passwordInput.type === 'password' ? 'text' : 'password';
+    passwordInput.type = type;
+    togglePassword.innerHTML = `<span class="material-symbols-outlined">${
+      type === 'password' ? 'visibility_off' : 'visibility'
+    }</span>`;
   });
 
+  // Alternar visibilidad de confirmación de contraseña
   toggleConfirmPassword.addEventListener('click', () => {
-    const type = confirmPasswordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-    confirmPasswordInput.setAttribute('type', type);
-    toggleConfirmPassword.innerHTML = `<span class="material-symbols-outlined">${type === 'password' ? 'visibility_off' : 'visibility'}</span>`;
+    const type = confirmPasswordInput.type === 'password' ? 'text' : 'password';
+    confirmPasswordInput.type = type;
+    toggleConfirmPassword.innerHTML = `<span class="material-symbols-outlined">${
+      type === 'password' ? 'visibility_off' : 'visibility'
+    }</span>`;
   });
 
+  // Envío del formulario
   form.addEventListener('submit', async (event) => {
     event.preventDefault();
 
-    // Clear previous error
+    // Limpiar error previo
     passwordMismatchError.classList.add('hidden');
 
+    // Obtener valores del formulario
     const nombres = document.getElementById('nombresInput').value.trim();
-    const primerApellido = document.getElementById('primerApellidoInput').value.trim();
+    const apellido1 = document.getElementById('apellido1').value.trim();
+    const apellido2 = document.getElementById('apellido2').value.trim();
     const email = document.getElementById('emailInput').value.trim();
+    const celular = document.getElementById('celular').value.trim();
     const password = passwordInput.value;
     const confirmPassword = confirmPasswordInput.value;
     const termsChecked = document.getElementById('terms-checkbox').checked;
 
+    // Validaciones
     if (password !== confirmPassword) {
       passwordMismatchError.classList.remove('hidden');
       return;
@@ -66,21 +76,18 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    // Token de autenticación (si necesario)
+    // Si tu API requiere autenticación, puedes usar un token aquí
     const token = localStorage.getItem('accessToken');
-    if (!token) {
-      alert('No estás autenticado. Por favor inicia sesión para poder registrar un nuevo usuario.');
-      return;
-    }
 
+    // Crear objeto con datos
     const payload = {
       estado: true,
-      nombres: nombres,
-      primerApellido: primerApellido,
-      // segundoApellido: '' (añade si lo tienes)
-      celular: '', // si tienes campo celular, cambia aquí
-      email: email,
-      password: password
+      nombres,
+      primerApellido: apellido1,
+      segundoApellido: apellido2 || null,
+      celular,
+      email,
+      password
     };
 
     try {
@@ -89,7 +96,7 @@ document.addEventListener('DOMContentLoaded', () => {
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          ...(token && { 'Authorization': `Bearer ${token}` }) // Se agrega solo si existe token
         },
         body: JSON.stringify(payload)
       });
@@ -100,13 +107,13 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       const data = await response.json();
-      console.log('Registro exitoso:', data);
-      alert(`Usuario registrado con ID: ${data.idUsuario}`);
-      // Por ejemplo, redirigir:
-      window.location.href = 'login.html';
+      console.log('✅ Registro exitoso:', data);
+
+      alert(`Usuario registrado correctamente.`);
+      window.location.href = 'login.html'; // Redirige al login
 
     } catch (error) {
-      console.error('Error al registrar usuario:', error);
+      console.error('❌ Error al registrar usuario:', error);
       alert('No se pudo completar el registro. Verifica los datos e inténtalo de nuevo.');
     }
   });
