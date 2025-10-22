@@ -1,5 +1,5 @@
 // Configuración de la API
-const API_URL = 'http://localhost:8080/api/vuelos';
+const API_URL = 'http://localhost:8080/api/vuelos/all';
 
 // Tamaño de página (máximo de vuelos por página)
 const PAGE_SIZE = 5;
@@ -36,6 +36,24 @@ function contarAsientos(asientos = []) {
   return { disponibles, ocupados, seleccionados };
 }
 
+// Inyectar estilos para forzar ancho completo de las tarjetas y evitar overflow lateral
+(function () {
+  const style = document.createElement('style');
+  style.innerHTML = `
+    /* Asegura que el contenedor y las tarjetas usen 100% del ancho disponible */
+    #contenedor-vuelos, #vuelos-list { width: 100%; max-width: 100%; box-sizing: border-box; }
+    .flight-card { width: 100% !important; max-width: 100% !important; box-sizing: border-box; margin: 0; }
+    .flight-card > .card-inner { width: 100%; box-sizing: border-box; }
+    /* Evita que imágenes u otros elementos provoquen overflow */
+    .flight-card img { max-width: 48px; height: auto; display: block; }
+    /* En mobiles asegurar padding interno y que no se desborde */
+    @media (max-width: 640px) {
+      .flight-card { padding-left: 0; padding-right: 0; }
+    }
+  `;
+  document.head.appendChild(style);
+})();
+
 // Función para crear la tarjeta de vuelo (asegura ancho completo)
 function crearTarjetaVuelo(vuelo) {
   const { disponibles, ocupados, seleccionados } = contarAsientos(vuelo.avion?.asientos || []);
@@ -44,14 +62,14 @@ function crearTarjetaVuelo(vuelo) {
   const imagen = vuelo.aerolinea?.imagen?.keyR2 || '';
 
   return `
-    <div class="w-full">
-      <div class="w-full bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+    <div class="flight-card w-full max-w-full box-border">
+      <div class="card-inner w-full bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
         <!-- Header con aerolínea -->
         <div class="flex items-center justify-between mb-4">
           <div class="flex items-center gap-3">
-            <img src="${imagen}" 
-                 alt="${vuelo.aerolinea?.nombre || 'Aerolínea'}" 
-                 class="w-12 h-12 object-contain rounded">
+            <img src="${imagen}"
+                 alt="${vuelo.aerolinea?.nombre || 'Aerolínea'}"
+                 class="w-12 h-12 object-contain rounded max-w-full" />
             <div>
               <h3 class="font-bold text-lg">${vuelo.aerolinea?.nombre || 'Aerolínea'}</h3>
               <p class="text-sm text-gray-600">${vuelo.avion?.modelo || ''}</p>
