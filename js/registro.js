@@ -20,79 +20,94 @@
             },
         }
 
-        // Call the dataTables jQuery plugin
-$(document).ready(function () {
+    // registro.js
 
-  cargarUsuarios()
+document.addEventListener('DOMContentLoaded', () => {
+  const form = document.getElementById('registerForm');
+  const passwordInput = document.getElementById('passwordInput');
+  const confirmPasswordInput = document.getElementById('confirmPasswordInput');
+  const passwordMismatchError = document.getElementById('passwordMismatchError');
+  const togglePassword = document.getElementById('togglePasswordVisibility');
+  const toggleConfirmPassword = document.getElementById('toggleConfirmPasswordVisibility');
 
-  $('#usuarios').DataTable();
-  checkAuthentication();
-  actualizarEmailDelUsuario();
+  // Toggle visibility for password
+  togglePassword.addEventListener('click', () => {
+    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+    passwordInput.setAttribute('type', type);
+    togglePassword.innerHTML = `<span class="material-symbols-outlined">${type === 'password' ? 'visibility' : 'visibility_off'}</span>`;
+  });
 
-});
+  toggleConfirmPassword.addEventListener('click', () => {
+    const type = confirmPasswordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+    confirmPasswordInput.setAttribute('type', type);
+    toggleConfirmPassword.innerHTML = `<span class="material-symbols-outlined">${type === 'password' ? 'visibility_off' : 'visibility'}</span>`;
+  });
 
-function checkAuthentication() {
-  const token = localStorage.token;
-  if (!token) {
-    // Si no hay token, redirigir al inicio de sesión
-    alert("No se ha iniciado sesión!");
-    window.location.href = 'login.html'
-  }
-}
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
 
-function logout() {
-  // Eliminar el token del localStorage
-  localStorage.removeItem('token'); // Asegúrate de usar la clave que usaste para guardar el token
-  localStorage.removeItem('email');
-  localStorage.removeItem('nombre');
-  // Redirigir al usuario a la página de inicio de sesión o a otra página
+    // Clear previous error
+    passwordMismatchError.classList.add('hidden');
 
-  window.location.href = 'login.html'
-}
+    const nombres = document.getElementById('nombresInput').value.trim();
+    const primerApellido = document.getElementById('primerApellidoInput').value.trim();
+    const email = document.getElementById('emailInput').value.trim();
+    const password = passwordInput.value;
+    const confirmPassword = confirmPasswordInput.value;
+    const termsChecked = document.getElementById('terms-checkbox').checked;
 
-function actualizarEmailDelUsuario() {
-  document.getElementById('txt-name-usuario').outerHTML = localStorage.nombre;
-}
-
-async function registrarUsuario() {
-  const datos = {
-    name: document.getElementById('txtName').value,
-    lastName: document.getElementById('txtLastName').value,
-    phone: document.getElementById('txtPhone').value,
-    city: document.getElementById('txtCity').value,
-    bio: document.getElementById('txtBio').value,
-    email: document.getElementById('txtEmail').value,
-    password: document.getElementById('txtPassword').value,
-  };
-
-  const repetirPassword = document.getElementById('txtRepetirPassword').value;
-  if (repetirPassword !== datos.password) {
-    alert('La contraseña que escribiste es diferente.');
-    return;
-  }
-
-  const rolSeleccionado = document.getElementById('selectRole').value; // "true" o "false"
-  const url = `https://ticket-backend-bkkf.onrender.com/api/users/${rolSeleccionado}`;
-
-  try {
-    const request = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(datos)
-    });
-
-    if (request.ok) {
-      alert("La cuenta fue creada con éxito!");
-      window.location.href = 'login.html';
-    } else {
-      const errorData = await request.json();
-      alert(errorData.message || "Error al crear el usuario.");
+    if (password !== confirmPassword) {
+      passwordMismatchError.classList.remove('hidden');
+      return;
     }
-  } catch (error) {
-    console.error("Error:", error);
-    alert("No se pudo conectar con el servidor.");
-  }
-}
+
+    if (!termsChecked) {
+      alert('Debes aceptar los términos para continuar.');
+      return;
+    }
+
+    // Token de autenticación (si necesario)
+    const token = localStorage.getItem('accessToken');
+    if (!token) {
+      alert('No estás autenticado. Por favor inicia sesión para poder registrar un nuevo usuario.');
+      return;
+    }
+
+    const payload = {
+      estado: true,
+      nombres: nombres,
+      primerApellido: primerApellido,
+      // segundoApellido: '' (añade si lo tienes)
+      celular: '', // si tienes campo celular, cambia aquí
+      email: email,
+      password: password
+    };
+
+    try {
+      const response = await fetch('http://localhost:8080/api/usuarios/register', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Error al registrar usuario: ${response.status} ${errorText}`);
+      }
+
+      const data = await response.json();
+      console.log('Registro exitoso:', data);
+      alert(`Usuario registrado con ID: ${data.idUsuario}`);
+      // Por ejemplo, redirigir:
+      window.location.href = 'login.html';
+
+    } catch (error) {
+      console.error('Error al registrar usuario:', error);
+      alert('No se pudo completar el registro. Verifica los datos e inténtalo de nuevo.');
+    }
+  });
+});

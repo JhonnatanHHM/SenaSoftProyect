@@ -1,11 +1,97 @@
 body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-        }
+  font-family: "Plus Jakarta Sans", sans-serif;
+}
 
-        .material-symbols-outlined {
-            font-variation-settings:
-                'FILL' 0,
-                'wght' 400,
-                'GRAD' 0,
-                'opsz' 24
-        }
+.material-symbols-outlined {
+  font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+}
+.primer-parrafo {
+    color: #38bdf8; /* azul cielo */
+  }
+  .segundo-parrafo {
+    color: #ffffff; /* blanco */
+  }
+  /* Modo oscuro (opcional) */
+  @media (prefers-color-scheme: dark) {
+    .primer-parrafo {
+      color: #ffffff;
+    }
+    .segundo-parrafo {
+      color: #d1d5db; /* gris claro para buen contraste */
+    }
+  }
+/* Animaciones para título y subtítulo (movimiento constante) */
+    @keyframes floatSway {
+      0%   { transform: translateY(0) rotate(0deg); }
+      25%  { transform: translateY(-6px) rotate(-0.6deg); }
+      50%  { transform: translateY(0) rotate(0deg); }
+      75%  { transform: translateY(6px) rotate(0.6deg); }
+      100% { transform: translateY(0) rotate(0deg); }
+    }
+
+    @keyframes floatSmall {
+      0%   { transform: translateY(0); }
+      50%  { transform: translateY(-4px); }
+      100% { transform: translateY(0); }
+    }
+
+    @keyframes pulseShadow {
+      0%   { text-shadow: 0 6px 18px rgba(2,6,23,0.18); }
+      50%  { text-shadow: 0 12px 30px rgba(2,6,23,0.22); }
+      100% { text-shadow: 0 6px 18px rgba(2,6,23,0.18); }
+    }
+
+    .animated-heading {
+      animation: floatSway 6s ease-in-out infinite, pulseShadow 6s ease-in-out infinite;
+      will-change: transform, text-shadow;
+      text-shadow: 0 6px 18px rgba(2,6,23,0.18);
+    }
+
+    .animated-subtitle {
+      animation: floatSmall 4s ease-in-out infinite;
+      opacity: 0.95;
+      transition: opacity .3s ease;
+    }
+
+    /* Accesibilidad: respetar preferencia de reducir movimiento */
+    @media (prefers-reduced-motion: reduce) {
+      .animated-heading,
+      .animated-subtitle {
+        animation: none !important;
+      }
+    }
+
+    .marquee { overflow: hidden; position: relative; }
+    .marquee-track {
+      display: flex;
+      gap: 1rem;
+      align-items: stretch;
+      /* la animación se ajusta por JS según ancho para velocidad constante */
+      animation-name: marquee-scroll;
+      animation-timing-function: linear;
+      animation-iteration-count: infinite;
+      will-change: transform;
+    }
+    .marquee-track > * { flex: 0 0 auto; }
+
+    @keyframes marquee-scroll {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); } /* con duplicado, -50% genera loop continuo */
+    }
+
+    .marquee:hover .marquee-track { animation-play-state: paused; }
+
+    /* Estilos visuales para tarjetas (mantener consistencia) */
+    .marquee-card { min-width: 320px; padding: 1.25rem; border-radius: .75rem; background: rgba(255,255,255,0.92); box-shadow: 0 6px 20px rgba(2,6,23,0.12); color: #1f2937; }
+    .marquee-card footer { margin-top: .5rem; color: #6b7280; font-size: 0.8rem; }
+
+    /* Accesibilidad: respetar prefers-reduced-motion */
+    @media (prefers-reduced-motion: reduce) {
+      .marquee-track { animation: none !important; }
+    }
+
+    /* Ajustes responsive */
+    @media (max-width: 640px) {
+      .marquee-track { gap: 0.75rem; }
+      .marquee-card { min-width: 260px; padding: 1rem; }
+    }

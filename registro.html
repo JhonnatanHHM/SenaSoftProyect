@@ -1,112 +1,108 @@
 <!DOCTYPE html>
-
 <html class="light" lang="es">
-
-<head>
+  <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>Registro de Usuario</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap"
-        rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
-</head>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
+      rel="stylesheet"
+    />
+  </head>
 
-<body class="bg-background-light dark:bg-background-dark font-display">
-    <div
-        class="relative flex min-h-screen w-full flex-col items-center justify-center bg-background-light dark:bg-background-dark group/design-root overflow-x-hidden">
-        <div class="layout-container flex h-full grow flex-col">
-            <div class="px-4 md:px-10 flex flex-1 justify-center py-5">
-                <div class="layout-content-container flex flex-col max-w-[480px] flex-1">
-                    <div class="flex flex-col gap-8 p-4">
-                        <div class="flex flex-col gap-3 text-center">
-                            <p
-                                class="text-3xl md:text-4xl font-black leading-tight tracking-[-0.033em] text-[#0d171b] dark:text-white">
-                                Crea tu cuenta</p>
-                            <p class="text-base font-normal leading-normal text-[#4c809a] dark:text-slate-400">Únete a
-                                nosotros para encontrar las mejores ofertas de vuelos.</p>
-                        </div>
-                        <div class="flex flex-col gap-4">
-                            <div class="flex flex-col sm:flex-row gap-4">
-                                <label class="flex flex-col min-w-40 flex-1">
-                                    <p
-                                        class="text-base font-medium leading-normal pb-2 text-[#0d171b] dark:text-slate-300">
-                                        Nombre</p>
-                                    <input
-                                        class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0d171b] dark:text-white focus:outline-0 focus:ring-0 border border-[#cfdfe7] dark:border-slate-700 bg-background-light dark:bg-background-dark focus:border-primary h-14 placeholder:text-[#4c809a] dark:placeholder-slate-500 p-[15px] text-base font-normal leading-normal"
-                                        placeholder="Tu nombre" value="" />
-                                </label>
-                                <label class="flex flex-col min-w-40 flex-1">
-                                    <p
-                                        class="text-base font-medium leading-normal pb-2 text-[#0d171b] dark:text-slate-300">
-                                        Apellido</p>
-                                    <input
-                                        class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0d171b] dark:text-white focus:outline-0 focus:ring-0 border border-[#cfdfe7] dark:border-slate-700 bg-background-light dark:bg-background-dark focus:border-primary h-14 placeholder:text-[#4c809a] dark:placeholder-slate-500 p-[15px] text-base font-normal leading-normal"
-                                        placeholder="Tu apellido" value="" />
-                                </label>
-                            </div>
-                            <label class="flex flex-col">
-                                <p class="text-base font-medium leading-normal pb-2 text-[#0d171b] dark:text-slate-300">
-                                    Correo electrónico</p>
-                                <input
-                                    class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0d171b] dark:text-white focus:outline-0 focus:ring-0 border border-[#cfdfe7] dark:border-slate-700 bg-background-light dark:bg-background-dark focus:border-primary h-14 placeholder:text-[#4c809a] dark:placeholder-slate-500 p-[15px] text-base font-normal leading-normal"
-                                    placeholder="tu@email.com" value="" />
-                            </label>
-                            <label class="flex flex-col">
-                                <p class="text-base font-medium leading-normal pb-2 text-[#0d171b] dark:text-slate-300">
-                                    Contraseña</p>
-                                <div class="flex w-full flex-1 items-stretch rounded-lg">
-                                    <input
-                                        class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-l-lg text-[#0d171b] dark:text-white focus:outline-0 focus:ring-0 border border-[#cfdfe7] dark:border-slate-700 bg-background-light dark:bg-background-dark focus:border-primary h-14 placeholder:text-[#4c809a] dark:placeholder-slate-500 p-[15px] border-r-0 text-base font-normal leading-normal"
-                                        placeholder="Ingresa tu contraseña" type="password" value="" />
-                                    <button
-                                        class="text-[#4c809a] dark:text-slate-400 flex border border-[#cfdfe7] dark:border-slate-700 bg-background-light dark:bg-background-dark items-center justify-center px-4 rounded-r-lg border-l-0 hover:bg-slate-100 dark:hover:bg-slate-800">
-                                        <span class="material-symbols-outlined">visibility</span>
-                                    </button>
-                                </div>
-                                <div class="w-full h-1 bg-slate-200 dark:bg-slate-700 rounded-full mt-2">
-                                    <div class="h-1 bg-primary w-1/3 rounded-full"></div>
-                                </div>
-                            </label>
-                            <label class="flex flex-col">
-                                <p class="text-base font-medium leading-normal pb-2 text-[#0d171b] dark:text-slate-300">
-                                    Confirmar contraseña</p>
-                                <div class="flex w-full flex-1 items-stretch rounded-lg">
-                                    <input
-                                        class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-l-lg text-[#0d171b] dark:text-white focus:outline-0 focus:ring-0 border border-red-500 bg-background-light dark:bg-background-dark focus:border-primary h-14 placeholder:text-[#4c809a] dark:placeholder-slate-500 p-[15px] border-r-0 text-base font-normal leading-normal"
-                                        placeholder="Confirma tu contraseña" type="password" value="" />
-                                    <button
-                                        class="text-[#4c809a] dark:text-slate-400 flex border border-red-500 bg-background-light dark:bg-background-dark items-center justify-center px-4 rounded-r-lg border-l-0 hover:bg-slate-100 dark:hover:bg-slate-800">
-                                        <span class="material-symbols-outlined">visibility_off</span>
-                                    </button>
-                                </div>
-                                <p class="text-red-500 text-sm mt-1">Las contraseñas no coinciden.</p>
-                            </label>
-                            <div class="flex items-start gap-3 pt-2">
-                                <input
-                                    class="form-checkbox h-5 w-5 rounded border-gray-300 dark:border-slate-600 text-primary focus:ring-primary bg-background-light dark:bg-background-dark mt-0.5"
-                                    id="terms-checkbox" type="checkbox" />
-                                <label class="text-sm text-[#4c809a] dark:text-slate-400" for="terms-checkbox">
-                                    Al registrarte, aceptas nuestra <a class="font-medium text-primary hover:underline"
-                                        href="#">Política de Privacidad</a> y nuestros <a
-                                        class="font-medium text-primary hover:underline" href="#">Términos de
-                                        Servicio</a>.
-                                </label>
-                            </div>
-                            <button
-                                class="flex items-center justify-center w-full h-14 px-6 mt-4 rounded-lg bg-primary text-white text-base font-bold leading-normal shadow-sm hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
-                                Registrarse
-                            </button>
-                        </div>
-                        <p class="text-center text-sm text-[#4c809a] dark:text-slate-400">
-                            ¿Ya tienes una cuenta? <a class="font-medium text-primary hover:underline"
-                                href="login.html">Inicia sesión</a>
-                        </p>
-                    </div>
+  <body class="bg-background-light dark:bg-background-dark font-display">
+    <div class="relative flex min-h-screen w-full flex-col items-center justify-center bg-background-light dark:bg-background-dark group/design-root overflow-x-hidden">
+      <div class="layout-container flex h-full grow flex-col">
+        <div class="px-4 md:px-10 flex flex-1 justify-center py-5">
+          <div class="layout-content-container flex flex-col max-w-[480px] flex-1">
+            <div class="flex flex-col gap-8 p-4">
+              <div class="flex flex-col gap-3 text-center">
+                <p class="text-3xl md:text-4xl font-black leading-tight tracking-[-0.033em] text-[#0d171b] dark:text-white">
+                  Crea tu cuenta
+                </p>
+                <p class="text-base font-normal leading-normal text-[#4c809a] dark:text-slate-400">
+                  Únete a nosotros para encontrar las mejores ofertas de vuelos.
+                </p>
+              </div>
+              <form id="registerForm" class="flex flex-col gap-4">
+                <div class="flex flex-col sm:flex-row gap-4">
+                  <label class="flex flex-col min-w-40 flex-1">
+                    <p class="text-base font-medium leading-normal pb-2 text-[#0d171b] dark:text-slate-300">Nombre</p>
+                    <input id="nombresInput" name="nombres"
+                      class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0d171b] dark:text-white focus:outline-0 focus:ring-0 border border-[#cfdfe7] dark:border-slate-700 bg-background-light dark:bg-background-dark focus:border-primary h-14 placeholder:text-[#4c809a] dark:placeholder-slate-500 p-[15px] text-base font-normal leading-normal"
+                      placeholder="Tu nombre" required type="text" value="" />
+                  </label>
+                  <label class="flex flex-col min-w-40 flex-1">
+                    <p class="text-base font-medium leading-normal pb-2 text-[#0d171b] dark:text-slate-300">Apellido</p>
+                    <input id="primerApellidoInput" name="primerApellido"
+                      class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0d171b] dark:text-white focus:outline-0 focus:ring-0 border border-[#cfdfe7] dark:border-slate-700 bg-background-light dark:bg-background-dark focus:border-primary h-14 placeholder:text-[#4c809a] dark:placeholder-slate-500 p-[15px] text-base font-normal leading-normal"
+                      placeholder="Tu apellido" required type="text" value="" />
+                  </label>
                 </div>
+                <label class="flex flex-col">
+                  <p class="text-base font-medium leading-normal pb-2 text-[#0d171b] dark:text-slate-300">Correo electrónico</p>
+                  <input id="emailInput" name="email"
+                    class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0d171b] dark:text-white focus:outline-0 focus:ring-0 border border-[#cfdfe7] dark:border-slate-700 bg-background-light dark:bg-background-dark focus:border-primary h‑14 placeholder:text-[#4c809a] dark:placeholder-slate-500 p-[15px] text-base font-normal leading-normal"
+                    placeholder="tu@email.com" required type="email" value="" />
+                </label>
+                <label class="flex flex-col">
+                  <p class="text-base font-medium leading-normal pb-2 text-[#0d171b] dark:text-slate-300">Contraseña</p>
+                  <div class="flex w-full flex-1 items‑stretch rounded-lg">
+                    <input id="passwordInput" name="password"
+                      class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-l-lg text-[#0d171b] dark:text-white focus:outline‑0 focus:ring‑0 border border-[#cfdfe7] dark:border-slate-700 bg-background-light dark:bg-background-dark focus:border-primary h‑14 placeholder:text-[#4c809a] dark:placeholder-slate-500 p-[15px] border‑r‑0 text-base font-normal leading-normal"
+                      placeholder="Ingresa tu contraseña" required type="password" value="" />
+                    <button type="button" id="togglePasswordVisibility"
+                      class="text-[#4c809a] dark:text-slate-400 flex border border-[#cfdfe7] dark:border-slate-700 bg-background-light dark:bg-background-dark items-center justify-center px-4 rounded-r-lg border-l-0 hover:bg-slate-100 dark:hover:bg-slate‑800">
+                      <span class="material-symbols-outlined">visibility</span>
+                    </button>
+                  </div>
+                </label>
+                <label class="flex flex-col">
+                  <p class="text-base font-medium leading-normal pb-2 text-[#0d171b] dark:text-slate-300">Confirmar contraseña</p>
+                  <div class="flex w-full flex-1 items‑stretch rounded-lg">
+                    <input id="confirmPasswordInput" name="confirmPassword"
+                      class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-l-lg text-[#0d171b] dark:text-white focus:outline‑0 focus:ring‑0 border border-[#cfdfe7] dark:border-slate-700 bg-background-light dark:bg-background-dark focus:border-primary h‑14 placeholder:text-[#4c809a] dark:placeholder-slate-500 p-[15px] border‑r‑0 text-base font-normal leading-normal"
+                      placeholder="Confirma tu contraseña" required type="password" value="" />
+                    <button type="button" id="toggleConfirmPasswordVisibility"
+                      class="text-[#4c809a] dark:text-slate-400 flex border border-[#cfdfe7] dark:border-slate‑700 bg-background-light dark:bg-background-dark items-center justify-center px-4 rounded-r-lg border‑l‑0 hover:bg-slate‑100 dark:hover:bg-slate‑800">
+                      <span class="material-symbols-outlined">visibility_off</span>
+                    </button>
+                  </div>
+                  <p id="passwordMismatchError" class="text-red-500 text-sm mt-1 hidden">
+                    Las contraseñas no coinciden.
+                  </p>
+                </label>
+                <div class="flex items‑start gap‑3 pt‑2">
+                  <input id="terms-checkbox" name="terms"
+                    class="form-checkbox h‑5 w‑5 rounded border-gray‑300 dark:border-slate‑600 text‑primary focus:ring‑primary bg-background-light dark:bg-background-dark mt‑0.5"
+                    type="checkbox" required />
+                  <label for="terms-checkbox" class="text-sm text-[#4c809a] dark:text-slate‑400">
+                    Al registrarte, aceptas nuestra
+                    <a class="font-medium text-primary hover:underline" href="#">Política de Privacidad</a>
+                    y nuestros
+                    <a class="font-medium text-primary hover:underline" href="#">Términos de Servicio</a>.
+                  </label>
+                </div>
+                <button id="registerButton"
+                  class="flex items-center justify-center w‑full h‑14 px‑6 mt‑4 rounded-lg bg-primary text-white text-base font-bold leading-normal shadow-sm hover:bg-primary/90 focus:outline‑none focus:ring‑2 focus:ring‑offset‑2 focus:ring-primary"
+                  type="submit">
+                  Registrarse
+                </button>
+              </form>
+              <p class="text-center text-sm text-[#4c809a] dark:text-slate‑400">
+                ¿Ya tienes una cuenta?
+                <a class="font-medium text-primary hover:underline" href="login.html">Inicia sesión</a>
+              </p>
             </div>
+          </div>
         </div>
+      </div>
     </div>
-</body>
-<script src="./js/registro.js"></script>
+    <script src="./js/registro.js"></script>
+  </body>
 </html>

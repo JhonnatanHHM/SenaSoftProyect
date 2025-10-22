@@ -1,153 +1,242 @@
 <!DOCTYPE html>
 
 <html class="light" lang="es">
-
-<head>
+  <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>Añadir Nuevo Pasajero</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap"
-        rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
-    <link rel="stylesheet" href="./css/añadir_pasajeros.css">
-</head>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./css/añadir_pasajeros.css" />
+  </head>
 
-<body class="bg-background-light dark:bg-background-dark font-display">
-    <div class="relative flex min-h-screen w-full flex-col items-center justify-center p-4 sm:p-6 lg:p-8">
-        <div class="w-full max-w-4xl">
-            <!-- Progress Indicator -->
+  <body class="bg-background-light dark:bg-background-dark font-display">
+    <div
+      class="relative flex min-h-screen w-full flex-col items-center justify-center p-4 sm:p-6 lg:p-8"
+    >
+      <div class="w-full max-w-4xl">
+        <!-- Progress Indicator -->
 
-            <div class="bg-white dark:bg-background-dark rounded-xl shadow-lg p-6 sm:p-8 md:p-12">
-                <!-- Page Heading -->
-                <div class="mb-8">
-                    <h1 class="text-text-dark dark:text-text-light text-3xl sm:text-4xl font-extrabold tracking-tight">
-                        Añadir Nuevo Pasajero</h1>
-                    <p class="mt-2 text-secondary dark:text-gray-400 text-base">Introduce los datos del pasajero.</p>
-                </div>
-                <!-- Form Section -->
-                <form class="grid grid-cols-1 gap-x-8 gap-y-6 md:grid-cols-2">
-                    <!-- First Name & Last Name -->
-                    <div class="md:col-span-1">
-                        <label class="block text-sm font-medium leading-6 text-text-dark dark:text-text-light"
-                            for="firstName">Nombre</label>
-                        <div class="mt-2">
-                            <input
-                                class="form-input block w-full rounded-lg border-border-color bg-background-light dark:bg-gray-800 dark:border-gray-600 dark:text-text-light px-4 py-3 text-text-dark placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
-                                id="firstName" name="firstName" placeholder="Introduce tu nombre" type="text" />
-                        </div>
-                    </div>
-                    <div class="md:col-span-1">
-                        <label class="block text-sm font-medium leading-6 text-text-dark dark:text-text-light"
-                            for="lastName">Primer Apellido</label>
-                        <div class="mt-2">
-                            <input
-                                class="form-input block w-full rounded-lg border-border-color bg-background-light dark:bg-gray-800 dark:border-gray-600 dark:text-text-light px-4 py-3 text-text-dark placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
-                                id="lastName" name="lastName" placeholder="Introduce tu apellido" type="text" />
-                        </div>
-                    </div>
-                    <div class="md:col-span-1">
-                        <label class="block text-sm font-medium leading-6 text-text-dark dark:text-text-light"
-                            for="lastName">Segundo Apellido</label>
-                        <div class="mt-2">
-                            <input
-                                class="form-input block w-full rounded-lg border-border-color bg-background-light dark:bg-gray-800 dark:border-gray-600 dark:text-text-light px-4 py-3 text-text-dark placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
-                                id="lastName" name="lastName" placeholder="Introduce tu apellido" type="text" />
-                        </div>
-                    </div>
-                    <!-- Date of Birth -->
-                    <div class="md:col-span-1">
-                        <label class="block text-sm font-medium leading-6 text-text-dark dark:text-text-light"
-                            for="dob">Fecha de Nacimiento</label>
-                        <div class="relative mt-2">
-                            <input
-                                class="form-input block w-full rounded-lg border-border-color bg-background-light dark:bg-gray-800 dark:border-gray-600 dark:text-text-light pl-4 pr-10 py-3 text-text-dark placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
-                                id="dob" name="dob" placeholder="DD/MM/AAAA" type="text" />
-                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
-                                <span
-                                    class="material-symbols-outlined text-secondary dark:text-gray-400">calendar_today</span>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Gender -->
-                    <div class="md:col-span-1">
-                        <label
-                            class="block text-sm font-medium leading-6 text-text-dark dark:text-text-light">Sexo</label>
-                        <div class="mt-2 flex flex-wrap gap-3">
-                            <label
-                                class="text-sm font-medium leading-normal flex items-center justify-center rounded-lg border border-border-color px-4 h-12 text-text-dark dark:text-text-light dark:border-gray-600 relative cursor-pointer flex-1 transition-all duration-200">
-                                Hombre
-                                <input class="invisible absolute" name="gender" type="radio" />
-                            </label>
-                            <label
-                                class="text-sm font-medium leading-normal flex items-center justify-center rounded-lg border border-border-color px-4 h-12 text-text-dark dark:text-text-light dark:border-gray-600 relative cursor-pointer flex-1 transition-all duration-200">
-                                Mujer
-                                <input class="invisible absolute" name="gender" type="radio" />
-                            </label>
-                            <label
-                                class="text-sm font-medium leading-normal flex items-center justify-center rounded-lg border border-border-color px-4 h-12 text-text-dark dark:text-text-light dark:border-gray-600 relative cursor-pointer flex-1 transition-all duration-200">
-                                Otro
-                                <input class="invisible absolute" name="gender" type="radio" />
-                            </label>
-                        </div>
-                    </div>
-                    <div class="md:col-span-1">
-                                            <label
-                                                class="block text-sm font-medium leading-6 text-text-dark dark:text-text-light"
-                                                for="nationality">Documento</label>
-                                            <div class="mt-2">
-                                                <select
-                                                    class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-slate-800 dark:text-slate-200 focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-slate-300 dark:border-slate-700 bg-background-light dark:bg-slate-800 h-14 placeholder:text-slate-400 dark:placeholder-slate-500 p-[15px] text-base font-normal leading-normal"
-                                                    placeholder="MM/AA" value="">
-                                                    <option>tipo de documento</option>
-                                                    <option>Cedula de Ciudadania</option>
-                                                    <option>Tarjeta de identidad</option>
-                                                    <option>Pasaporte</option>
-                                                    <option>Cedula de Extranjeria</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                    <!-- Passport/ID -->
-                    <div class="md:col-span-1">
-                        <label class="block text-sm font-medium leading-6 text-text-dark dark:text-text-light"
-                            for="passport">Numero de Identidad</label>
-                        <div class="mt-2">
-                            <input
-                                class="form-input block w-full rounded-lg border-border-color bg-background-light dark:bg-gray-800 dark:border-gray-600 dark:text-text-light px-4 py-3 text-text-dark placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
-                                id="passport" name="passport" placeholder="Introduce el número" type="text" />
-                        </div>
-                    </div>
-                    <div class="md:col-span-1">
-                        <label class="block text-sm font-medium leading-6 text-text-dark dark:text-text-light"
-                            for="passport">Celular</label>
-                        <div class="mt-2">
-                            <input
-                                class="form-input block w-full rounded-lg border-border-color bg-background-light dark:bg-gray-800 dark:border-gray-600 dark:text-text-light px-4 py-3 text-text-dark placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
-                                id="passport" name="passport" placeholder="Introduce tu numero de telefono" type="text" />
-                        </div>
-                    </div>
-                    <div class="md:col-span-1">
-                        <label class="block text-sm font-medium leading-6 text-text-dark dark:text-text-light"
-                            for="passport">Gmail</label>
-                        <div class="mt-2">
-                            <input
-                                class="form-input block w-full rounded-lg border-border-color bg-background-light dark:bg-gray-800 dark:border-gray-600 dark:text-text-light px-4 py-3 text-text-dark placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
-                                id="passport" name="passport" placeholder="Ingrese su Gmail" type="email" />
-                        </div>
-                    </div>
-                </form>
-                <!-- Action Buttons -->
-                <div
-                    class="mt-10 pt-8 border-t border-gray-200 dark:border-gray-700 flex flex-col sm:flex-row-reverse sm:items-center sm:justify-start gap-4">
-                    <button
-                        class="inline-flex justify-center rounded-lg bg-primary px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary transition-colors duration-200"
-                        type="button">
-                        <a href="confimacion_de_vuelo.html">Añadir</a>
-                    </button>
-                </div>
+        <div
+          class="bg-white dark:bg-background-dark rounded-xl shadow-lg p-6 sm:p-8 md:p-12"
+        >
+          <!-- Page Heading -->
+          <div class="mb-8">
+            <h1
+              class="text-text-dark dark:text-text-light text-3xl sm:text-4xl font-extrabold tracking-tight"
+            >
+              Añadir Nuevo Pasajero
+            </h1>
+            <p class="mt-2 text-secondary dark:text-gray-400 text-base">
+              Introduce los datos del pasajero.
+            </p>
+          </div>
+          <!-- Form Section -->
+          <form class="grid grid-cols-1 gap-x-8 gap-y-6 md:grid-cols-2">
+            <!-- First Name & Last Name -->
+            <div class="md:col-span-1">
+              <label
+                class="block text-sm font-medium leading-6 text-text-dark dark:text-text-light"
+                for="firstName"
+                >Nombre</label
+              >
+              <div class="mt-2">
+                <input
+                  class="form-input block w-full rounded-lg border-border-color bg-background-light dark:bg-gray-800 dark:border-gray-600 dark:text-text-light px-4 py-3 text-text-dark placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
+                  id="firstName"
+                  name="firstName"
+                  placeholder="Introduce tu nombre"
+                  type="text"
+                />
+              </div>
             </div>
+            <div class="md:col-span-1">
+              <label
+                class="block text-sm font-medium leading-6 text-text-dark dark:text-text-light"
+                for="lastName"
+                >Primer Apellido</label
+              >
+              <div class="mt-2">
+                <input
+                  class="form-input block w-full rounded-lg border-border-color bg-background-light dark:bg-gray-800 dark:border-gray-600 dark:text-text-light px-4 py-3 text-text-dark placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
+                  id="lastName"
+                  name="lastName"
+                  placeholder="Introduce tu apellido"
+                  type="text"
+                />
+              </div>
+            </div>
+            <div class="md:col-span-1">
+              <label
+                class="block text-sm font-medium leading-6 text-text-dark dark:text-text-light"
+                for="lastName"
+                >Segundo Apellido</label
+              >
+              <div class="mt-2">
+                <input
+                  class="form-input block w-full rounded-lg border-border-color bg-background-light dark:bg-gray-800 dark:border-gray-600 dark:text-text-light px-4 py-3 text-text-dark placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
+                  id="lastName"
+                  name="lastName"
+                  placeholder="Introduce tu apellido"
+                  type="text"
+                />
+              </div>
+            </div>
+            <!-- Date of Birth -->
+            <div class="md:col-span-1">
+              <label
+                class="block text-sm font-medium leading-6 text-text-dark dark:text-text-light"
+                for="dob"
+                >Fecha de Nacimiento</label
+              >
+              <div class="relative mt-2">
+                <input
+                  class="form-input block w-full rounded-lg border-border-color bg-background-light dark:bg-gray-800 dark:border-gray-600 dark:text-text-light pl-4 pr-10 py-3 text-text-dark placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
+                  id="dob"
+                  name="dob"
+                  placeholder="DD/MM/AAAA"
+                  type="text"
+                />
+                <div
+                  class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3"
+                >
+                  <span
+                    class="material-symbols-outlined text-secondary dark:text-gray-400"
+                    >calendar_today</span
+                  >
+                </div>
+              </div>
+            </div>
+            <!-- Gender -->
+            <div class="md:col-span-1">
+              <label
+                class="block text-sm font-medium leading-6 text-text-dark dark:text-text-light"
+                >Sexo</label
+              >
+              <div class="mt-2 flex flex-wrap gap-3">
+                <label
+                  class="text-sm font-medium leading-normal flex items-center justify-center rounded-lg border border-border-color px-4 h-12 text-text-dark dark:text-text-light dark:border-gray-600 relative cursor-pointer flex-1 transition-all duration-200"
+                >
+                  Hombre
+                  <input
+                    class="invisible absolute"
+                    name="gender"
+                    type="radio"
+                  />
+                </label>
+                <label
+                  class="text-sm font-medium leading-normal flex items-center justify-center rounded-lg border border-border-color px-4 h-12 text-text-dark dark:text-text-light dark:border-gray-600 relative cursor-pointer flex-1 transition-all duration-200"
+                >
+                  Mujer
+                  <input
+                    class="invisible absolute"
+                    name="gender"
+                    type="radio"
+                  />
+                </label>
+                <label
+                  class="text-sm font-medium leading-normal flex items-center justify-center rounded-lg border border-border-color px-4 h-12 text-text-dark dark:text-text-light dark:border-gray-600 relative cursor-pointer flex-1 transition-all duration-200"
+                >
+                  Otro
+                  <input
+                    class="invisible absolute"
+                    name="gender"
+                    type="radio"
+                  />
+                </label>
+              </div>
+            </div>
+            <div class="md:col-span-1">
+              <label
+                class="block text-sm font-medium leading-6 text-text-dark dark:text-text-light"
+                for="nationality"
+                >Documento</label
+              >
+              <div class="mt-2">
+                <select
+                  class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-slate-800 dark:text-slate-200 focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-slate-300 dark:border-slate-700 bg-background-light dark:bg-slate-800 h-14 placeholder:text-slate-400 dark:placeholder-slate-500 p-[15px] text-base font-normal leading-normal"
+                  placeholder="MM/AA"
+                  value=""
+                >
+                  <option>tipo de documento</option>
+                  <option>Cedula de Ciudadania</option>
+                  <option>Tarjeta de identidad</option>
+                  <option>Pasaporte</option>
+                  <option>Cedula de Extranjeria</option>
+                </select>
+              </div>
+            </div>
+            <!-- Passport/ID -->
+            <div class="md:col-span-1">
+              <label
+                class="block text-sm font-medium leading-6 text-text-dark dark:text-text-light"
+                for="passport"
+                >Numero de Identidad</label
+              >
+              <div class="mt-2">
+                <input
+                  class="form-input block w-full rounded-lg border-border-color bg-background-light dark:bg-gray-800 dark:border-gray-600 dark:text-text-light px-4 py-3 text-text-dark placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
+                  id="passport"
+                  name="passport"
+                  placeholder="Introduce el número"
+                  type="text"
+                />
+              </div>
+            </div>
+            <div class="md:col-span-1">
+              <label
+                class="block text-sm font-medium leading-6 text-text-dark dark:text-text-light"
+                for="passport"
+                >Celular</label
+              >
+              <div class="mt-2">
+                <input
+                  class="form-input block w-full rounded-lg border-border-color bg-background-light dark:bg-gray-800 dark:border-gray-600 dark:text-text-light px-4 py-3 text-text-dark placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
+                  id="passport"
+                  name="passport"
+                  placeholder="Introduce tu numero de telefono"
+                  type="text"
+                />
+              </div>
+            </div>
+            <div class="md:col-span-1">
+              <label
+                class="block text-sm font-medium leading-6 text-text-dark dark:text-text-light"
+                for="passport"
+                >Gmail</label
+              >
+              <div class="mt-2">
+                <input
+                  class="form-input block w-full rounded-lg border-border-color bg-background-light dark:bg-gray-800 dark:border-gray-600 dark:text-text-light px-4 py-3 text-text-dark placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
+                  id="passport"
+                  name="passport"
+                  placeholder="Ingrese su Gmail"
+                  type="email"
+                />
+              </div>
+            </div>
+          </form>
+          <!-- Action Buttons -->
+          <div
+            class="mt-10 pt-8 border-t border-gray-200 dark:border-gray-700 flex flex-col sm:flex-row-reverse sm:items-center sm:justify-start gap-4"
+          >
+            <button
+              class="inline-flex justify-center rounded-lg bg-primary px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary transition-colors duration-200"
+              type="button"
+            >
+              <a href="confimacion_de_vuelo.html">Añadir</a>
+            </button>
+          </div>
         </div>
+      </div>
     </div>
-</body>
-<script src="./js/añadir_pasajeros.js"></script>
+  </body>
+  <script src="./js/añadir_pasajeros.js"></script>
 </html>

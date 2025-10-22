@@ -32,7 +32,20 @@
                   de México a Cancún</p>
               </div>
             </div>
-            <div class="flex flex-col lg:flex-row gap-8 mt-6">
+            
+            <!-- Loading indicator -->
+            <div id="loadingIndicator" class="flex justify-center my-8">
+              <div class="loading-spinner"></div>
+              <p class="ml-4 text-[#0d171b] dark:text-white">Cargando asientos...</p>
+            </div>
+            
+            <!-- Error message -->
+            <div id="errorMessage" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative hidden" role="alert">
+              <strong class="font-bold">Error!</strong>
+              <span class="block sm:inline">No se pudieron cargar los asientos. Por favor, inténtalo más tarde.</span>
+            </div>
+            
+            <div id="seatsContent" class="flex flex-col lg:flex-row gap-8 mt-6 hidden">
               <!-- Seat Map -->
               <div
                 class="w-full lg:w-2/3 bg-white dark:bg-background-dark p-6 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
@@ -51,90 +64,8 @@
                       data-alt="Right wing of the airplane"></div>
                     <div class="flex flex-col gap-4 items-center">
                       <!-- Seat Rows -->
-                      <div class="grid grid-cols-[1fr_auto_1fr] w-full gap-x-4 gap-y-2">
-                        <!-- Row 1-5 -->
-                        <div class="contents">
-                          <div class="flex justify-around">
-                            <div class="seat available">1A</div>
-                            <div class="seat occupied">1B</div>
-                            <div class="seat available">1C</div>
-                          </div>
-                          <div class="text-gray-500 dark:text-gray-400 font-bold self-center">1</div>
-                          <div class="flex justify-around">
-                            <div class="seat occupied">1D</div>
-                            <div class="seat available">1E</div>
-                            <div class="seat available">1F</div>
-                          </div>
-                        </div>
-                        <!-- Add more rows similarly -->
-                        <div class="contents">
-                          <div class="flex justify-around">
-                            <div class="seat available">2A</div>
-                            <div class="seat available">2B</div>
-                            <div class="seat occupied">2C</div>
-                          </div>
-                          <div class="text-gray-500 dark:text-gray-400 font-bold self-center">2</div>
-                          <div class="flex justify-around">
-                            <div class="seat available">2D</div>
-                            <div class="seat available">2E</div>
-                            <div class="seat occupied">2F</div>
-                          </div>
-                        </div>
-                        <!-- Emergency Exit Row -->
-                        <div class="contents">
-                          <div class="flex justify-around">
-                            <div class="seat available">10A</div>
-                            <div class="seat emergency">10B</div>
-                            <div class="seat available">10C</div>
-                          </div>
-                          <div class="text-gray-500 dark:text-gray-400 font-bold self-center">10</div>
-                          <div class="flex justify-around">
-                            <div class="seat emergency">10D</div>
-                            <div class="seat emergency">10E</div>
-                            <div class="seat available">10F</div>
-                          </div>
-                        </div>
-                        <div class="contents">
-                          <div class="flex justify-around">
-                            <div class="seat emergency">11A</div>
-                            <div class="seat emergency">11B</div>
-                            <div class="seat emergency">11C</div>
-                          </div>
-                          <div class="text-gray-500 dark:text-gray-400 font-bold self-center">11</div>
-                          <div class="flex justify-around">
-                            <div class="seat emergency">11D</div>
-                            <div class="seat emergency">11E</div>
-                            <div class="seat emergency">11F</div>
-                          </div>
-                        </div>
-                        <div class="col-span-3 h-4"></div>
-                        <!-- More normal rows -->
-                        <div class="contents">
-                          <div class="flex justify-around">
-                            <div class="seat available">12A</div>
-                            <div class="seat available">12B</div>
-                            <div class="seat available">12C</div>
-                          </div>
-                          <div class="text-gray-500 dark:text-gray-400 font-bold self-center">12</div>
-                          <div class="flex justify-around">
-                            <div class="seat selected">12D</div>
-                            <div class="seat occupied">12E</div>
-                            <div class="seat occupied">12F</div>
-                          </div>
-                        </div>
-                        <div class="contents">
-                          <div class="flex justify-around">
-                            <div class="seat available">13A</div>
-                            <div class="seat available">13B</div>
-                            <div class="seat available">13C</div>
-                          </div>
-                          <div class="text-gray-500 dark:text-gray-400 font-bold self-center">13</div>
-                          <div class="flex justify-around">
-                            <div class="seat selected">13D</div>
-                            <div class="seat available">13E</div>
-                            <div class="seat available">13F</div>
-                          </div>
-                        </div>
+                      <div id="seatRows" class="grid grid-cols-[1fr_auto_1fr] w-full gap-x-4 gap-y-2">
+                        <!-- Seats will be dynamically inserted here -->
                       </div>
                     </div>
                   </div>
@@ -183,23 +114,24 @@
                       class="flex justify-between items-center border-t border-t-[#cfdfe7] dark:border-t-gray-700 py-3">
                       <p class="text-[#4c809a] dark:text-gray-400 text-sm font-normal leading-normal">Asientos
                         seleccionados</p>
-                      <p class="text-[#0d171b] dark:text-white text-sm font-bold leading-normal text-right">12D, 13D</p>
+                      <p id="selectedSeats" class="text-[#0d171b] dark:text-white text-sm font-bold leading-normal text-right">Ninguno</p>
                     </div>
                     <div
                       class="flex justify-between items-center border-t border-t-[#cfdfe7] dark:border-t-gray-700 py-3">
                       <p class="text-[#4c809a] dark:text-gray-400 text-sm font-normal leading-normal">Precio por asiento
                       </p>
-                      <p class="text-[#0d171b] dark:text-white text-sm font-bold leading-normal text-right">$50.00</p>
+                      <p id="seatPrice" class="text-[#0d171b] dark:text-white text-sm font-bold leading-normal text-right">$0.00</p>
                     </div>
                     <div
                       class="flex justify-between items-center border-t border-t-[#cfdfe7] dark:border-t-gray-700 py-3">
                       <p class="text-[#4c809a] dark:text-gray-400 text-lg font-bold leading-normal">Costo total</p>
-                      <p class="text-primary text-xl font-black leading-normal text-right">$100.00</p>
+                      <p id="totalCost" class="text-primary text-xl font-black leading-normal text-right">$0.00</p>
                     </div>
                   </div>
-                  <button
-                    class="w-full mt-6 bg-primary text-white font-bold py-3 px-4 rounded-lg hover:bg-primary/90 transition-colors duration-200">
-                    <a href="confimacion_de_vuelo.html">Confirmar Asientos</a>
+                  <button id="confirmButton"
+                    class="w-full mt-6 bg-primary text-white font-bold py-3 px-4 rounded-lg hover:bg-primary/90 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                    disabled>
+                    Confirmar Asientos
                   </button>
                 </div>
               </div>

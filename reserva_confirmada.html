@@ -25,129 +25,277 @@
     <main class="flex-1 px-4 sm:px-10 lg:px-20 py-5">
       <div class="mx-auto max-w-4xl">
         <div class="flex flex-col gap-6">
-          <div class="flex flex-wrap justify-between items-center gap-4 p-4">
-            <div class="flex min-w-72 flex-col gap-2">
-              <p class="text-[#0d171b] dark:text-white text-4xl font-black leading-tight tracking-tight">¡Tu Vuelo está
-                Confirmado!</p>
-              <p class="text-gray-500 dark:text-gray-400 text-base font-normal leading-normal">Felicidades por tu
-                compra. Aquí tienes los detalles de tu vuelo.</p>
-            </div>
-            <div class="flex gap-2">
-              <button
-                class="flex items-center justify-center gap-2 min-w-[84px] max-w-[480px] cursor-pointer rounded-lg h-10 px-4 bg-gray-200 dark:bg-background-dark text-[#0d171b] dark:text-white text-sm font-medium">
-                <span class="material-symbols-outlined">picture_as_pdf</span>
-                <span class="truncate">Guardar como PDF</span>
-              </button>
-            </div>
+          <!-- Loading indicator -->
+          <div id="loadingIndicator" class="flex justify-center my-8">
+            <div class="loading-spinner"></div>
+            <p class="ml-4 text-[#0d171b] dark:text-white">Cargando detalles de la reserva...</p>
           </div>
-          <div
-            class="bg-white dark:bg-background-dark rounded-xl shadow-md p-6 flex flex-col md:flex-row items-start gap-6">
-            <div class="flex-1">
-              <h2 class="text-gray-500 dark:text-gray-400 text-sm font-medium">Número de Confirmación</h2>
-              <p class="text-accent text-4xl font-bold tracking-wider">#F28D35</p>
-              <p class="text-green-600 dark:text-green-400 font-semibold mt-1">Confirmado</p>
-            </div>
-            <div class="w-full md:w-auto">
-              <div class="w-32 h-32 bg-white p-2 rounded-lg shadow">
-                <img alt="QR Code for check-in" class="w-full h-full"
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuABUJMBu3RQm9UFXXGqCFn3R-areGYOByvD6J1NuD5ZcwdzI7aaFOmKrNDDHvQFls1RljRjIPCoVNpakdDOi9wfwdMzClwr37fe9s5LwkU2OU5EFyv_MxQvDfiqyygAa05SpEb-NXHSlf2wPBvtocU_80BdMWKJpAMshECd0SsVMRb2BbCUWg-ouJ7tZ066UN24eApwqyUhRMxu6tPnGihPPIldcfk4megs8dqj8rRQaM_p4xkRbRLHFUieV9cxtGFoHJ9G1jJSg5o" />
-              </div>
-            </div>
+          
+          <!-- Error message -->
+          <div id="errorMessage" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative hidden" role="alert">
+            <strong class="font-bold">Error!</strong>
+            <span class="block sm:inline">No se pudieron cargar los detalles de la reserva. Por favor, inténtalo más tarde.</span>
           </div>
-          <div class="bg-white dark:bg-background-dark rounded-xl shadow-md">
-            <div class="p-6 border-b border-gray-200 dark:border-gray-700">
-              <h3 class="text-xl font-bold text-[#0d171b] dark:text-white flex items-center gap-2"><span
-                  class="material-symbols-outlined text-primary">flight</span>Itinerario del Vuelo</h3>
-            </div>
-            <div class="p-6">
-              <div class="flex flex-col sm:flex-row justify-between items-start gap-6">
-                <div class="flex-1">
-                  <p class="text-gray-500 dark:text-gray-400 text-sm">Salida</p>
-                  <p class="text-lg font-bold text-[#0d171b] dark:text-white">New York (JFK)</p>
-                  <p class="text-gray-600 dark:text-gray-300">Lunes, 25 de Diciembre, 2024 - 10:30 AM</p>
-                </div>
-                <div class="flex-1 flex flex-col items-center">
-                  <div class="w-full flex items-center justify-center relative my-2">
-                    <div class="w-full h-0.5 bg-gray-300 dark:bg-gray-600"></div>
-                    <span
-                      class="material-symbols-outlined text-primary absolute left-0 -translate-x-1/2 bg-white dark:bg-background-dark px-1">flight_takeoff</span>
-                    <span
-                      class="material-symbols-outlined text-primary absolute right-0 translate-x-1/2 bg-white dark:bg-background-dark px-1">flight_land</span>
-                  </div>
-                  <p class="text-sm text-gray-500 dark:text-gray-400">Duración: 5h 30m (Directo)</p>
-                </div>
-                <div class="flex-1 text-left sm:text-right">
-                  <p class="text-gray-500 dark:text-gray-400 text-sm">Llegada</p>
-                  <p class="text-lg font-bold text-[#0d171b] dark:text-white">Los Angeles (LAX)</p>
-                  <p class="text-gray-600 dark:text-gray-300">Lunes, 25 de Diciembre, 2024 - 01:00 PM</p>
-                </div>
+          
+          <!-- Content area -->
+          <div id="contentArea" class="hidden">
+            <div class="flex flex-wrap justify-between items-center gap-4 p-4">
+              <div class="flex min-w-72 flex-col gap-2">
+                <p class="text-[#0d171b] dark:text-white text-4xl font-black leading-tight tracking-tight">¡Tu Vuelo está
+                  Confirmado!</p>
+                <p class="text-gray-500 dark:text-gray-400 text-base font-normal leading-normal">Felicidades por tu
+                  compra. Aquí tienes los detalles de tu vuelo.</p>
               </div>
-              <div class="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700 flex justify-between items-center">
-                <div>
-                  <p class="text-gray-500 dark:text-gray-400 text-sm">Aerolínea</p>
-                  <p class="text-[#0d171b] dark:text-white font-medium">FlightApp Air, Vuelo FA2024</p>
-                </div>
-                <button
-                  class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em]">
-                  <span class="truncate"><a href="index.html">Volver al Inicio</a></span>
+              <div class="flex gap-2 no-print">
+                <button id="downloadPdfButton"
+                  class="flex items-center justify-center gap-2 min-w-[84px] max-w-[480px] cursor-pointer rounded-lg h-10 px-4 bg-gray-200 dark:bg-background-dark text-[#0d171b] dark:text-white text-sm font-medium">
+                  <span class="material-symbols-outlined">picture_as_pdf</span>
+                  <span class="truncate">Guardar como PDF</span>
                 </button>
               </div>
             </div>
-          </div>
-          <div class="grid md:grid-cols-2 gap-6">
-            <div class="bg-white dark:bg-background-dark rounded-xl shadow-md">
-              <div class="p-6 border-b border-gray-200 dark:border-gray-700">
-                <h3 class="text-xl font-bold text-[#0d171b] dark:text-white flex items-center gap-2"><span
-                    class="material-symbols-outlined text-primary">group</span>Información del Pasajero</h3>
+            <div
+              class="bg-white dark:bg-background-dark rounded-xl shadow-md p-6 flex flex-col md:flex-row items-start gap-6 print-area">
+              <div class="flex-1">
+                <h2 class="text-gray-500 dark:text-gray-400 text-sm font-medium">Número de Confirmación</h2>
+                <p id="confirmationNumber" class="text-accent text-4xl font-bold tracking-wider">#F28D35</p>
+                <p class="text-green-600 dark:text-green-400 font-semibold mt-1">Confirmado</p>
               </div>
-              <div class="p-6 space-y-3">
-                <p class="text-gray-800 dark:text-gray-200">John Doe</p>
-                <p class="text-gray-800 dark:text-gray-200">Jane Doe</p>
-              </div>
-            </div>
-            <div class="bg-white dark:bg-background-dark rounded-xl shadow-md">
-              <div class="p-6 border-b border-gray-200 dark:border-gray-700">
-                <h3 class="text-xl font-bold text-[#0d171b] dark:text-white flex items-center gap-2"><span
-                    class="material-symbols-outlined text-primary">receipt_long</span>Desglose del Precio</h3>
-              </div>
-              <div class="p-6 space-y-2">
-                <div class="flex justify-between text-gray-800 dark:text-gray-200">
-                  <span>Tarifa del Vuelo:</span>
-                  <span>$450.00</span>
-                </div>
-                <div class="flex justify-between text-gray-800 dark:text-gray-200">
-                  <span>Impuestos y Tasas:</span>
-                  <span>$50.00</span>
-                </div>
-                <div class="flex justify-between text-gray-800 dark:text-gray-200">
-                  <span>Equipaje Adicional:</span>
-                  <span>$35.00</span>
-                </div>
-                <div
-                  class="pt-2 mt-2 border-t border-gray-200 dark:border-gray-700 flex justify-between font-bold text-[#0d171b] dark:text-white">
-                  <span>Total Pagado:</span>
-                  <span>$535.00</span>
+              <div class="w-full md:w-auto">
+                <div class="w-32 h-32 bg-white p-2 rounded-lg shadow">
+                  <img id="qrCode" alt="QR Code for check-in" class="w-full h-full"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuABUJMBu3RQm9UFXXGqCFn3R-areGYOByvD6J1NuD5ZcwdzI7aaFOmKrNDDHvQFls1RljRjIPCoVNpakdDOi9wfwdMzClwr37fe9s5LwkU2OU5EFyv_MxQvDfiqyygAa05SpEb-NXHSlf2wPBvtocU_80BdMWKJpAMshECd0SsVMRb2BbCUWg-ouJ7tZ066UN24eApwqyUhRMxu6tPnGihPPIldcfk4megs8dqj8rRQaM_p4xkRbRLHFUieV9cxtGFoHJ9G1jJSg5o" />
                 </div>
               </div>
             </div>
-          </div>
-          <div class="bg-white dark:bg-background-dark rounded-xl shadow-md p-6">
-            <h3 class="text-xl font-bold text-[#0d171b] dark:text-white mb-4">Información Adicional</h3>
-            <div class="flex flex-col sm:flex-row gap-4">
-              <a class="text-primary hover:underline" href="#">Política de Equipaje</a>
-              <a class="text-primary hover:underline" href="#">Información de Check-in</a>
-              <a class="text-primary hover:underline" href="#">Página de la Aerolínea</a>
+            <div class="bg-white dark:bg-background-dark rounded-xl shadow-md print-area">
+              <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                <h3 class="text-xl font-bold text-[#0d171b] dark:text-white flex items-center gap-2"><span
+                    class="material-symbols-outlined text-primary">flight</span>Itinerario del Vuelo</h3>
+              </div>
+              <div class="p-6">
+                <div class="flex flex-col sm:flex-row justify-between items-start gap-6">
+                  <div class="flex-1">
+                    <p class="text-gray-500 dark:text-gray-400 text-sm">Salida</p>
+                    <p id="departureCity" class="text-lg font-bold text-[#0d171b] dark:text-white">New York (JFK)</p>
+                    <p id="departureDate" class="text-gray-600 dark:text-gray-300">Lunes, 25 de Diciembre, 2024 - 10:30 AM</p>
+                  </div>
+                  <div class="flex-1 flex flex-col items-center">
+                    <div class="w-full flex items-center justify-center relative my-2">
+                      <div class="w-full h-0.5 bg-gray-300 dark:bg-gray-600"></div>
+                      <span
+                        class="material-symbols-outlined text-primary absolute left-0 -translate-x-1/2 bg-white dark:bg-background-dark px-1">flight_takeoff</span>
+                      <span
+                        class="material-symbols-outlined text-primary absolute right-0 translate-x-1/2 bg-white dark:bg-background-dark px-1">flight_land</span>
+                    </div>
+                    <p id="flightDuration" class="text-sm text-gray-500 dark:text-gray-400">Duración: 5h 30m (Directo)</p>
+                  </div>
+                  <div class="flex-1 text-left sm:text-right">
+                    <p class="text-gray-500 dark:text-gray-400 text-sm">Llegada</p>
+                    <p id="arrivalCity" class="text-lg font-bold text-[#0d171b] dark:text-white">Los Angeles (LAX)</p>
+                    <p id="arrivalDate" class="text-gray-600 dark:text-gray-300">Lunes, 25 de Diciembre, 2024 - 01:00 PM</p>
+                  </div>
+                </div>
+                <div class="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700 flex justify-between items-center">
+                  <div>
+                    <p class="text-gray-500 dark:text-gray-400 text-sm">Aerolínea</p>
+                    <p id="airlineInfo" class="text-[#0d171b] dark:text-white font-medium">FlightApp Air, Vuelo FA2024</p>
+                  </div>
+                  <button
+                    class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em] no-print">
+                    <span class="truncate"><a href="index.html">Volver al Inicio</a></span>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="grid md:grid-cols-2 gap-6">
+              <div class="bg-white dark:bg-background-dark rounded-xl shadow-md print-area">
+                <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                  <h3 class="text-xl font-bold text-[#0d171b] dark:text-white flex items-center gap-2"><span
+                      class="material-symbols-outlined text-primary">group</span>Información del Pasajero</h3>
+                </div>
+                <div id="passengersInfo" class="p-6 space-y-3">
+                  <p class="text-gray-800 dark:text-gray-200">John Doe</p>
+                  <p class="text-gray-800 dark:text-gray-200">Jane Doe</p>
+                </div>
+              </div>
+              <div class="bg-white dark:bg-background-dark rounded-xl shadow-md print-area">
+                <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                  <h3 class="text-xl font-bold text-[#0d171b] dark:text-white flex items-center gap-2"><span
+                      class="material-symbols-outlined text-primary">receipt_long</span>Desglose del Precio</h3>
+                </div>
+                <div id="priceBreakdown" class="p-6 space-y-2">
+                  <div class="flex justify-between text-gray-800 dark:text-gray-200">
+                    <span>Tarifa del Vuelo:</span>
+                    <span id="baseFare">$450.00</span>
+                  </div>
+                  <div class="flex justify-between text-gray-800 dark:text-gray-200">
+                    <span>Impuestos y Tasas:</span>
+                    <span id="taxes">$50.00</span>
+                  </div>
+                  <div class="flex justify-between text-gray-800 dark:text-gray-200">
+                    <span>Equipaje Adicional:</span>
+                    <span id="baggageFees">$35.00</span>
+                  </div>
+                  <div
+                    class="pt-2 mt-2 border-t border-gray-200 dark:border-gray-700 flex justify-between font-bold text-[#0d171b] dark:text-white">
+                    <span>Total Pagado:</span>
+                    <span id="totalPaid">$535.00</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="bg-white dark:bg-background-dark rounded-xl shadow-md p-6 print-area">
+              <h3 class="text-xl font-bold text-[#0d171b] dark:text-white mb-4">Información Adicional</h3>
+              <div class="flex flex-col sm:flex-row gap-4">
+                <a class="text-primary hover:underline" href="#">Política de Equipaje</a>
+                <a class="text-primary hover:underline" href="#">Información de Check-in</a>
+                <a class="text-primary hover:underline" href="#">Página de la Aerolínea</a>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </main>
     <footer
-      class="text-center p-4 text-gray-500 dark:text-gray-400 text-sm border-t border-solid border-t-[#e7eff3] dark:border-t-background-dark mt-10">
+      class="text-center p-4 text-gray-500 dark:text-gray-400 text-sm border-t border-solid border-t-[#e7eff3] dark:border-t-background-dark mt-10 no-print">
       © 2024 FlightApp. Todos los derechos reservados.
     </footer>
   </div>
   </div>
 </body>
-<script src="./js/reserva_confirmada.js"></script>
+<script>
+  // Function to fetch reservation data from the API
+  async function fetchReservationData() {
+    const loadingIndicator = document.getElementById('loadingIndicator');
+    const errorMessage = document.getElementById('errorMessage');
+    const contentArea = document.getElementById('contentArea');
+    
+    // Show loading indicator
+    loadingIndicator.classList.remove('hidden');
+    errorMessage.classList.add('hidden');
+    contentArea.classList.add('hidden');
+    
+    try {
+      // Get reservation ID from URL parameters or localStorage
+      // For now, we'll use a placeholder ID
+      const reservationId = localStorage.getItem('currentReservationId') || 1;
+      
+      // Replace with your actual Spring Boot API endpoint
+      const response = await fetch(`http://localhost:8080/api/reservas/${reservationId}`);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const reserva = await response.json();
+      
+      // Hide loading indicator
+      loadingIndicator.classList.add('hidden');
+      
+      // Populate the page with reservation data
+      populateReservationData(reserva);
+      
+      // Show content area
+      contentArea.classList.remove('hidden');
+    } catch (error) {
+      console.error('Error fetching reservation data:', error);
+      loadingIndicator.classList.add('hidden');
+      errorMessage.classList.remove('hidden');
+    }
+  }
+  
+  // Function to populate the page with reservation data
+  function populateReservationData(reserva) {
+    // Populate confirmation number
+    document.getElementById('confirmationNumber').textContent = `#${reserva.numero_reserva || 'F28D35'}`;
+    
+    // Populate flight details
+    if (reserva.vuelos && reserva.vuelos.length > 0) {
+      const vuelo = reserva.vuelos[0]; // Assuming one flight per reservation
+      
+      // Departure information
+      document.getElementById('departureCity').textContent = 
+        `${vuelo.ciudad_salida || 'Ciudad'} (${vuelo.lugar_salida || 'COD'})`;
+      
+      const departureDate = new Date(vuelo.hora_salida);
+      document.getElementById('departureDate').textContent = 
+        `${departureDate.toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })} - ${departureDate.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}`;
+      
+      // Arrival information
+      document.getElementById('arrivalCity').textContent = 
+        `${vuelo.ciudad_llegada || 'Ciudad'} (${vuelo.lugar_llegada || 'COD'})`;
+      
+      const arrivalDate = new Date(vuelo.hora_llegada);
+      document.getElementById('arrivalDate').textContent = 
+        `${arrivalDate.toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })} - ${arrivalDate.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}`;
+      
+      // Flight duration
+      const duration = calculateDuration(vuelo.hora_salida, vuelo.hora_llegada);
+      document.getElementById('flightDuration').textContent = `Duración: ${duration} (Directo)`;
+      
+      // Airline information
+      document.getElementById('airlineInfo').textContent = 
+        `${vuelo.aerolinea?.nombre || 'Aerolínea'}, Vuelo ${vuelo.id_vuelo || 'FA2024'}`;
+    }
+    
+    // Populate passenger information
+    const passengersInfo = document.getElementById('passengersInfo');
+    passengersInfo.innerHTML = '';
+    
+    if (reserva.pasajeros && reserva.pasajeros.length > 0) {
+      reserva.pasajeros.forEach(pasajero => {
+        const passengerElement = document.createElement('p');
+        passengerElement.className = 'text-gray-800 dark:text-gray-200';
+        passengerElement.textContent = 
+          `${pasajero.nombres || ''} ${pasajero.primer_apellido || ''} ${pasajero.segundo_apellido || ''}`;
+        passengersInfo.appendChild(passengerElement);
+      });
+    } else {
+      passengersInfo.innerHTML = '<p class="text-gray-800 dark:text-gray-200">No hay pasajeros registrados</p>';
+    }
+    
+    // Populate price breakdown
+    if (reserva.pago) {
+      const baseFare = reserva.pago.total * 0.8;
+      const taxes = reserva.pago.total * 0.15;
+      const baggageFees = reserva.pago.total * 0.05;
+      
+      document.getElementById('baseFare').textContent = `$${baseFare.toFixed(2)}`;
+      document.getElementById('taxes').textContent = `$${taxes.toFixed(2)}`;
+      document.getElementById('baggageFees').textContent = `$${baggageFees.toFixed(2)}`;
+      document.getElementById('totalPaid').textContent = `$${reserva.pago.total.toFixed(2)}`;
+    }
+  }
+  
+  // Helper function to calculate duration between two dates
+  function calculateDuration(start, end) {
+    if (!start || !end) return 'N/A';
+    
+    const inicio = new Date(start);
+    const fin = new Date(end);
+    const diffMs = fin - inicio;
+    const diffHrs = Math.floor(diffMs / 3600000);
+    const diffMins = Math.floor((diffMs % 3600000) / 60000);
+    
+    return `${diffHrs}h ${diffMins}m`;
+  }
+  
+  // Function to generate PDF
+  function generatePDF() {
+    window.print();
+  }
+  
+  // Add event listener to download PDF button
+  document.addEventListener('DOMContentLoaded', function() {
+    // Fetch data when page loads
+    fetchReservationData();
+    
+    // Add event listener to download PDF button
+    const downloadPdfButton = document.getElementById('downloadPdfButton');
+    if (downloadPdfButton) {
+      downloadPdfButton.addEventListener('click', generatePDF);
+    }
+  });
+</script>
 </html>
