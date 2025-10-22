@@ -11,16 +11,18 @@ public class AsientosDTO {
     private BigDecimal precio;
     private AsientosEntity.AsientoStatus estado; // DISPONIBLE, OCUPADO, SELECCIONADO
     private Long idAvion;
+    private Long usuarioReservado;
 
     public AsientosDTO() {
     }
 
-    public AsientosDTO(Long idAsiento, String nombre, BigDecimal precio, AsientosEntity.AsientoStatus estado, Long idAvion) {
+    public AsientosDTO(Long idAsiento, String nombre, BigDecimal precio, AsientosEntity.AsientoStatus estado, Long idAvion, Long usuarioReservado) {
         this.idAsiento = idAsiento;
         this.nombre = nombre;
         this.precio = precio;
         this.estado = estado;
         this.idAvion = idAvion;
+        this.usuarioReservado = usuarioReservado;
     }
 
     public Long getIdAsiento() {
@@ -61,5 +63,13 @@ public class AsientosDTO {
 
     public void setIdAvion(Long idAvion) {
         this.idAvion = idAvion;
+    }
+
+    public Long getUsuarioReservado() {
+        return usuarioReservado;
+    }
+
+    public void setUsuarioReservado(Long usuarioReservado) {
+        this.usuarioReservado = usuarioReservado;
     }
 }

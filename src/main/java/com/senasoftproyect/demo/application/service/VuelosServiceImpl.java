@@ -101,7 +101,8 @@ public class VuelosServiceImpl implements VuelosService {
                         asiento.getNombre(),
                         asiento.getPrecio(),
                         asiento.getEstado(),
-                        asiento.getAvion().getIdAvion()
+                        asiento.getAvion().getIdAvion(),
+                        asiento.getUsuarioReservado()
                 ))
                 .collect(Collectors.toList());
 

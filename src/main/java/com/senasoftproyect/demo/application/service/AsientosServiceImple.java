@@ -1,6 +1,7 @@
 package com.senasoftproyect.demo.application.service;
 
 import com.senasoftproyect.demo.application.dtos.AsientosDTO;
+import com.senasoftproyect.demo.application.dtos.AsientosStatusDTO;
 import com.senasoftproyect.demo.domain.entitys.AsientosEntity;
 import com.senasoftproyect.demo.domain.repository.AsientosRepository;
 import com.senasoftproyect.demo.domain.service.AsientosService;
@@ -60,12 +61,13 @@ public class AsientosServiceImple implements AsientosService {
 
     @Transactional
     @Override
-    public AsientosDTO actualizarEstado(Long idAsiento, AsientosEntity.AsientoStatus nuevoEstado) {
+    public AsientosDTO actualizarEstado(AsientosStatusDTO asientosStatusDTO) {
 
-        AsientosEntity asiento = asientosRepository.getByIdAsiento(idAsiento)
-                .orElseThrow(() -> new RuntimeException("Asiento no encontrado con id " + idAsiento));
+        AsientosEntity asiento = asientosRepository.getByIdAsiento(asientosStatusDTO.getIdAsiento())
+                .orElseThrow(() -> new RuntimeException("Asiento no encontrado con id " + asientosStatusDTO.getIdAsiento()));
 
-        asiento.setEstado(nuevoEstado);
+        asiento.setEstado(asientosStatusDTO.getNuevoEstado());
+        asiento.setUsuarioReservado(asiento.getUsuarioReservado());
 
         AsientosDTO asientosDTO = convertToDto(asientosRepository.save(asiento));
 
@@ -81,6 +83,7 @@ public class AsientosServiceImple implements AsientosService {
         if (entity.getAvion() != null) {
             dto.setIdAvion(entity.getAvion().getIdAvion());
         }
+        dto.setUsuarioReservado(entity.getUsuarioReservado());
         return dto;
     }
 
@@ -92,6 +95,7 @@ public class AsientosServiceImple implements AsientosService {
         if (dto.getEstado() != null) {
             entity.setEstado(dto.getEstado());
         }
+        entity.setUsuarioReservado(dto.getUsuarioReservado());
         return entity;
     }
 }

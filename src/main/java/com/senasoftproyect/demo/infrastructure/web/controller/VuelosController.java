@@ -25,7 +25,7 @@ public class VuelosController {
         this.vuelosService = vuelosService;
     }
 
-    @GetMapping
+    @GetMapping("/all")
     @Operation(summary = "Obtener todos los vuelos", description = "Retorna la lista completa de vuelos con sus detalles")
     public ResponseEntity<List<VuelosCompleteDTO>> getAllVuelos() {
         List<VuelosCompleteDTO> vuelos = vuelosService.getAll();

@@ -37,7 +37,7 @@ public class CiudadesController {
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = CiudadesDTO.class)))
     })
-    @GetMapping
+    @GetMapping("/all")
     public ResponseEntity<List<CiudadesCompleteDTO>> getAll() {
         return ResponseEntity.ok(ciudadesService.getAllCompleteDto());
     }

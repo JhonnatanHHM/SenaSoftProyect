@@ -27,22 +27,22 @@ public class JwtGenerator {
     private String secretKey;
 
     public String generateToken(Authentication authentication) {
-        UserDetails userPrincipal = (UserDetails) authentication.getPrincipal();
-        List<String> roles = userPrincipal.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority).collect(Collectors.toList());
+        CustomUserDetails userPrincipal = (CustomUserDetails) authentication.getPrincipal();
 
         Date currentDate = new Date();
         Date expireDate = new Date(currentDate.getTime() + SecurityConstants.JWT_EXPIRATION);
-        //utiliza currentdate.getTime() para obtener la fecha y hora actual y sumarle el tiempo de expiración
 
         return Jwts.builder()
                 .subject(userPrincipal.getUsername())
-                .claim("Usuario", roles)
+                .claim("id", userPrincipal.getIdUser())
+                .claim("nombres", userPrincipal.getNombres())
+                .claim("email", userPrincipal.getEmail())
                 .issuedAt(currentDate)
                 .expiration(expireDate)
                 .signWith(getKey())
                 .compact();
     }
+
 
     public Key getKey() {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);

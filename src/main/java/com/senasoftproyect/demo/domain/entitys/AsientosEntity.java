@@ -18,6 +18,9 @@ public class AsientosEntity {
     @Column(length = 100, nullable = false)
     private String nombre;
 
+    @Column(name = "usuario_reservado")
+    private Long usuarioReservado;
+
     @Column(precision = 10, scale = 2)
     @Schema(description = "Precio del asiento", example = "59.99")
     private BigDecimal precio;
@@ -44,9 +47,10 @@ public class AsientosEntity {
         SELECCIONADO
     }
 
-    public AsientosEntity(Long idAsiento, String nombre, BigDecimal precio, AvionesEntity avion, AsientoStatus estado) {
+    public AsientosEntity(Long idAsiento, String nombre, Long usuarioReservado, BigDecimal precio, AvionesEntity avion, AsientoStatus estado) {
         this.idAsiento = idAsiento;
         this.nombre = nombre;
+        this.usuarioReservado = usuarioReservado;
         this.precio = precio;
         this.avion = avion;
         this.estado = estado;
@@ -69,6 +73,14 @@ public class AsientosEntity {
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
+    }
+
+    public Long getUsuarioReservado() {
+        return usuarioReservado;
+    }
+
+    public void setUsuarioReservado(Long usuarioReservado) {
+        this.usuarioReservado = usuarioReservado;
     }
 
     public BigDecimal getPrecio() {

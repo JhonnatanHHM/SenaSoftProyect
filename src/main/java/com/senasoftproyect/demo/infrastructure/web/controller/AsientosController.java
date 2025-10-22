@@ -1,9 +1,12 @@
 package com.senasoftproyect.demo.infrastructure.web.controller;
 
 import com.senasoftproyect.demo.application.dtos.AsientosDTO;
+import com.senasoftproyect.demo.application.dtos.AsientosStatusDTO;
 import com.senasoftproyect.demo.domain.entitys.AsientosEntity;
 import com.senasoftproyect.demo.domain.service.AsientosService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -74,16 +77,29 @@ public class AsientosController {
         asientosService.delete(id);
     }
 
-    @Operation(summary = "Actualizar solo el estado de un asiento")
+    @Operation(
+            summary = "Actualizar solo el estado de un asiento",
+            description = "Actualiza únicamente el estado (ocupado/libre) de un asiento específico"
+    )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Estado actualizado correctamente"),
-            @ApiResponse(responseCode = "404", description = "Asiento no encontrado")
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Estado actualizado correctamente",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = AsientosDTO.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Asiento no encontrado",
+                    content = @Content
+            )
     })
-    @PatchMapping("/estado/{id}/{nuevoEstado}")
+    @PatchMapping("/estado")
     public AsientosDTO actualizarEstado(
-            @PathVariable Long id,
-            @PathVariable("nuevoEstado") AsientosEntity.AsientoStatus nuevoEstado) {
-        AsientosDTO actualizado = asientosService.actualizarEstado(id, nuevoEstado);
-        return actualizado;
+            @RequestBody AsientosStatusDTO asientosStatusDTO) {
+        return asientosService.actualizarEstado(asientosStatusDTO);
     }
+
 }

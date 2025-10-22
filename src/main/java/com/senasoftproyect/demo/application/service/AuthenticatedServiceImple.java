@@ -3,6 +3,7 @@ package com.senasoftproyect.demo.application.service;
 import com.senasoftproyect.demo.domain.entitys.UsuariosEntity;
 import com.senasoftproyect.demo.domain.repository.UsuariosRepository;
 import com.senasoftproyect.demo.domain.service.AuthenticatedService;
+import com.senasoftproyect.demo.infrastructure.security.CustomUserDetails;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
@@ -28,16 +29,20 @@ public class AuthenticatedServiceImple implements AuthenticatedService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-
         UsuariosEntity user = usuariosRepository.getByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado!"));
 
         List<GrantedAuthority> authorities = new ArrayList<>();
 
-        authorities.add(new SimpleGrantedAuthority("Nombre" + " " + user.getNombres()));
+        CustomUserDetails customUserDetails = new CustomUserDetails();
+        customUserDetails.setIdUser(user.getIdUsuario());
+        customUserDetails.setNombres(user.getNombres());
+        customUserDetails.setEmail(user.getEmail());
+        customUserDetails.setPassword(user.getPassword());
+        customUserDetails.setAuthorities(authorities);
 
-        authorities.add(new SimpleGrantedAuthority("Telefono" + " " + user.getCelular()));
-
-        return new User(user.getEmail(), user.getPassword(), authorities);
+        return customUserDetails;
     }
+
+
 }
