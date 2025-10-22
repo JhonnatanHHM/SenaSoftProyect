@@ -24,12 +24,7 @@ function parseJwt(token) {
   try {
     const base64Url = token.split('.')[1];
     const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    const jsonPayload = decodeURIComponent(
-      atob(base64)
-        .split('')
-        .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
-        .join('')
-    );
+    const jsonPayload = atob(base64);
     return JSON.parse(jsonPayload);
   } catch (error) {
     console.error("❌ Error al decodificar el token:", error);
@@ -44,33 +39,32 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
   const email = document.getElementById("emailInput").value;
   const password = document.getElementById("passwordInput").value;
 
-  try {
-   
-     const response = await fetch("https://localhost:8080/api/login", {
-       method: "POST",
-       headers: { "Content-Type": "application/json" },
-       body: JSON.stringify({ email, password }),
-     });
-     const data = await response.json();
-    const token = data.token;
+ try {
+  const response = await fetch("http://localhost:8080/api/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password }),
+  });
 
-    const decoded = parseJwt(token);
-    if (decoded) {
-      sessionStorage.setItem("token", token);
-      sessionStorage.setItem("id", decoded.id);
-      sessionStorage.setItem("nombre", decoded.nombres);
-      sessionStorage.setItem("correo", decoded.email);
-      sessionStorage.setItem("expira", decoded.exp);
+  const data = await response.json();
+  const token = data.accessToken;
 
-      console.log("✅ Usuario logueado:", decoded);
+  const decoded = parseJwt(token);
+  if (decoded) {
+    sessionStorage.setItem("token", token);
+    sessionStorage.setItem("id", decoded.id);
+    sessionStorage.setItem("nombre", decoded.nombres);
+    sessionStorage.setItem("correo", decoded.email);
+    sessionStorage.setItem("expira", decoded.exp);
 
-      // Redirigir al index
-      window.location.href = "/index.html";
-    } else {
-      alert("Token inválido o error al iniciar sesión.");
-    }
-  } catch (error) {
-    console.error("❌ Error en el login:", error);
-    alert("Error al iniciar sesión. Intenta de nuevo.");
+    console.log("✅ Usuario logueado:", decoded);
+
+    // Redirigir al index
+    window.location.href = "/index.html";
+  } else {
+    alert("Token inválido o error al iniciar sesión.");
   }
-});
+} catch (error) {
+  console.error("❌ Error en el login:", error);
+  alert("Error al iniciar sesión. Intenta de nuevo.");
+}});
