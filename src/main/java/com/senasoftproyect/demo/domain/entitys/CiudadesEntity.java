@@ -1,5 +1,6 @@
 package com.senasoftproyect.demo.domain.entitys;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
@@ -11,20 +12,16 @@ public class CiudadesEntity {
     @Column(name = "id_ciudad")
     private Long idCiudad;
 
-    @Column(length = 50, nullable = false)
-    private String ciudad;
+    private String nombre;
 
-    @Column(length = 50, nullable = false)
-    private String region;
+    @ManyToOne
+    @JoinColumn(name = "region")
+    private RegionesEntity region;
 
-    @Column(length = 50, nullable = false)
-    private String pais;
-
-    public CiudadesEntity(Long idCiudad, String ciudad, String region, String pais) {
+    public CiudadesEntity(Long idCiudad, String nombre, RegionesEntity region) {
         this.idCiudad = idCiudad;
-        this.ciudad = ciudad;
+        this.nombre = nombre;
         this.region = region;
-        this.pais = pais;
     }
 
     public CiudadesEntity() {
@@ -38,27 +35,19 @@ public class CiudadesEntity {
         this.idCiudad = idCiudad;
     }
 
-    public String getCiudad() {
-        return ciudad;
+    public String getNombre() {
+        return nombre;
     }
 
-    public void setCiudad(String ciudad) {
-        this.ciudad = ciudad;
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
     }
 
-    public String getRegion() {
+    public RegionesEntity getRegion() {
         return region;
     }
 
-    public void setRegion(String region) {
+    public void setRegion(RegionesEntity region) {
         this.region = region;
-    }
-
-    public String getPais() {
-        return pais;
-    }
-
-    public void setPais(String pais) {
-        this.pais = pais;
     }
 }

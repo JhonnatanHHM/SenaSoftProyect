@@ -1,5 +1,6 @@
 package com.senasoftproyect.demo.domain.entitys;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 
@@ -21,6 +22,11 @@ public class AsientosEntity {
     @Schema(description = "Precio del asiento", example = "59.99")
     private BigDecimal precio;
 
+    @ManyToOne
+    @JsonIgnore
+    @JoinColumn(name = "id_avion")
+    private AvionesEntity avion;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     @Schema(
@@ -38,10 +44,11 @@ public class AsientosEntity {
         SELECCIONADO
     }
 
-    public AsientosEntity(Long idAsiento, String nombre, BigDecimal precio, AsientoStatus estado) {
+    public AsientosEntity(Long idAsiento, String nombre, BigDecimal precio, AvionesEntity avion, AsientoStatus estado) {
         this.idAsiento = idAsiento;
         this.nombre = nombre;
         this.precio = precio;
+        this.avion = avion;
         this.estado = estado;
     }
 
@@ -78,5 +85,13 @@ public class AsientosEntity {
 
     public void setEstado(AsientoStatus estado) {
         this.estado = estado;
+    }
+
+    public AvionesEntity getAvion() {
+        return avion;
+    }
+
+    public void setAvion(AvionesEntity avion) {
+        this.avion = avion;
     }
 }

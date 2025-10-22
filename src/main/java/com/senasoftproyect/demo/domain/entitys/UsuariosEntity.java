@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "usuarios")
@@ -36,6 +37,22 @@ public class UsuariosEntity {
 
     @Column(nullable = false)
     private String password;
+
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<TicketsEntity> tickets;
+
+    public UsuariosEntity(Long idUsuario, LocalDateTime fechaRegistro, boolean estado, String nombres, String primerApellido, String segundoApellido, String celular, String email, String password, List<TicketsEntity> tickets) {
+        this.idUsuario = idUsuario;
+        this.fechaRegistro = fechaRegistro;
+        this.estado = estado;
+        this.nombres = nombres;
+        this.primerApellido = primerApellido;
+        this.segundoApellido = segundoApellido;
+        this.celular = celular;
+        this.email = email;
+        this.password = password;
+        this.tickets = tickets;
+    }
 
     public UsuariosEntity() {
     }
@@ -110,5 +127,13 @@ public class UsuariosEntity {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public List<TicketsEntity> getTickets() {
+        return tickets;
+    }
+
+    public void setTickets(List<TicketsEntity> tickets) {
+        this.tickets = tickets;
     }
 }
