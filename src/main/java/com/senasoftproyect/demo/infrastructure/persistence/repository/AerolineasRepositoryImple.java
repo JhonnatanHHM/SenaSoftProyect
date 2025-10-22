@@ -20,6 +20,11 @@ public class AerolineasRepositoryImple implements AerolineasRepository {
     }
 
     @Override
+    public boolean existsByNombre(String nombre) {
+        return aerolineasCrudRepository.existsByNombre(nombre);
+    }
+
+    @Override
     public List<AerolineasEntity> getAll() {
         return aerolineasCrudRepository.findAll();
     }

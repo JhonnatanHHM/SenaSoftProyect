@@ -1,5 +1,7 @@
 package com.senasoftproyect.demo.application.dtos;
 
+import com.senasoftproyect.demo.domain.entitys.AsientosEntity;
+
 import java.math.BigDecimal;
 
 public class AsientosDTO {
@@ -7,13 +9,13 @@ public class AsientosDTO {
     private Long idAsiento;
     private String nombre;
     private BigDecimal precio;
-    private String estado; // DISPONIBLE, OCUPADO, SELECCIONADO
+    private AsientosEntity.AsientoStatus estado; // DISPONIBLE, OCUPADO, SELECCIONADO
     private Long idAvion;
 
     public AsientosDTO() {
     }
 
-    public AsientosDTO(Long idAsiento, String nombre, BigDecimal precio, String estado, Long idAvion) {
+    public AsientosDTO(Long idAsiento, String nombre, BigDecimal precio, AsientosEntity.AsientoStatus estado, Long idAvion) {
         this.idAsiento = idAsiento;
         this.nombre = nombre;
         this.precio = precio;
@@ -45,11 +47,11 @@ public class AsientosDTO {
         this.precio = precio;
     }
 
-    public String getEstado() {
+    public AsientosEntity.AsientoStatus getEstado() {
         return estado;
     }
 
-    public void setEstado(String estado) {
+    public void setEstado(AsientosEntity.AsientoStatus estado) {
         this.estado = estado;
     }
 

@@ -1,19 +1,20 @@
 package com.senasoftproyect.demo.domain.service;
 
-import com.senasoftproyect.demo.domain.entitys.PagosEntity;
+import com.senasoftproyect.demo.application.dtos.PagosDTO;
+
 
 import java.util.List;
 import java.util.Optional;
 
 public interface PagosService {
 
-    List<PagosEntity> getAll();
+    List<PagosDTO> getAll();
 
-    Optional<PagosEntity> getByIdPago(Long idPago);
+    Optional<PagosDTO> getByIdPago(Long idPago);
 
-    PagosEntity save(PagosEntity pago);
+    PagosDTO save(PagosDTO pago);
 
-    PagosEntity update(PagosEntity pago);
+    PagosDTO update(PagosDTO pago);
 
     void delete(Long idPago);
 }

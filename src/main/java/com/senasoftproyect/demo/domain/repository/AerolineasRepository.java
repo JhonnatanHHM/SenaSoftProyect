@@ -7,6 +7,8 @@ import java.util.Optional;
 
 public interface AerolineasRepository {
 
+    boolean existsByNombre(String nombre);
+
     List<AerolineasEntity> getAll();
 
     void delete(Long idAerolinea);

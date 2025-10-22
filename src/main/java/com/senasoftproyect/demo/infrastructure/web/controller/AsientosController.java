@@ -1,6 +1,7 @@
 package com.senasoftproyect.demo.infrastructure.web.controller;
 
 import com.senasoftproyect.demo.application.dtos.AsientosDTO;
+import com.senasoftproyect.demo.domain.entitys.AsientosEntity;
 import com.senasoftproyect.demo.domain.service.AsientosService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -71,5 +72,18 @@ public class AsientosController {
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) {
         asientosService.delete(id);
+    }
+
+    @Operation(summary = "Actualizar solo el estado de un asiento")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Estado actualizado correctamente"),
+            @ApiResponse(responseCode = "404", description = "Asiento no encontrado")
+    })
+    @PatchMapping("/estado/{id}/{nuevoEstado}")
+    public AsientosDTO actualizarEstado(
+            @PathVariable Long id,
+            @PathVariable("nuevoEstado") AsientosEntity.AsientoStatus nuevoEstado) {
+        AsientosDTO actualizado = asientosService.actualizarEstado(id, nuevoEstado);
+        return actualizado;
     }
 }

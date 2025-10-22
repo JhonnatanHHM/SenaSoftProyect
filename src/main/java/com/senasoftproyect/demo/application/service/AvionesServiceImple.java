@@ -91,7 +91,7 @@ public class AvionesServiceImple implements AvionesService {
                         dtoAsiento.setIdAsiento(asiento.getIdAsiento());
                         dtoAsiento.setNombre(asiento.getNombre());
                         dtoAsiento.setPrecio(asiento.getPrecio());
-                        dtoAsiento.setEstado(asiento.getEstado().name());
+                        dtoAsiento.setEstado(asiento.getEstado());
                         dtoAsiento.setIdAvion(entity.getIdAvion());
                         return dtoAsiento;
                     }).collect(Collectors.toList());

@@ -1,19 +1,21 @@
 package com.senasoftproyect.demo.domain.service;
 
-import com.senasoftproyect.demo.domain.entitys.AerolineasEntity;
+import com.senasoftproyect.demo.application.dtos.AerolineasCompleteDTO;
+import com.senasoftproyect.demo.application.dtos.AerolineasDTO;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface AerolineasService {
 
-    List<AerolineasEntity> getAll();
+    List<AerolineasCompleteDTO> getAll();
 
-    Optional<AerolineasEntity> getByIdAerolinea(Long idAerolinea);
+    AerolineasCompleteDTO save(AerolineasDTO dto, MultipartFile file) throws Exception;
 
-    AerolineasEntity save(AerolineasEntity aerolinea);
+    AerolineasCompleteDTO update(Long id, AerolineasDTO dto, MultipartFile file) throws Exception;
 
-    AerolineasEntity update(AerolineasEntity aerolinea);
+    AerolineasCompleteDTO getById(Long id) throws Exception;
 
-    void delete(Long idAerolinea);
+    void delete(Long idAerolinea) throws Exception;
 }

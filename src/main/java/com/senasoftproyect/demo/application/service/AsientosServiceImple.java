@@ -4,6 +4,7 @@ import com.senasoftproyect.demo.application.dtos.AsientosDTO;
 import com.senasoftproyect.demo.domain.entitys.AsientosEntity;
 import com.senasoftproyect.demo.domain.repository.AsientosRepository;
 import com.senasoftproyect.demo.domain.service.AsientosService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -57,12 +58,26 @@ public class AsientosServiceImple implements AsientosService {
         asientosRepository.delete(idAsiento);
     }
 
+    @Transactional
+    @Override
+    public AsientosDTO actualizarEstado(Long idAsiento, AsientosEntity.AsientoStatus nuevoEstado) {
+
+        AsientosEntity asiento = asientosRepository.getByIdAsiento(idAsiento)
+                .orElseThrow(() -> new RuntimeException("Asiento no encontrado con id " + idAsiento));
+
+        asiento.setEstado(nuevoEstado);
+
+        AsientosDTO asientosDTO = convertToDto(asientosRepository.save(asiento));
+
+        return asientosDTO;
+    }
+
     private AsientosDTO convertToDto(AsientosEntity entity) {
         AsientosDTO dto = new AsientosDTO();
         dto.setIdAsiento(entity.getIdAsiento());
         dto.setNombre(entity.getNombre());
         dto.setPrecio(entity.getPrecio());
-        dto.setEstado(entity.getEstado().name());
+        dto.setEstado(entity.getEstado());
         if (entity.getAvion() != null) {
             dto.setIdAvion(entity.getAvion().getIdAvion());
         }
@@ -75,7 +90,7 @@ public class AsientosServiceImple implements AsientosService {
         entity.setNombre(dto.getNombre());
         entity.setPrecio(dto.getPrecio());
         if (dto.getEstado() != null) {
-            entity.setEstado(AsientosEntity.AsientoStatus.valueOf(dto.getEstado()));
+            entity.setEstado(dto.getEstado());
         }
         return entity;
     }

@@ -43,4 +43,5 @@ public class AsientosRepositoryImple implements AsientosRepository {
     public Optional<AsientosEntity> getByIdAsiento(Long idAsiento) {
         return asientosCrudRepository.findById(idAsiento);
     }
+
 }

@@ -1,5 +1,6 @@
 package com.senasoftproyect.demo.application.dtos;
 
+
 import java.util.List;
 
 public class AvionesDTO {
@@ -18,6 +19,7 @@ public class AvionesDTO {
         this.capacidad = capacidad;
         this.asientos = asientos;
     }
+
 
     public Long getIdAvion() {
         return idAvion;

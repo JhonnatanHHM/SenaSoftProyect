@@ -15,4 +15,6 @@ public interface PagosRepository {
     PagosEntity save(PagosEntity pago);
 
     Optional<PagosEntity> getByIdPago(Long idPago);
+
+    boolean existsById(Long idPago);
 }

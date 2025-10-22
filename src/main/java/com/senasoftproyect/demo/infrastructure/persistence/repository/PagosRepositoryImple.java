@@ -43,4 +43,9 @@ public class PagosRepositoryImple implements PagosRepository {
     public Optional<PagosEntity> getByIdPago(Long idPago) {
         return pagosCrudRepository.findById(idPago);
     }
+
+    @Override
+    public boolean existsById(Long idPago) {
+        return pagosCrudRepository.existsById(idPago);
+    }
 }
