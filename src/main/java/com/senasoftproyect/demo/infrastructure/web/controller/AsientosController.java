@@ -96,7 +96,7 @@ public class AsientosController {
     })
     @PatchMapping("/estado/{idAsiento}/{idUsuario}")
     public AsientosDTO actualizarEstado(
-            @PathVariable Long idAsiento, @PathVariable Long idAsiento) {
+            @PathVariable Long idAsiento, @PathVariable Long idUsuario) {
         return asientosService.actualizarEstado(idAsiento, idAsiento);
     }
 
