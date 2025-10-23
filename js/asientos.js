@@ -87,27 +87,33 @@ function loadSelectedSeatsFromLocalStorage() {
   try {
     // Get selected flight ID from sessionStorage
     const flightId = sessionStorage.getItem("selectedFlightId");
+    
+    // Clear any generic selectedSeats to avoid loading seats from other flights
+    localStorage.removeItem("selectedSeats");
 
-    // Try to get selected seats from flight-specific key first
+    // Only load seats for the specific flight
     if (flightId) {
-      const savedSeats = localStorage.getItem(
-        `selectedSeats_flight_${flightId}`
-      );
+      const savedSeats = localStorage.getItem(`selectedSeats_flight_${flightId}`);
       if (savedSeats) {
         selectedSeats = JSON.parse(savedSeats);
-        console.log(
-          "Loaded selected seats from flight-specific key:",
-          selectedSeats
-        );
-        return;
+        // Validate that seats belong to the current flight's aircraft
+        const storedVuelos = localStorage.getItem("vuelosCache");
+        if (storedVuelos) {
+          const vuelosCache = JSON.parse(storedVuelos);
+          const flightData = vuelosCache.find((vuelo) => vuelo.idVuelo == flightId);
+          if (flightData && flightData.avion && flightData.avion.asientos) {
+            const validSeatIds = flightData.avion.asientos.map(seat => seat.idAsiento);
+            selectedSeats = selectedSeats.filter(seat => validSeatIds.includes(seat.idAsiento));
+          }
+        }
+        console.log("Loaded selected seats for flight ID", flightId, ":", selectedSeats);
+      } else {
+        selectedSeats = []; // Ensure no seats from other flights are used
+        console.log("No seats found for flight ID", flightId);
       }
-    }
-
-    // Fallback to generic key
-    const savedSeats = localStorage.getItem("selectedSeats");
-    if (savedSeats) {
-      selectedSeats = JSON.parse(savedSeats);
-      console.log("Loaded selected seats from generic key:", selectedSeats);
+    } else {
+      selectedSeats = [];
+      console.log("No flight ID found, initializing empty selectedSeats");
     }
   } catch (e) {
     console.error("Error loading selected seats from localStorage:", e);
@@ -115,7 +121,7 @@ function loadSelectedSeatsFromLocalStorage() {
   }
 }
 
-// Helper to read token from sessionStorage (centralizado)
+// Helper to read token from sessionStorage
 function getToken() {
   try {
     return sessionStorage.getItem("token") || null;
@@ -147,7 +153,7 @@ async function fetchSeats() {
       throw new Error("No se ha seleccionado un vuelo válido.");
     }
 
-    // Load previously selected seats
+    // Load previously selected seats for this flight only
     loadSelectedSeatsFromLocalStorage();
 
     // Try to get flight data from cache first
@@ -160,10 +166,7 @@ async function fetchSeats() {
         currentFlight = flightData;
       }
     } catch (parseError) {
-      console.warn(
-        "No se pudieron cargar los vuelos desde localStorage:",
-        parseError
-      );
+      console.warn("No se pudieron cargar los vuelos desde localStorage:", parseError);
     }
 
     // If we have flight data with seats, use it
@@ -171,11 +174,11 @@ async function fetchSeats() {
       seatsData = flightData.avion.asientos.map((seat) => ({
         idAsiento: seat.idAsiento,
         nombre: seat.nombre,
-        estado: seat.estado || "DISPONIBLE", // Preserve original estado or default to DISPONIBLE
-        precio: seat.precio || 0, // Ensure we have a price
+        estado: seat.estado || "DISPONIBLE",
+        precio: seat.precio || 0,
       }));
 
-      console.log("Using cached seats data:", seatsData);
+      console.log("Using cached seats data for flight ID", flightId, ":", seatsData);
 
       // Hide loading indicator
       loadingIndicator.classList.add("hidden");
@@ -194,31 +197,27 @@ async function fetchSeats() {
 
     // Otherwise, fetch from API
     const response = await fetch(
-      `http://localhost:8080/api/vuelos/${flightId}/asientos`
+      `https://senasoftproyect.onrender.com/api/vuelos/${flightId}/asientos`
     );
 
     if (!response.ok) {
       if (response.status === 404) {
         throw new Error("No se encontraron asientos para este vuelo.");
       } else if (response.status === 500) {
-        throw new Error(
-          "Error en el servidor. Por favor, inténtalo más tarde."
-        );
+        throw new Error("Error en el servidor. Por favor, inténtalo más tarde.");
       } else {
-        throw new Error(
-          `Error HTTP: ${response.status} - ${response.statusText}`
-        );
+        throw new Error(`Error HTTP: ${response.status} - ${response.statusText}`);
       }
     }
 
     const rawSeatsData = await response.json();
-    console.log("Fetched seats data from API:", rawSeatsData);
+    console.log("Fetched seats data from API for flight ID", flightId, ":", rawSeatsData);
 
     // Ensure all seats have proper estado and price data
     seatsData = rawSeatsData.map((seat) => ({
       idAsiento: seat.idAsiento,
       nombre: seat.nombre,
-      estado: seat.estado || "DISPONIBLE", // Preserve original estado or default to DISPONIBLE
+      estado: seat.estado || "DISPONIBLE",
       precio: seat.precio || 0,
     }));
 
@@ -305,12 +304,8 @@ function updateFlightInfo(flightData) {
     }
 
     if (departureDateTime && !isNaN(departureDateTime.getTime())) {
-      // Format time as HH:MM
       const hours = departureDateTime.getHours().toString().padStart(2, "0");
-      const minutes = departureDateTime
-        .getMinutes()
-        .toString()
-        .padStart(2, "0");
+      const minutes = departureDateTime.getMinutes().toString().padStart(2, "0");
       departureTimeElement.textContent = `${hours}:${minutes}`;
     } else {
       departureTimeElement.textContent = "--:--";
@@ -329,7 +324,6 @@ function updateFlightInfo(flightData) {
     }
 
     if (arrivalDateTime && !isNaN(arrivalDateTime.getTime())) {
-      // Format time as HH:MM
       const hours = arrivalDateTime.getHours().toString().padStart(2, "0");
       const minutes = arrivalDateTime.getMinutes().toString().padStart(2, "0");
       arrivalTimeElement.textContent = `${hours}:${minutes}`;
@@ -396,7 +390,6 @@ function updateFlightInfoFromId(flightId) {
     flightRouteElement.textContent = "Ciudad de México a Cancún";
   }
 
-  // Set default values for time elements
   if (departureTimeElement) departureTimeElement.textContent = "--:--";
   if (arrivalTimeElement) arrivalTimeElement.textContent = "--:--";
   if (flightDurationElement) flightDurationElement.textContent = "--h --m";
@@ -411,12 +404,11 @@ function generateSampleSeats() {
   for (let row = 1; row <= rows; row++) {
     for (let i = 0; i < letters.length; i++) {
       const estado = Math.random() > 0.7 ? "OCUPADO" : "DISPONIBLE";
-      // Generate more realistic pricing based on seat position
-      let precio = 50; // Base price
-      if (row <= 3) precio += 30; // Premium rows
-      if (row >= 8) precio += 10; // Back rows
-      if (letters[i] === "A" || letters[i] === "D") precio += 15; // Window seats
-      if (letters[i] === "B" || letters[i] === "C") precio += 10; // Middle seats
+      let precio = 50;
+      if (row <= 3) precio += 30;
+      if (row >= 8) precio += 10;
+      if (letters[i] === "A" || letters[i] === "D") precio += 15;
+      if (letters[i] === "B" || letters[i] === "C") precio += 10;
 
       seats.push({
         idAsiento: (row - 1) * 4 + i + 1,
@@ -427,12 +419,11 @@ function generateSampleSeats() {
     }
   }
 
-  // Mark some seats as emergency exits
   if (seats.length > 0) {
-    if (seats[8]) seats[8].estado = "EMERGENCIA"; // Row 3, seat A
-    if (seats[11]) seats[11].estado = "EMERGENCIA"; // Row 3, seat D
-    if (seats[28]) seats[28].estado = "EMERGENCIA"; // Row 8, seat A
-    if (seats[31]) seats[31].estado = "EMERGENCIA"; // Row 8, seat D
+    if (seats[8]) seats[8].estado = "EMERGENCIA";
+    if (seats[11]) seats[11].estado = "EMERGENCIA";
+    if (seats[28]) seats[28].estado = "EMERGENCIA";
+    if (seats[31]) seats[31].estado = "EMERGENCIA";
   }
 
   return seats;
@@ -448,44 +439,34 @@ function renderSeats(seats) {
     return;
   }
 
-  // Clear existing seats
   seatRows.innerHTML = "";
 
-  // Group seats by row (4 seats per row)
   const rows = [];
   for (let i = 0; i < seats.length; i += 4) {
     rows.push(seats.slice(i, i + 4));
   }
 
-  // Render each row
   rows.forEach((rowSeats, rowIndex) => {
-    // Create row container
     const rowContainer = document.createElement("div");
     rowContainer.className = "contents";
 
-    // Left side (first 2 seats)
     const leftSide = document.createElement("div");
     leftSide.className = "flex justify-around";
 
-    // Right side (last 2 seats)
     const rightSide = document.createElement("div");
     rightSide.className = "flex justify-around";
 
-    // Row number
     const rowLabel = document.createElement("div");
     rowLabel.className =
       "text-gray-500 dark:text-gray-400 font-bold self-center text-lg";
     rowLabel.textContent = rowIndex + 1;
 
-    // Process seats for this row
     rowSeats.forEach((seat, seatIndex) => {
       const seatElement = document.createElement("div");
-      // Check if seat is already selected
       const isSelected = selectedSeats.some(
         (s) => s.idAsiento === seat.idAsiento
       );
 
-      // Determine seat class based on state
       let seatClass = "seat ";
       if (seat.estado === "OCUPADO") {
         seatClass += "occupied";
@@ -503,15 +484,12 @@ function renderSeats(seats) {
       seatElement.dataset.price = seat.precio || 0;
       seatElement.dataset.estado = seat.estado;
 
-      // Add click event for available seats only
       if (seat.estado === "DISPONIBLE" || seat.estado === "EMERGENCIA") {
         seatElement.addEventListener("click", () => {
-          // Directly toggle the seat selection without creating a new object
           toggleSeatSelection(seat);
         });
       }
 
-      // Add seat to appropriate side
       if (seatIndex < 2) {
         leftSide.appendChild(seatElement);
       } else {
@@ -519,17 +497,15 @@ function renderSeats(seats) {
       }
     });
 
-    // Add elements to row container
     rowContainer.appendChild(leftSide);
     rowContainer.appendChild(rowLabel);
     rowContainer.appendChild(rightSide);
 
-    // Add row to seat rows container
     seatRows.appendChild(rowContainer);
   });
 }
 
-// New function to restore selected seats UI after rendering
+// Function to restore selected seats UI after rendering
 function restoreSelectedSeatsUI() {
   console.log("Restoring selected seats UI:", selectedSeats);
 
@@ -538,14 +514,11 @@ function restoreSelectedSeatsUI() {
       `.seat[data-id="${seat.idAsiento}"]`
     );
     if (seatElement) {
-      // Remove all state classes first
       seatElement.classList.remove("available", "occupied", "emergency");
-      // Add selected class
       seatElement.classList.add("selected");
     }
   });
 
-  // Update summary
   updateSummary();
 }
 
@@ -553,13 +526,11 @@ function restoreSelectedSeatsUI() {
 function toggleSeatSelection(seat) {
   console.log("Toggle seat selection called for seat:", seat);
 
-  // Validate seat data before proceeding
   if (!seat || !seat.idAsiento || isNaN(seat.idAsiento)) {
     console.error("Invalid seat data:", seat);
     return;
   }
 
-  // Find the seat element by data-id attribute
   const seatElement = document.querySelector(
     `.seat[data-id="${seat.idAsiento}"]`
   );
@@ -569,7 +540,6 @@ function toggleSeatSelection(seat) {
     return;
   }
 
-  // Check if seat is already selected
   const selectedIndex = selectedSeats.findIndex(
     (s) => s.idAsiento === seat.idAsiento
   );
@@ -578,23 +548,19 @@ function toggleSeatSelection(seat) {
   console.log("Current selected seats:", selectedSeats);
 
   if (selectedIndex !== -1) {
-    // Deselect seat
     console.log("Deselecting seat:", seat.idAsiento);
     selectedSeats.splice(selectedIndex, 1);
     seatElement.classList.remove("selected");
     seatElement.classList.add("available");
 
-    // Update seat status on server to "DISPONIBLE"
     updateSeatStatusOnServer(seat.idAsiento, "DISPONIBLE");
   } else {
-    // Check if we've reached the maximum number of seats
     if (selectedSeats.length >= maxSeats) {
       console.log("Maximum seats reached");
       alert(`Solo puedes seleccionar un máximo de ${maxSeats} asientos.`);
       return;
     }
 
-    // Select seat - ensure we store all necessary data
     console.log("Selecting seat:", seat.idAsiento);
     selectedSeats.push({
       idAsiento: seat.idAsiento,
@@ -603,19 +569,13 @@ function toggleSeatSelection(seat) {
       estado: seat.estado,
     });
 
-    // Remove all state classes first
     seatElement.classList.remove("available", "occupied", "emergency");
-    // Add selected class
     seatElement.classList.add("selected");
 
-    // Update seat status on server to "SELECCIONADO"
     updateSeatStatusOnServer(seat.idAsiento, "SELECCIONADO");
   }
 
-  // Save selected seats to localStorage
   saveSelectedSeatsToLocalStorage();
-
-  // Update summary
   updateSummary();
   console.log("Updated selected seats:", selectedSeats);
 }
@@ -623,10 +583,6 @@ function toggleSeatSelection(seat) {
 // Function to save selected seats to localStorage
 function saveSelectedSeatsToLocalStorage() {
   try {
-    localStorage.setItem("selectedSeats", JSON.stringify(selectedSeats));
-    console.log("Selected seats saved to localStorage:", selectedSeats);
-
-    // Also save with a flight-specific key for better organization
     const flightId = sessionStorage.getItem("selectedFlightId");
     if (flightId) {
       localStorage.setItem(
@@ -636,27 +592,24 @@ function saveSelectedSeatsToLocalStorage() {
       console.log(
         `Selected seats saved to localStorage with flight key: selectedSeats_flight_${flightId}`
       );
-    }
 
-    // Save the complete reservation data
-    const reservationData = {
-      selectedSeats: selectedSeats,
-      flightId: flightId,
-      timestamp: new Date().toISOString(),
-    };
-    localStorage.setItem("currentReservation", JSON.stringify(reservationData));
+      const reservationData = {
+        selectedSeats: selectedSeats,
+        flightId: flightId,
+        timestamp: new Date().toISOString(),
+      };
+      localStorage.setItem("currentReservation", JSON.stringify(reservationData));
+    }
   } catch (e) {
     console.error("Error saving selected seats to localStorage:", e);
   }
 }
 
-// Function to update seat status on server (single robust implementation)
+// Function to update seat status on server
 async function updateSeatStatusOnServer(seatId, status) {
-  // Get token and userId from storage (with safe defaults)
   const token = getToken();
   const userId = parseInt(sessionStorage.getItem("id")) || 1;
 
-  // Helper to find the seat element in the DOM
   function findSeatElement(id) {
     const seatElements = document.querySelectorAll(".seat");
     for (let element of seatElements) {
@@ -665,7 +618,6 @@ async function updateSeatStatusOnServer(seatId, status) {
     return null;
   }
 
-  // Validate seatId
   if (!seatId || isNaN(seatId)) {
     console.error("Invalid seat ID:", seatId);
     return;
@@ -674,12 +626,11 @@ async function updateSeatStatusOnServer(seatId, status) {
   const seatElement = findSeatElement(seatId);
   if (seatElement) seatElement.classList.add("updating");
 
-  const idAsiento = seatId; // Just to illustrate usage
+  const idAsiento = seatId;
   const idUsuario = userId;
 
   try {
-    // Prepare fetch options
-    const url = `http://localhost:8080/api/asientos/estado/${seatId}/${userId}`;
+    const url = `https://senasoftproyect.onrender.com/api/asientos/estado/${seatId}/${userId}`;
     const body = JSON.stringify({
       estado: status,
       usuarioReservado: idUsuario,
@@ -691,28 +642,21 @@ async function updateSeatStatusOnServer(seatId, status) {
         "Content-Type": "application/json",
       },
       body,
-      // keep credentials omitted by default; if backend uses cookies consider adding credentials: 'include'
     };
 
     if (token) options.headers["Authorization"] = `Bearer ${token}`;
 
     console.log("PATCH options:", options, "url:", url);
 
-    // Perform fetch and capture network errors separately
     let response;
     try {
       response = await fetch(url, options);
     } catch (networkErr) {
-      // Network errors (including CORS preflight failures) will be caught here
-      console.error(
-        "Network error during fetch (possible CORS/preflight issue):",
-        networkErr
-      );
-      throw networkErr; // rethrow to be handled by outer catch
+      console.error("Network error during fetch:", networkErr);
+      throw networkErr;
     }
 
     if (!response.ok) {
-      // If CORS blocks preflight, response may not be available; throw to go to catch
       throw new Error(`HTTP ${response.status} ${response.statusText}`);
     }
 
@@ -720,13 +664,7 @@ async function updateSeatStatusOnServer(seatId, status) {
   } catch (err) {
     console.error("Error updating seat status:", err);
 
-    // Fallback behavior when fetch fails (e.g., CORS or server down):
-    // Update local seatsData and UI using the provided JSON structure
-    console.warn(
-      "Aplicando cambio de estado en modo local (fallback). Esto ocurre cuando la petición al backend falla o es bloqueada por CORS."
-    );
-
-    // Find seat in seatsData and update it
+    console.warn("Aplicando cambio de estado en modo local (fallback).");
     const index = seatsData.findIndex((s) => s.idAsiento === seatId);
     const fallbackPayload = {
       idAsiento: seatId,
@@ -745,7 +683,6 @@ async function updateSeatStatusOnServer(seatId, status) {
         estado: status,
       });
     } else {
-      // If seat not present, push a new one (for demo purposes)
       seatsData.push({
         idAsiento: fallbackPayload.idAsiento,
         nombre: fallbackPayload.nombre,
@@ -754,7 +691,6 @@ async function updateSeatStatusOnServer(seatId, status) {
       });
     }
 
-    // Update the seat element classes in the UI
     if (seatElement) {
       seatElement.classList.remove("available", "occupied", "emergency");
       if (status === "SELECCIONADO") {
@@ -767,33 +703,26 @@ async function updateSeatStatusOnServer(seatId, status) {
       seatElement.dataset.estado = status;
     }
 
-    // Persist fallback changes to localStorage so page reload shows changes
     try {
       localStorage.setItem("seatsFallback", JSON.stringify(seatsData));
     } catch (e) {
       console.warn("No se pudo guardar seatsFallback en localStorage:", e);
     }
 
-    // Show the user a clear message explaining the fallback
     alert(
-      "No se pudo actualizar el asiento en el servidor (problema de CORS o conexión). El cambio se aplicó localmente para la demostración. Por favor, inténtalo de nuevo más tarde."
+      "No se pudo actualizar el asiento en el servidor. El cambio se aplicó localmente para la demostración."
     );
   } finally {
-    // Remove updating indicator
     if (seatElement) seatElement.classList.remove("updating");
   }
 }
 
 // Function to remove a seat from selection
 function removeSeat(seatId) {
-  // Find the seat in selectedSeats array
   const selectedIndex = selectedSeats.findIndex((s) => s.idAsiento === seatId);
 
   if (selectedIndex !== -1) {
-    // Remove from selectedSeats array
     const removedSeat = selectedSeats.splice(selectedIndex, 1)[0];
-
-    // Update the seat element in the seat map
     const seatElements = document.querySelectorAll(".seat");
     for (let element of seatElements) {
       if (parseInt(element.dataset.id) === seatId) {
@@ -803,7 +732,6 @@ function removeSeat(seatId) {
       }
     }
 
-    // Update summary
     updateSummary();
   }
 }
@@ -819,7 +747,6 @@ function updateSummary() {
   const totalCostElement = document.getElementById("totalCost");
   const confirmButton = document.getElementById("confirmButton");
 
-  // Clear the container
   if (selectedSeatsContainer) {
     selectedSeatsContainer.innerHTML = "";
   } else {
@@ -829,24 +756,17 @@ function updateSummary() {
   }
 
   if (selectedSeats.length === 0) {
-    // Show "no seats selected" message
     if (noSeatsSelected) noSeatsSelected.style.display = "block";
     if (seatPriceElement) seatPriceElement.textContent = "$0.00";
     if (seatCountElement) seatCountElement.textContent = "0";
     if (totalCostElement) totalCostElement.textContent = "$0.00";
     if (confirmButton) confirmButton.disabled = true;
   } else {
-    // Hide "no seats selected" message
-    if (noSeatsSelected) {
-      noSeatsSelected.style.display = "none";
-    }
+    if (noSeatsSelected) noSeatsSelected.style.display = "none";
 
-    // Add each selected seat to the summary
     selectedSeats.forEach((seat) => {
       const seatItem = document.createElement("div");
       seatItem.className = "selected-seat-item";
-
-      // Add animation class for carousel effect
       seatItem.style.animation = "slideIn 0.3s ease forwards";
 
       const price = parseFloat(seat.precio) || 0;
@@ -868,7 +788,6 @@ function updateSummary() {
       selectedSeatsContainer.appendChild(seatItem);
     });
 
-    // Add event listeners to remove buttons
     document.querySelectorAll(".remove-seat-btn").forEach((button) => {
       button.addEventListener("click", function () {
         const seatId = parseInt(this.dataset.seatId);
@@ -876,20 +795,17 @@ function updateSummary() {
       });
     });
 
-    // Calculate total cost
     const totalPrice = selectedSeats.reduce(
       (sum, seat) => sum + (parseFloat(seat.precio) || 0),
       0
     );
 
-    // Show average price per seat
     const averagePrice =
       selectedSeats.length > 0 ? totalPrice / selectedSeats.length : 0;
     seatPriceElement.textContent = `$${averagePrice.toFixed(2)}`;
     seatCountElement.textContent = selectedSeats.length;
     totalCostElement.textContent = `$${totalPrice.toFixed(2)}`;
 
-    // Enable confirm button
     if (confirmButton) confirmButton.disabled = false;
   }
 }
@@ -900,16 +816,10 @@ document.addEventListener("DOMContentLoaded", function () {
   if (confirmButton) {
     confirmButton.addEventListener("click", function () {
       if (selectedSeats.length > 0) {
-        // Save selected seats to localStorage before redirecting
         saveSelectedSeatsToLocalStorage();
-
-        // Save flight data to localStorage as well
         if (currentFlight) {
           localStorage.setItem("currentFlight", JSON.stringify(currentFlight));
         }
-
-        // Here you would typically send the selected seats to your backend
-        // For now, we'll just redirect to the confirmation page
         console.log("Selected seats:", selectedSeats);
         window.location.href = "confimacion_de_vuelo.html";
       } else {
@@ -920,11 +830,9 @@ document.addEventListener("DOMContentLoaded", function () {
     console.warn("DOMContentLoaded: #confirmButton no encontrado en el DOM");
   }
 
-  // Add event listener to back button in error message
   const backButton = document.getElementById("backButton");
   if (backButton) {
     backButton.addEventListener("click", function () {
-      // Deselect seats visually when returning to index
       deselectSeatsVisually();
       window.location.href = "index.html";
     });
@@ -932,35 +840,40 @@ document.addEventListener("DOMContentLoaded", function () {
     console.warn("DOMContentLoaded: #backButton no encontrado en el DOM");
   }
 
-  // Add event listener to home link
   const homeLink = document.getElementById("homeLink");
   if (homeLink) {
     homeLink.addEventListener("click", function (e) {
       e.preventDefault();
-      // Deselect seats visually when returning to index
       deselectSeatsVisually();
       window.location.href = "index.html";
     });
   }
 
-  // Fetch seats when page loads
-  // Diagnostic: print token and userId so developer can verify Authorization is sent
   const diagnosticToken = getToken();
   const diagnosticUserId =
     sessionStorage.getItem("id") || sessionStorage.getItem("userId") || null;
   console.log("Diagnostic - token (sessionStorage):", diagnosticToken);
   console.log("Diagnostic - userId (sessionStorage):", diagnosticUserId);
 
+  // Clear any irrelevant seat data from previous flights
+  const flightId = sessionStorage.getItem("selectedFlightId");
+  if (flightId) {
+    Object.keys(localStorage).forEach((key) => {
+      if (key.startsWith("selectedSeats_flight_") && !key.includes(flightId)) {
+        localStorage.removeItem(key);
+        console.log(`Cleared irrelevant localStorage key: ${key}`);
+      }
+    });
+  }
+
   fetchSeats();
 });
 
-// New function to deselect seats visually when returning to index
+// Function to deselect seats visually when returning to index
 function deselectSeatsVisually() {
-  // Get selected seats from localStorage
   const flightId = sessionStorage.getItem("selectedFlightId");
   let selectedSeatsData = [];
 
-  // Try to get selected seats from flight-specific key first
   if (flightId) {
     const savedSeats = localStorage.getItem(`selectedSeats_flight_${flightId}`);
     if (savedSeats) {
@@ -968,70 +881,40 @@ function deselectSeatsVisually() {
     }
   }
 
-  // Fallback to generic key
-  if (selectedSeatsData.length === 0) {
-    const savedSeats = localStorage.getItem("selectedSeats");
-    if (savedSeats) {
-      selectedSeatsData = JSON.parse(savedSeats);
-    }
-  }
-
-  // If we have selected seats data, deselect them visually
   if (selectedSeatsData.length > 0) {
     selectedSeatsData.forEach((seat) => {
       const seatElement = document.querySelector(
         `.seat[data-id="${seat.idAsiento}"]`
       );
       if (seatElement) {
-        // Remove selected class and add available class
         seatElement.classList.remove("selected");
         seatElement.classList.add("available");
       }
     });
   } else if (selectedSeats.length > 0) {
-    // Fallback: if no data in localStorage, use the current selectedSeats array
     selectedSeats.forEach((seat) => {
       const seatElement = document.querySelector(
         `.seat[data-id="${seat.idAsiento}"]`
       );
       if (seatElement) {
-        // Remove selected class and add available class
         seatElement.classList.remove("selected");
         seatElement.classList.add("available");
       }
     });
   }
 
-  // Clear the selectedSeats array
   selectedSeats = [];
-
-  // Remove from localStorage
   localStorage.removeItem("selectedSeats");
-
-  // Try to remove flight-specific key as well
   if (flightId) {
     localStorage.removeItem(`selectedSeats_flight_${flightId}`);
   }
-
-  // Remove current reservation data
   localStorage.removeItem("currentReservation");
-
-  // Also clear the currentFlight data
   localStorage.removeItem("currentFlight");
-
-  // Update the summary panel to reflect no seats selected
   updateSummary();
-
-  console.log(
-    "Seats visually deselected and data cleared from memory and localStorage"
-  );
+  console.log("Seats visually deselected and data cleared from memory and localStorage");
 }
 
 // Add event listener for when the user leaves the page
 window.addEventListener("beforeunload", function (e) {
-  // Check if we're navigating away from the seat selection page
-  // If the user is leaving without confirming, we might want to clear the seats
-  // But we'll only do this if they're going to index.html or another main page
-  // For now, we'll just log the event
   console.log("User is leaving the seat selection page");
 });

@@ -33,3 +33,258 @@
     border: none !important;
   }
 }
+
+/* ===========================
+   Reserva Confirmada — Estilos
+   Advanced, moderno y llamativo
+   =========================== */
+
+/* Paleta */
+:root{
+  --bg:#f5f8fb;
+  --card:#ffffff;
+  --muted:#6b7280;
+  --accent-1:linear-gradient(135deg,#0066ff 0%,#00c2ff 100%);
+  --accent:#00529B;
+  --accent-2:#FF6B00;
+  --success:#10b981;
+  --danger:#ef4444;
+  --glass:rgba(255,255,255,0.65);
+  --shadow-lg: 0 10px 30px rgba(13,30,48,0.08);
+  --radius:14px;
+  --radius-sm:10px;
+  --text:#081126;
+  --muted-2:#94a3b8;
+  font-family: "Plus Jakarta Sans", Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+}
+
+/* Base */
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  line-height:1.45;
+  font-size:15px;
+}
+
+/* Layout helpers */
+.layout-container{max-width:1320px;margin:0 auto;padding:28px 22px}
+.max-w-4xl{max-width:900px;margin:0 auto}
+
+/* Card */
+.bg-white{background:var(--card)}
+.rounded-xl{border-radius:var(--radius)}
+.rounded-lg{border-radius:var(--radius-sm)}
+.shadow-md{box-shadow:var(--shadow-lg)}
+.print-area{background:transparent}
+
+/* Header hero */
+#contentArea > .flex:first-child{
+  align-items:flex-start;
+  gap:1.25rem;
+  padding:1rem 0 1.25rem;
+}
+#contentArea .text-4xl{
+  background:var(--accent-1);
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+  display:inline-block;
+}
+
+/* Confirmation card */
+.print-area + .bg-white,
+.bg-white.print-area{
+  border-radius:var(--radius);
+  overflow:visible;
+}
+
+/* Confirmation summary */
+#confirmationNumber{
+  background:linear-gradient(90deg,#fff 0%, rgba(255,255,255,0.6) 100%);
+  display:inline-block;
+  padding:6px 12px;
+  border-radius:8px;
+  box-shadow:0 8px 20px rgba(0,82,155,0.06);
+  color:var(--accent-2);
+}
+
+/* QR container */
+img#qrCode{
+  border-radius:10px;
+  object-fit:cover;
+  width:100%;
+  height:100%;
+  display:block;
+  background:linear-gradient(180deg,#f8fafc,#eef7ff);
+  border:1px solid rgba(6,12,34,0.04);
+}
+
+/* Itinerary card */
+.itinerary-card{padding:1.25rem}
+.itinerary-card p{margin:0}
+.itinerary-card .text-sm{color:var(--muted)}
+.itinerary-card .text-lg{color:var(--text);font-weight:700}
+
+/* Divider with icons */
+.itinerary-divider{
+  position:relative;
+  margin:0.75rem 0;
+}
+.itinerary-divider .line{
+  height:2px;
+  background:linear-gradient(90deg, rgba(6,12,34,0.06), rgba(6,12,34,0.02));
+}
+.itinerary-divider .material-symbols-outlined{
+  background:var(--card);
+  padding:6px;
+  border-radius:999px;
+  box-shadow:0 6px 18px rgba(2,6,23,0.04);
+}
+
+/* Passenger & pricing cards */
+#passengersInfo p,#priceBreakdown div span{display:block}
+#passengersInfo p{font-weight:600;color:var(--text);padding:6px 0}
+#priceBreakdown {min-height:110px}
+
+/* Buttons */
+button, a.button{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:10px 14px;
+  border-radius:10px;
+  font-weight:700;
+  transition:transform .12s ease,box-shadow .12s ease;
+}
+button:hover, a.button:hover{transform:translateY(-3px);box-shadow:0 10px 28px rgba(2,6,23,0.08)}
+.no-print a, .no-print button{text-decoration:none}
+
+/* Primary button style */
+.btn-primary, button.bg-primary{
+  background:var(--accent);
+  color:white;
+  box-shadow:0 12px 30px rgba(0,82,155,0.16);
+  border:0;
+}
+
+/* Accent link style */
+a.text-primary{
+  color:var(--accent);
+  font-weight:600;
+}
+
+/* Price styling */
+#totalPaid, #totalCost, .text-2xl{color:var(--accent-2);font-weight:800}
+
+/* Responsive grid improvements */
+@media (min-width:1024px){
+  .grid.md\:grid-cols-2{display:grid;grid-template-columns:repeat(2,1fr);gap:1.25rem}
+  .sticky{position:sticky;top:28px}
+}
+
+/* Subtle background patterns */
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  background:
+    radial-gradient(600px 300px at 10% 10%, rgba(19,164,236,0.06), transparent 6%),
+    radial-gradient(500px 250px at 90% 90%, rgba(255,107,0,0.04), transparent 8%);
+  pointer-events:none;
+  z-index:0;
+}
+
+/* Dark mode adjustments (keeps look vivid) */
+html.dark{
+  --bg:#071422;
+  --card:#071421;
+  --text:#e6eef7;
+  --muted:#9fb2c9;
+  --muted-2:#7f98b4;
+  --accent-1:linear-gradient(135deg,#1e90ff 0%,#00c2ff 100%);
+  --accent:#13a4ec;
+  --accent-2:#ff8a3d;
+  --glass:rgba(255,255,255,0.03);
+  filter: none;
+}
+html.dark body{background:var(--bg);color:var(--text)}
+html.dark .bg-white{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.03)}
+
+/* Print rules: simplify layout */
+@media print{
+  body{background:#fff;color:#000}
+  .no-print{display:none!important}
+  .print-area{box-shadow:none!important;border-radius:0!important;background:#fff!important}
+  footer{display:none}
+  #qrCode{max-width:120px}
+}
+
+/* Accessibility focus */
+:focus{outline:3px solid rgba(0,82,155,0.12);outline-offset:3px}
+
+/* Helpers */
+.small{font-size:13px;color:var(--muted)}
+.mb-2{margin-bottom:.5rem}
+.mt-2{margin-top:.5rem}
+
+/* Forzar TODO el texto de la vista de confirmación a negro */
+/* Aplica solo dentro del área de contenido para no romper otros componentes */
+#contentArea,
+#contentArea * {
+  color: #000 !important;
+  -webkit-text-fill-color: #000 !important; /* Safari */
+}
+
+/* Quitar gradientes aplicados con background-clip (p. ej. títulos) */
+#contentArea .text-4xl,
+#contentArea .text-4xl * {
+  background: none !important;
+  -webkit-background-clip: unset !important;
+  background-clip: unset !important;
+  color: #000 !important;
+}
+
+/* Forzar color negro en elementos comunes que usan clases utilitarias */
+#contentArea .text-primary,
+#contentArea .text-accent,
+#contentArea .text-slate-200,
+#contentArea .text-slate-800,
+#contentArea .text-gray-500,
+#contentArea .text-gray-600,
+#contentArea .text-gray-800 {
+  color: #000 !important;
+}
+
+/* Botones y enlaces: texto negro, respetar fondo */
+#contentArea a,
+#contentArea button,
+#contentArea .btn-primary {
+  color: #000 !important;
+  -webkit-text-fill-color: #000 !important;
+}
+
+/* Icon fonts / Material Symbols */
+#contentArea .material-symbols-outlined {
+  color: #000 !important;
+}
+
+/* Placeholders / select options */
+#contentArea input::placeholder,
+#contentArea textarea::placeholder,
+#contentArea select option {
+  color: #000 !important;
+  opacity: 0.95 !important;
+}
+
+/* Mantener excepción si necesitas elementos con otro color:
+   añade en el HTML la clase `no-force-color` para excluirlos. */
+#contentArea .no-force-color,
+#contentArea .no-force-color * {
+  color: inherit !important;
+  -webkit-text-fill-color: inherit !important;
+}

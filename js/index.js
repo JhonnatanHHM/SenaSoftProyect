@@ -1,5 +1,5 @@
 // Configuración de la API
-const API_URL = "http://localhost:8080/api/vuelos/all";
+const API_URL = "https://senasoftproyect.onrender.com/api/vuelos/all";
 
 // Tamaño de página (máximo de vuelos por página)
 const PAGE_SIZE = 5;
@@ -897,3 +897,234 @@ function obtenerDestinosPorOrigen(origen, query = "") {
     .filter((d) => d.toLowerCase().includes(lowerQuery))
     .map((nombre) => ({ codigo: nombre, ciudad: nombre }));
 }
+
+// Enforce: departure >= today, return >= departure and return <= departure + 2 months
+
+(function () {
+  const dep = document.getElementById('departure-date');
+  const ret = document.getElementById('return-date');
+  const enableReturn = document.getElementById('enable-return');
+
+  if (!dep || !ret) {
+    console.warn('date_constraints: elementos #departure-date o #return-date no encontrados.');
+    return;
+  }
+
+  const toISO = (d) => {
+    const tzOffset = d.getTimezoneOffset() * 60000;
+    return new Date(d - tzOffset).toISOString().slice(0, 10);
+  };
+
+  const addMonths = (date, months) => {
+    const d = new Date(date);
+    const day = d.getDate();
+    d.setMonth(d.getMonth() + months);
+
+    // Ajuste si el mes nuevo no tiene el mismo día (ej. 31 -> 30/Feb)
+    if (d.getDate() < day) {
+      d.setDate(0); // último día del mes anterior
+    }
+    return d;
+  };
+
+  const today = (() => {
+    const n = new Date();
+    n.setHours(0, 0, 0, 0);
+    return n;
+  })();
+
+  // Inicializar min para departure
+  dep.min = toISO(today);
+
+  function updateReturnConstraints() {
+    if (!dep.value) {
+      // Si no hay departure elegido, return mínimo = today
+      ret.min = dep.min;
+      ret.max = toISO(addMonths(new Date(ret.min), 2));
+      return;
+    }
+    const depDate = new Date(dep.value + 'T00:00:00');
+    const minRet = depDate;
+    const maxRet = addMonths(depDate, 2);
+
+    ret.min = toISO(minRet);
+    ret.max = toISO(maxRet);
+
+    // Si return está fuera de rango, ajustar
+    if (ret.value) {
+      const cur = new Date(ret.value + 'T00:00:00');
+      if (cur < minRet) ret.value = ret.min;
+      else if (cur > maxRet) ret.value = ret.max;
+    }
+  }
+
+  // Toggle return enabled/disabled with checkbox (if present)
+  function updateReturnEnabled() {
+    if (enableReturn) {
+      if (!enableReturn.checked) {
+        ret.disabled = true;
+        // opcional: borrar valor
+        // ret.value = '';
+      } else {
+        ret.disabled = false;
+      }
+    }
+  }
+
+  // Listeners
+  dep.addEventListener('change', () => {
+    // evitar fechas anteriores por si el navegador no aplica min
+    if (dep.value) {
+      const chosen = new Date(dep.value + 'T00:00:00');
+      if (chosen < today) dep.value = toISO(today);
+    }
+    updateReturnConstraints();
+  });
+
+  ret.addEventListener('change', () => {
+    // validar que no se pueda poner antes de dep o después de dep+2meses (por si navegador no aplica)
+    updateReturnConstraints();
+  });
+
+  if (enableReturn) {
+    enableReturn.addEventListener('change', () => {
+      updateReturnEnabled();
+      // si se activa, actualizar constraints inmediatamente
+      if (enableReturn.checked) updateReturnConstraints();
+    });
+  }
+
+  // Inicializar estado al cargar la página
+  document.addEventListener('DOMContentLoaded', () => {
+    // si hay un valor inicial en departure, garantizar que cumpla
+    if (dep.value) {
+      const chosen = new Date(dep.value + 'T00:00:00');
+      if (chosen < today) dep.value = toISO(today);
+    } else {
+      // opcional: setear departure a today por defecto
+      // dep.value = toISO(today);
+    }
+
+    updateReturnEnabled();
+    updateReturnConstraints();
+  });
+
+  // Ejecutar ahora por si el script se carga después de DOMReady
+  if (document.readyState !== 'loading') {
+    updateReturnEnabled();
+    updateReturnConstraints();
+  }
+})();
+
+/* =========================
+   Mostrar vuelos más cercanos a la fecha seleccionada
+   ========================= */
+
+function parseFlightDate(v) {
+  if (!v) return null;
+  const candidates = [
+    v.fechaSalida, v.horaSalida, v.salida,
+    v.departureDate, v.departureTime, v.departure,
+    v.fecha, v.date, v.datetime
+  ];
+  for (const c of candidates) {
+    if (!c) continue;
+    const d = new Date(c);
+    if (!isNaN(d)) return d;
+    // intentar si es YYYY-MM-DD sin hora
+    if (/^\d{4}-\d{2}-\d{2}$/.test(String(c))) return new Date(c + 'T00:00:00');
+  }
+  return null;
+}
+
+function toISODateOnly(date) {
+  if (!date) return '';
+  const d = new Date(date);
+  d.setHours(0,0,0,0);
+  const tz = d.getTimezoneOffset()*60000;
+  return new Date(d - tz).toISOString().slice(0,10);
+}
+
+function findNearestFlights(targetISO, maxResults = 5) {
+  if (!targetISO || !Array.isArray(vuelosCache)) return [];
+  const target = new Date(targetISO + 'T00:00:00');
+  const list = vuelosCache
+    .map(v => {
+      const fd = parseFlightDate(v);
+      return { vuelo: v, date: fd, diff: fd ? Math.abs(fd - target) : Infinity };
+    })
+    .filter(x => x.date && isFinite(x.diff))
+    .sort((a,b) => a.diff - b.diff)
+    .slice(0, maxResults)
+    .map(x => x.vuelo);
+  return list;
+}
+
+function renderNearestFlightsForDate(targetISO) {
+  const container = document.getElementById('contenedor-vuelos');
+  if (!container) return;
+  container.innerHTML = ''; // limpiar resultados anteriores
+
+  if (!targetISO) {
+    container.innerHTML = '<p class="text-gray-600">Selecciona una fecha de salida para ver vuelos cercanos.</p>';
+    return;
+  }
+
+  const nearest = findNearestFlights(targetISO, 10);
+  if (!nearest.length) {
+    container.innerHTML = '<p class="text-red-600">No se encontraron vuelos cerca de esa fecha.</p>';
+    return;
+  }
+
+  // si existe la función crearTarjetaVuelo en este archivo, usarla para cada vuelo
+  if (typeof crearTarjetaVuelo === 'function') {
+    nearest.forEach(v => {
+      const card = crearTarjetaVuelo(v);
+      if (card instanceof HTMLElement) container.appendChild(card);
+      else container.insertAdjacentHTML('beforeend', card);
+    });
+    return;
+  }
+
+  // fallback simple: mostrar información básica
+  nearest.forEach(v => {
+    const origen = v.origen || v.origin || v.ciudadOrigen || v.departure || 'Origen';
+    const destino = v.destino || v.destination || v.ciudadDestino || v.arrival || 'Destino';
+    const fecha = toISODateOnly(parseFlightDate(v)) || 'Fecha desconocida';
+    const precio = v.precio || v.price || v.tarifa || '—';
+
+    const html = `
+      <article class="p-4 bg-white rounded-lg shadow mb-3">
+        <div class="flex justify-between items-center">
+          <div>
+            <div class="font-bold text-lg">${origen} ➝ ${destino}</div>
+            <div class="text-sm text-gray-600">Fecha: ${fecha}</div>
+          </div>
+          <div class="text-right">
+            <div class="font-extrabold text-sky-600">${precio ? '$' + precio : '—'}</div>
+            <button class="mt-2 px-3 py-1 rounded bg-sky-500 text-white" onclick="seleccionarVuelo('${v.id || v.idVuelo || v.codigo || ''}')">Seleccionar</button>
+          </div>
+        </div>
+      </article>
+    `;
+    container.insertAdjacentHTML('beforeend', html);
+  });
+}
+
+/* Hook: cuando el usuario cambia la fecha de salida mostramos los vuelos más cercanos */
+document.addEventListener('DOMContentLoaded', () => {
+  const dep = document.getElementById('departure-date');
+  if (!dep) return;
+
+  dep.addEventListener('change', () => {
+    // actualizar disponibilidad (si ya tienes esa función)
+    if (typeof updateDateAvailabilityUI === 'function') updateDateAvailabilityUI();
+    // renderizar vuelos cercanos
+    renderNearestFlightsForDate(dep.value);
+  });
+
+  // si ya hay un valor al cargar la página
+  if (dep.value) renderNearestFlightsForDate(dep.value);
+});
+
+

@@ -109,7 +109,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     try {
       const response = await fetch(
-        "http://localhost:8080/api/usuarios/register",
+        "https://senasoftproyect.onrender.com/api/usuarios/register",
         {
           method: "POST",
           headers: {

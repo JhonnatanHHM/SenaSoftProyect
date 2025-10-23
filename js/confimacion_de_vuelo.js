@@ -406,6 +406,9 @@ function populateReservationData(reserva) {
             </p>
           </div>
           <button class="px-6 py-2.5 rounded-lg text-base font-semibold bg-primary/10 dark:bg-primary/20 text-primary hover:bg-primary/20 dark:hover:bg-primary/30 transition-colors">
+            <a href="/añadir_pasajeros.html">Añadir Pasajero</a>
+          </button>
+          <button class="px-6 py-2.5 rounded-lg text-base font-semibold bg-primary/10 dark:bg-primary/20 text-primary hover:bg-primary/20 dark:hover:bg-primary/30 transition-colors">
             <a href="asientos.html">Editar o Añadir</a>
           </button>
         `;
@@ -436,6 +439,11 @@ function populateReservationData(reserva) {
         }: ${pasajero.numero_documento || pasajero.numeroDocumento || ""}
             </p>
           </div>
+          <button class="px-6 py-2.5 rounded-lg text-base font-semibold bg-primary/10 dark:bg-primary/20 text-primary hover:bg-primary/20 dark:hover:bg-primary/30 transition-colors">
+            <a href="añadir_pasajeros.html?id=${
+              pasajero.id_pasajero || pasajero.id || ""
+            }">Editar o Añadir</a>
+          </button>
           <button class="px-6 py-2.5 rounded-lg text-base font-semibold bg-primary/10 dark:bg-primary/20 text-primary hover:bg-primary/20 dark:hover:bg-primary/30 transition-colors">
             <a href="añadir_pasajeros.html?id=${
               pasajero.id_pasajero || pasajero.id || ""

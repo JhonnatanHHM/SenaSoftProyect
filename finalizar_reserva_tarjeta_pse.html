@@ -11,6 +11,7 @@
         rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
     <link rel="stylesheet" href="./css/finalizar_reserva_tarjeta_pse.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body class="bg-background-light dark:bg-background-dark font-display">
@@ -150,9 +151,9 @@
                                         <span class="material-symbols-outlined">lock</span>
                                         <p class="text-sm font-medium">Pago 100% Seguro</p>
                                     </div>
-                                    <button id="confirmPsePaymentButton"
+                                    <button id="confirmPsePaymentButton" type="button"
                                         class="flex items-center justify-center gap-2 w-full sm:w-auto h-14 px-8 rounded-lg bg-primary text-white text-base font-bold leading-normal tracking-wide hover:bg-primary/90 transition-colors duration-200">
-                                        <span>Continuar en Pse</span>
+                                        Pagar
                                     </button>
                                 </div>
                             </div>
@@ -198,5 +199,53 @@
         </div>
     </div>
 </body>
+<!-- Añadir SweetAlert2 CDN y script de confirmación justo antes de la carga del script de la página -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const btn = document.getElementById('confirmPsePaymentButton');
+    if (!btn) return;
+
+    btn.addEventListener('click', async function (e) {
+      e.preventDefault();
+
+      const result = await Swal.fire({
+        title: 'Confirmar pago',
+        text: '¿Deseas confirmar el pago ahora?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, pagar',
+        cancelButtonText: 'Cancelar',
+        reverseButtons: true,
+        width: 520
+      });
+
+      if (result.isConfirmed) {
+        // Mostrar proceso breve y redirigir luego de éxito
+        Swal.fire({
+          title: 'Procesando pago',
+          html: 'Por favor espera...',
+          allowOutsideClick: false,
+          didOpen: () => {
+            Swal.showLoading();
+          },
+          timer: 900,
+          willClose: () => {}
+        }).then(() => {
+          Swal.fire({
+            icon: 'success',
+            title: 'Pago realizado',
+            text: 'Tu reserva ha sido confirmada.',
+            confirmButtonText: 'Ver comprobante'
+          }).then(() => {
+            // redirigir a la página de confirmación
+            window.location.href = 'reserva_confirmada.html';
+          });
+        });
+      }
+    });
+  });
+</script>
+
 <script src="./js/finalizar_reserva_tarjeta_pse.js"></script>
 </html>

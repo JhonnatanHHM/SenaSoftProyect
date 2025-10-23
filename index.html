@@ -115,60 +115,67 @@
                         class="mr-2"
                         checked
                       />
-                      <label for="enable-return" class="text-sm"
-                        >Habilitar fecha de regreso</label
-                      >
+                      <label for="enable-return" class="text-sm">Habilitar fecha de regreso</label>
                     </div>
 
                     <div class="relative input-wrapper">
-                      <span class="material-symbols-outlined input-icon"
-                        >flight_takeoff</span
-                      >
+                      <span class="material-symbols-outlined input-icon">flight_takeoff</span>
                       <input
                         id="origen"
+                        name="origen"
+                        type="text"
                         placeholder="Ciudad o aeropuerto"
                         autocomplete="off"
+                        aria-label="Origen"
+                        class="w-full"
                       />
-                      <div id="origen-suggestions" class="suggestions"></div>
+                      <div id="origen-suggestions" class="suggestions" aria-hidden="true"></div>
                     </div>
 
                     <div class="relative input-wrapper">
-                      <span class="material-symbols-outlined input-icon"
-                        >flight_land</span
-                      >
+                      <span class="material-symbols-outlined input-icon">flight_land</span>
                       <input
                         id="destino"
+                        name="destino"
+                        type="text"
                         placeholder="Ciudad o aeropuerto"
                         autocomplete="off"
                         disabled
+                        aria-label="Destino"
+                        class="w-full"
                       />
-                      <div id="destino-suggestions" class="suggestions"></div>
+                      <div id="destino-suggestions" class="suggestions" aria-hidden="true"></div>
                     </div>
 
                     <div class="relative input-wrapper">
-                      <span class="material-symbols-outlined input-icon"
-                        >calendar_month</span
-                      >
+                      <span class="material-symbols-outlined input-icon">calendar_month</span>
                       <input
                         id="departure-date"
+                        name="departureDate"
                         type="date"
                         placeholder="Seleccionar fecha"
+                        aria-label="Fecha de salida"
+                        class="w-full"
                       />
                     </div>
 
                     <div class="relative input-wrapper">
-                      <span class="material-symbols-outlined input-icon"
-                        >calendar_month</span
-                      >
+                      <span class="material-symbols-outlined input-icon">calendar_month</span>
                       <input
                         id="return-date"
+                        name="returnDate"
                         type="date"
                         placeholder="Seleccionar fecha"
+                        aria-label="Fecha de regreso"
+                        class="w-full"
                       />
                     </div>
 
                     <div class="w-full lg:col-span-1 flex gap-2 items-center">
-                      <button type="submit">Buscar</button>
+                      <label for="buscar-btn" class="sr-only">Buscar vuelos</label>
+                      <button id="buscar-btn" type="submit" class="px-4 py-2 rounded-lg bg-sky-600 text-white font-bold hover:bg-sky-700">
+                        Buscar
+                      </button>
                     </div>
                   </form>
                 </div>
