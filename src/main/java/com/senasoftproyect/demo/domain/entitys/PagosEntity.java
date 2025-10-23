@@ -59,6 +59,8 @@ public class PagosEntity {
     @Column(nullable = false)
     private String telefono;
 
+    private Long usuario;
+
     @Schema(description = "Enumeración que representa los metodos posibles del pago")
     public enum MetodoStatus {
         CREDITO,
@@ -73,7 +75,7 @@ public class PagosEntity {
         CANCELADO
     }
 
-    public PagosEntity(Long idPago, MetodoStatus metodo, BigDecimal total, PagoStatus estado, LocalDateTime fechaPago, String nombresPagador, String tipoDocumento, String numeroDocumento, String email, String telefono) {
+    public PagosEntity(Long idPago, MetodoStatus metodo, BigDecimal total, PagoStatus estado, LocalDateTime fechaPago, String nombresPagador, String tipoDocumento, String numeroDocumento, String email, String telefono, Long usuario) {
         this.idPago = idPago;
         this.metodo = metodo;
         this.total = total;
@@ -84,6 +86,7 @@ public class PagosEntity {
         this.numeroDocumento = numeroDocumento;
         this.email = email;
         this.telefono = telefono;
+        this.usuario = usuario;
     }
 
     public PagosEntity() {
@@ -167,5 +170,13 @@ public class PagosEntity {
 
     public void setTelefono(String telefono) {
         this.telefono = telefono;
+    }
+
+    public Long getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(Long usuario) {
+        this.usuario = usuario;
     }
 }

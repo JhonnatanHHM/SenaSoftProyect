@@ -1,9 +1,9 @@
 package com.senasoftproyect.demo.application.service;
 
 import com.senasoftproyect.demo.application.dtos.AsientosDTO;
-import com.senasoftproyect.demo.application.dtos.AsientosStatusDTO;
 import com.senasoftproyect.demo.domain.entitys.AsientosEntity;
 import com.senasoftproyect.demo.domain.repository.AsientosRepository;
+import com.senasoftproyect.demo.domain.repository.UsuariosRepository;
 import com.senasoftproyect.demo.domain.service.AsientosService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,10 +16,12 @@ import java.util.stream.Collectors;
 @Service
 public class AsientosServiceImple implements AsientosService {
 
+    private final UsuariosRepository usuariosRepository;
     private final AsientosRepository asientosRepository;
 
     @Autowired
-    public AsientosServiceImple(AsientosRepository asientosRepository) {
+    public AsientosServiceImple(UsuariosRepository usuariosRepository, AsientosRepository asientosRepository) {
+        this.usuariosRepository = usuariosRepository;
         this.asientosRepository = asientosRepository;
     }
 
@@ -61,17 +63,35 @@ public class AsientosServiceImple implements AsientosService {
 
     @Transactional
     @Override
-    public AsientosDTO actualizarEstado(AsientosStatusDTO asientosStatusDTO) {
+    public AsientosDTO actualizarEstado(Long idAsiento, Long idUsuario) {
 
-        AsientosEntity asiento = asientosRepository.getByIdAsiento(asientosStatusDTO.getIdAsiento())
-                .orElseThrow(() -> new RuntimeException("Asiento no encontrado con id " + asientosStatusDTO.getIdAsiento()));
+        AsientosEntity asiento = asientosRepository.getByIdAsiento(idAsiento)
+                .orElseThrow(() -> new RuntimeException("Asiento no encontrado con id " + idAsiento));
 
-        asiento.setEstado(asientosStatusDTO.getNuevoEstado());
-        asiento.setUsuarioReservado(asiento.getUsuarioReservado());
+        switch (asiento.getEstado()) {
+            case OCUPADO:
+                throw new RuntimeException("El asiento ya está ocupado y no se puede modificar.");
 
-        AsientosDTO asientosDTO = convertToDto(asientosRepository.save(asiento));
+            case SELECCIONADO:
+                asiento.setEstado(AsientosEntity.AsientoStatus.DISPONIBLE);
+                asiento.setUsuarioReservado(null);
+                break;
 
-        return asientosDTO;
+            case DISPONIBLE:
+                asiento.setEstado(AsientosEntity.AsientoStatus.SELECCIONADO);
+                asiento.setUsuarioReservado(
+                        usuariosRepository.getByIdUsuario(idUsuario)
+                                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con id " + idUsuario))
+                                .getIdUsuario()
+                );
+                break;
+
+            default:
+                throw new RuntimeException("Estado del asiento no reconocido: " + asiento.getEstado());
+        }
+
+        AsientosEntity actualizado = asientosRepository.save(asiento);
+        return convertToDto(actualizado);
     }
 
     private AsientosDTO convertToDto(AsientosEntity entity) {

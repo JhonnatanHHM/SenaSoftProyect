@@ -43,4 +43,9 @@ public class TicketsRepositoryImple implements TicketsRepository {
     public Optional<TicketsEntity> getByIdTicket(Long idTicket) {
         return ticketsCrudRepository.findById(idTicket);
     }
+
+    @Override
+    public List<TicketsEntity> getByUsuarioIdUsuario(Long idUsuario) {
+        return ticketsCrudRepository.findByUsuarioIdUsuario(idUsuario);
+    }
 }

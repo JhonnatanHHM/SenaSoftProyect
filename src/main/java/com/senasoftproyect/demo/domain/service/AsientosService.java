@@ -1,7 +1,6 @@
 package com.senasoftproyect.demo.domain.service;
 
 import com.senasoftproyect.demo.application.dtos.AsientosDTO;
-import com.senasoftproyect.demo.application.dtos.AsientosStatusDTO;
 import jakarta.transaction.Transactional;
 
 import java.util.List;
@@ -20,5 +19,5 @@ public interface AsientosService {
     void delete(Long idAsiento);
 
     @Transactional
-    AsientosDTO actualizarEstado(AsientosStatusDTO asientosStatusDTO);
+    AsientosDTO actualizarEstado(Long idAsiento, Long idUsuario);
 }

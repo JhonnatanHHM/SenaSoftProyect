@@ -3,16 +3,16 @@ package com.senasoftproyect.demo.application.dtos;
 public class TicketsDTO {
 
     private Long idTicket;
-    private Long idReserva;
+    private ReservasCompleteDTO Reserva;
     private String qrCode;
     private Long idUsuario;
 
     public TicketsDTO() {
     }
 
-    public TicketsDTO(Long idTicket, Long idReserva, String qrCode, Long idUsuario) {
+    public TicketsDTO(Long idTicket, ReservasCompleteDTO Reserva, String qrCode, Long idUsuario) {
         this.idTicket = idTicket;
-        this.idReserva = idReserva;
+        this.Reserva = Reserva;
         this.qrCode = qrCode;
         this.idUsuario = idUsuario;
     }
@@ -25,12 +25,12 @@ public class TicketsDTO {
         this.idTicket = idTicket;
     }
 
-    public Long getIdReserva() {
-        return idReserva;
+    public ReservasCompleteDTO getReserva() {
+        return Reserva;
     }
 
-    public void setIdReserva(Long idReserva) {
-        this.idReserva = idReserva;
+    public void setReserva(ReservasCompleteDTO reserva) {
+        this.Reserva = reserva;
     }
 
     public String getQrCode() {

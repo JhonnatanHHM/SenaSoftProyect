@@ -16,4 +16,6 @@ public interface TicketsService {
     TicketsEntity update(TicketsEntity ticket);
 
     void delete(Long idTicket);
+
+    List<TicketsEntity> getByUsuarioIdUsuario(Long idUsuario);
 }

@@ -12,17 +12,19 @@ public class ReservasDTO {
     private Long pagoId;
     private Long vueloId;
     private ReservasEntity.ReservaEstado estado;
+    private Long usuario;
 
     public ReservasDTO() {
     }
 
-    public ReservasDTO(Long idReserva, String numeroReserva, List<Long> pasajerosIds, Long pagoId, Long vueloId, ReservasEntity.ReservaEstado estado) {
+    public ReservasDTO(Long idReserva, String numeroReserva, List<Long> pasajerosIds, Long pagoId, Long vueloId, ReservasEntity.ReservaEstado estado, Long usuario) {
         this.idReserva = idReserva;
         this.numeroReserva = numeroReserva;
         this.pasajerosIds = pasajerosIds;
         this.pagoId = pagoId;
         this.vueloId = vueloId;
         this.estado = estado;
+        this.usuario = usuario;
     }
 
     public Long getIdReserva() {
@@ -71,5 +73,13 @@ public class ReservasDTO {
 
     public void setEstado(ReservasEntity.ReservaEstado estado) {
         this.estado = estado;
+    }
+
+    public Long getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(Long usuario) {
+        this.usuario = usuario;
     }
 }

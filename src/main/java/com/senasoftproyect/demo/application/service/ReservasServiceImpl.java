@@ -1,14 +1,8 @@
 package com.senasoftproyect.demo.application.service;
 
 import com.senasoftproyect.demo.application.dtos.*;
-import com.senasoftproyect.demo.domain.entitys.PagosEntity;
-import com.senasoftproyect.demo.domain.entitys.PasajerosEntity;
-import com.senasoftproyect.demo.domain.entitys.ReservasEntity;
-import com.senasoftproyect.demo.domain.entitys.VuelosEntity;
-import com.senasoftproyect.demo.domain.repository.PagosRepository;
-import com.senasoftproyect.demo.domain.repository.PasajerosRepository;
-import com.senasoftproyect.demo.domain.repository.ReservasRepository;
-import com.senasoftproyect.demo.domain.repository.VuelosRepository;
+import com.senasoftproyect.demo.domain.entitys.*;
+import com.senasoftproyect.demo.domain.repository.*;
 import com.senasoftproyect.demo.domain.service.ReservasService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,6 +15,7 @@ import java.util.stream.Collectors;
 @Service
 public class ReservasServiceImpl implements ReservasService {
 
+    private final UsuariosRepository usuariosRepository;
     private final VuelosServiceImpl vuelosService;
     private final ReservasRepository reservasRepository;
     private final PasajerosRepository pasajerosRepository;
@@ -28,10 +23,11 @@ public class ReservasServiceImpl implements ReservasService {
     private final VuelosRepository vuelosRepository;
 
     @Autowired
-    public ReservasServiceImpl(VuelosServiceImpl vuelosService, ReservasRepository reservasRepository,
+    public ReservasServiceImpl(UsuariosRepository usuariosRepository, VuelosServiceImpl vuelosService, ReservasRepository reservasRepository,
                                PasajerosRepository pasajerosRepository,
                                PagosRepository pagosRepository,
                                VuelosRepository vuelosRepository) {
+        this.usuariosRepository = usuariosRepository;
         this.vuelosService = vuelosService;
         this.reservasRepository = reservasRepository;
         this.pasajerosRepository = pasajerosRepository;
@@ -87,7 +83,8 @@ public class ReservasServiceImpl implements ReservasService {
                 pasajerosIds,
                 pagoId,
                 vueloId,
-                entity.getEstado()
+                entity.getEstado(),
+                entity.getUsuario().getIdUsuario()
         );
     }
 
@@ -118,7 +115,8 @@ public class ReservasServiceImpl implements ReservasService {
                         entity.getPago().getTipoDocumento(),
                         entity.getPago().getNumeroDocumento(),
                         entity.getPago().getEmail(),
-                        entity.getPago().getTelefono()) : null;
+                        entity.getPago().getTelefono(),
+                        entity.getPago().getUsuario()) : null;
 
         VuelosCompleteDTO vueloDTO = entity.getVuelo() != null ?
                 vuelosService.convertToCompleteDto(entity.getVuelo()) : null;
@@ -147,12 +145,22 @@ public class ReservasServiceImpl implements ReservasService {
 
         String numeroReserva = generateToken();
 
+        UsuariosEntity usuario = null;
+
+        if (dto.getUsuario() != null) {
+            Optional<UsuariosEntity> usuarioOpt = usuariosRepository.getByIdUsuario(dto.getUsuario());
+            if (usuarioOpt.isPresent()) {
+                usuario = usuarioOpt.get();
+            }
+        }
+
         return new ReservasEntity(
                 dto.getIdReserva(),
                 numeroReserva,
                 pasajeros,
                 pago,
                 vuelo,
+                usuario,
                 estado
         );
     }

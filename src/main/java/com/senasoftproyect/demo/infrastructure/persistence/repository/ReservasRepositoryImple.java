@@ -1,6 +1,7 @@
 package com.senasoftproyect.demo.infrastructure.persistence.repository;
 
 import com.senasoftproyect.demo.domain.entitys.ReservasEntity;
+import com.senasoftproyect.demo.domain.entitys.TicketsEntity;
 import com.senasoftproyect.demo.domain.repository.ReservasRepository;
 import com.senasoftproyect.demo.domain.repository.crud.ReservasCrudRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,4 +44,5 @@ public class ReservasRepositoryImple implements ReservasRepository {
     public Optional<ReservasEntity> getByIdReserva(Long idReserva) {
         return reservasCrudRepository.findById(idReserva);
     }
+
 }

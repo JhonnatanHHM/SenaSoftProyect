@@ -1,8 +1,6 @@
 package com.senasoftproyect.demo.infrastructure.web.controller;
 
 import com.senasoftproyect.demo.application.dtos.AsientosDTO;
-import com.senasoftproyect.demo.application.dtos.AsientosStatusDTO;
-import com.senasoftproyect.demo.domain.entitys.AsientosEntity;
 import com.senasoftproyect.demo.domain.service.AsientosService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -96,10 +94,10 @@ public class AsientosController {
                     content = @Content
             )
     })
-    @PatchMapping("/estado")
+    @PatchMapping("/estado/{idAsiento}/{idUsuario}")
     public AsientosDTO actualizarEstado(
-            @RequestBody AsientosStatusDTO asientosStatusDTO) {
-        return asientosService.actualizarEstado(asientosStatusDTO);
+            @PathVariable Long idAsiento, @PathVariable Long idAsiento) {
+        return asientosService.actualizarEstado(idAsiento, idAsiento);
     }
 
 }

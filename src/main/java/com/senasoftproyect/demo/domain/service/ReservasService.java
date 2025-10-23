@@ -2,6 +2,7 @@ package com.senasoftproyect.demo.domain.service;
 
 import com.senasoftproyect.demo.application.dtos.ReservasCompleteDTO;
 import com.senasoftproyect.demo.application.dtos.ReservasDTO;
+import com.senasoftproyect.demo.domain.entitys.ReservasEntity;
 
 import java.util.List;
 import java.util.Optional;

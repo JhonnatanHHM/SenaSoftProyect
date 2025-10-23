@@ -2,7 +2,9 @@ package com.senasoftproyect.demo.application.service;
 
 import com.senasoftproyect.demo.application.dtos.PagosDTO;
 import com.senasoftproyect.demo.domain.entitys.PagosEntity;
+import com.senasoftproyect.demo.domain.entitys.UsuariosEntity;
 import com.senasoftproyect.demo.domain.repository.PagosRepository;
+import com.senasoftproyect.demo.domain.repository.UsuariosRepository;
 import com.senasoftproyect.demo.domain.service.PagosService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,8 +16,16 @@ import java.util.stream.Collectors;
 @Service
 public class PagosServiceImpl implements PagosService {
 
+
+    private final PagosRepository pagosRepository;
+
+    private final UsuariosRepository usuariosRepository;
+
     @Autowired
-    private PagosRepository pagosRepository;
+    public PagosServiceImpl(PagosRepository pagosRepository, UsuariosRepository usuariosRepository) {
+        this.pagosRepository = pagosRepository;
+        this.usuariosRepository = usuariosRepository;
+    }
 
     @Override
     public List<PagosDTO> getAll() {
@@ -62,19 +72,30 @@ public class PagosServiceImpl implements PagosService {
     }
 
     private PagosDTO convertToDTO(PagosEntity entity) {
+        Long usuarioId = null;
+
+        if (entity.getUsuario() != null) {
+            Optional<UsuariosEntity> usuarioOpt = usuariosRepository.getByIdUsuario(entity.getUsuario());
+            if (usuarioOpt.isPresent()) {
+                usuarioId = usuarioOpt.get().getIdUsuario();
+            }
+        }
+
         return new PagosDTO(
                 entity.getIdPago(),
-                entity.getMetodo() != null ? entity.getMetodo() : null,
+                entity.getMetodo(),
                 entity.getTotal(),
-                entity.getEstado() != null ? entity.getEstado() : null,
+                entity.getEstado(),
                 entity.getFechaPago(),
                 entity.getNombresPagador(),
                 entity.getTipoDocumento(),
                 entity.getNumeroDocumento(),
                 entity.getEmail(),
-                entity.getTelefono()
+                entity.getTelefono(),
+                usuarioId
         );
     }
+
 
     private PagosEntity convertToEntity(PagosDTO dto) {
         PagosEntity entity = new PagosEntity();

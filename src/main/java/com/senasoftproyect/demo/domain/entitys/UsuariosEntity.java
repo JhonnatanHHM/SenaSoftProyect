@@ -41,7 +41,10 @@ public class UsuariosEntity {
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TicketsEntity> tickets;
 
-    public UsuariosEntity(Long idUsuario, LocalDateTime fechaRegistro, boolean estado, String nombres, String primerApellido, String segundoApellido, String celular, String email, String password, List<TicketsEntity> tickets) {
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ReservasEntity> reservas;
+
+    public UsuariosEntity(Long idUsuario, LocalDateTime fechaRegistro, boolean estado, String nombres, String primerApellido, String segundoApellido, String celular, String email, String password, List<TicketsEntity> tickets, List<ReservasEntity> reservas) {
         this.idUsuario = idUsuario;
         this.fechaRegistro = fechaRegistro;
         this.estado = estado;
@@ -52,6 +55,7 @@ public class UsuariosEntity {
         this.email = email;
         this.password = password;
         this.tickets = tickets;
+        this.reservas = reservas;
     }
 
     public UsuariosEntity() {
@@ -135,5 +139,13 @@ public class UsuariosEntity {
 
     public void setTickets(List<TicketsEntity> tickets) {
         this.tickets = tickets;
+    }
+
+    public List<ReservasEntity> getReservas() {
+        return reservas;
+    }
+
+    public void setReservas(List<ReservasEntity> reservas) {
+        this.reservas = reservas;
     }
 }

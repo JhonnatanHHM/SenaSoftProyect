@@ -16,4 +16,6 @@ public interface TicketsRepository {
     TicketsEntity save(TicketsEntity ticket);
 
     Optional<TicketsEntity> getByIdTicket(Long idTicket);
+
+    List<TicketsEntity> getByUsuarioIdUsuario(Long idUsuario);
 }

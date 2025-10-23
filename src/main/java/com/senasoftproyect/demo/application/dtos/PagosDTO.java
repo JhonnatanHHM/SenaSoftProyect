@@ -47,10 +47,13 @@ public class PagosDTO {
     @Schema(description = "Teléfono de contacto del pagador", example = "+57 3104567890")
     private String telefono;
 
+    @Schema(description = "Id de usuario propietario de la cuenta del pago", example = "1L")
+    private Long usuario;
+
     public PagosDTO() {
     }
 
-    public PagosDTO(Long idPago, PagosEntity.MetodoStatus metodo, BigDecimal total, PagosEntity.PagoStatus estado, LocalDateTime fechaPago, String nombresPagador, String tipoDocumento, String numeroDocumento, String email, String telefono) {
+    public PagosDTO(Long idPago, PagosEntity.MetodoStatus metodo, BigDecimal total, PagosEntity.PagoStatus estado, LocalDateTime fechaPago, String nombresPagador, String tipoDocumento, String numeroDocumento, String email, String telefono, Long usuario) {
         this.idPago = idPago;
         this.metodo = metodo;
         this.total = total;
@@ -61,6 +64,7 @@ public class PagosDTO {
         this.numeroDocumento = numeroDocumento;
         this.email = email;
         this.telefono = telefono;
+        this.usuario = usuario;
     }
 
     public Long getIdPago() {
@@ -141,5 +145,13 @@ public class PagosDTO {
 
     public void setTelefono(String telefono) {
         this.telefono = telefono;
+    }
+
+    public Long getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(Long usuario) {
+        this.usuario = usuario;
     }
 }

@@ -1,5 +1,6 @@
 package com.senasoftproyect.demo.domain.entitys;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.util.List;
 
@@ -27,6 +28,11 @@ public class ReservasEntity {
     @JoinColumn(name = "vuelo_id")
     private VuelosEntity vuelo;
 
+    @ManyToOne
+    @JsonIgnore
+    @JoinColumn(name = "usuario")
+    private UsuariosEntity usuario;
+
     @Enumerated(EnumType.STRING)
     private ReservaEstado estado;
 
@@ -36,12 +42,13 @@ public class ReservasEntity {
         PENDIENTE
     }
 
-    public ReservasEntity(Long idReserva, String numeroReserva, List<PasajerosEntity> pasajeros, PagosEntity pago, VuelosEntity vuelo, ReservaEstado estado) {
+    public ReservasEntity(Long idReserva, String numeroReserva, List<PasajerosEntity> pasajeros, PagosEntity pago, VuelosEntity vuelo, UsuariosEntity usuario, ReservaEstado estado) {
         this.idReserva = idReserva;
         this.numeroReserva = numeroReserva;
         this.pasajeros = pasajeros;
         this.pago = pago;
         this.vuelo = vuelo;
+        this.usuario = usuario;
         this.estado = estado;
     }
 
@@ -94,5 +101,13 @@ public class ReservasEntity {
 
     public void setEstado(ReservaEstado estado) {
         this.estado = estado;
+    }
+
+    public UsuariosEntity getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(UsuariosEntity usuario) {
+        this.usuario = usuario;
     }
 }
