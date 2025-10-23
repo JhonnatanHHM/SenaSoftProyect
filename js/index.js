@@ -153,7 +153,6 @@ function crearTarjetaVuelo(vuelo) {
 async function cargarVuelos() {
   const contenedor = document.getElementById('contenedor-vuelos');
 
-  // Mostrar loading
   contenedor.innerHTML = `
     <div class="text-center py-8">
       <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
@@ -174,11 +173,9 @@ async function cargarVuelos() {
     }
 
     const vuelos = await response.json();
+    vuelosCache = Array.isArray(vuelos) ? vuelos : [vuelos];  // Guardamos globalmente
 
-    // Si es un solo vuelo, convertirlo en array
-    const vuelosArray = Array.isArray(vuelos) ? vuelos : [vuelos];
-
-    if (vuelosArray.length === 0) {
+    if (vuelosCache.length === 0) {
       contenedor.innerHTML = `
         <div class="text-center py-8">
           <p class="text-gray-600">No hay vuelos disponibles en este momento.</p>
@@ -187,8 +184,7 @@ async function cargarVuelos() {
       return;
     }
 
-    // Renderizar con paginación (PAGE_SIZE por página)
-    renderVuelosPaginados(contenedor, vuelosArray, PAGE_SIZE);
+    renderVuelosPaginados(contenedor, vuelosCache, PAGE_SIZE);
 
   } catch (error) {
     console.error('Error al cargar vuelos:', error);
@@ -375,13 +371,49 @@ if (token) {
   }
 }
 
-// 🧠 filtro
+// Variable global para guardar vuelos
+let vuelosCache = [];
 
-// Escuchar el formulario de búsqueda
+// Función para filtrar vuelos en memoria según filtros
+function filtrarVuelosLocal(origen, destino, fechaSalida, fechaRegreso, enableReturn) {
+  return vuelosCache.filter(vuelo => {
+    // Ajusta aquí según tu estructura real de vuelo y campos de fecha
+    const matchOrigen = origen ? vuelo.origen.toLowerCase().includes(origen.toLowerCase()) : true;
+    const matchDestino = destino ? vuelo.destino.toLowerCase().includes(destino.toLowerCase()) : true;
+    const matchFechaSalida = fechaSalida ? vuelo.fechaSalida === fechaSalida : true;
+
+    let matchFechaRegreso = true;
+    if (enableReturn && fechaRegreso) {
+      matchFechaRegreso = vuelo.fechaRegreso === fechaRegreso;
+    }
+
+    return matchOrigen && matchDestino && matchFechaSalida && matchFechaRegreso;
+  });
+}
+
+// Funciones para obtener orígenes y destinos únicos para autocompletar
+function obtenerOrigenes(query = '') {
+  const lowerQuery = query.toLowerCase();
+  const origenes = [...new Set(vuelosCache.map(v => v.origen))];
+  return origenes
+    .filter(o => o.toLowerCase().includes(lowerQuery))
+    .map(codigo => ({ codigo, ciudad: codigo })); // Ajusta según datos reales
+}
+
+function obtenerDestinos(origen, query = '') {
+  const lowerQuery = query.toLowerCase();
+  const destinos = [...new Set(vuelosCache.filter(v => v.origen === origen).map(v => v.destino))];
+  return destinos
+    .filter(d => d.toLowerCase().includes(lowerQuery))
+    .map(codigo => ({ codigo, ciudad: codigo })); // Ajusta según datos reales
+}
+
+// Escuchar el formulario y manejar el filtro local
 document.addEventListener('DOMContentLoaded', () => {
   const form = document.getElementById('formBusqueda');
   const enableReturn = document.getElementById('enable-return');
   const returnDateInput = document.getElementById('return-date');
+  const contenedor = document.getElementById('contenedor-vuelos');
 
   // Deshabilitar fecha de regreso si el checkbox está desmarcado
   enableReturn.addEventListener('change', () => {
@@ -391,8 +423,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Cuando el usuario envía el formulario
-  form.addEventListener('submit', async (e) => {
+  // Al enviar formulario, filtrar vuelos en memoria
+  form.addEventListener('submit', (e) => {
     e.preventDefault();
 
     const origen = form.querySelector('input[placeholder="Ciudad o aeropuerto"]').value.trim();
@@ -400,8 +432,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const fechaSalida = document.getElementById('departure-date').value;
     const fechaRegreso = document.getElementById('return-date').value;
 
-    // Mostrar loading mientras busca
-    const contenedor = document.getElementById('contenedor-vuelos');
     contenedor.innerHTML = `
       <div class="text-center py-8">
         <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
@@ -409,32 +439,11 @@ document.addEventListener('DOMContentLoaded', () => {
       </div>
     `;
 
-    try {
-      // Construir la URL con parámetros
-      const params = new URLSearchParams();
-      if (origen) params.append('origen', origen);
-      if (destino) params.append('destino', destino);
-      if (fechaSalida) params.append('fechaSalida', fechaSalida);
-      if (enableReturn.checked && fechaRegreso) params.append('fechaRegreso', fechaRegreso);
+    // Filtrar vuelos desde vuelosCache
+    setTimeout(() => { // simular async para mostrar loading
+      const vuelosFiltrados = filtrarVuelosLocal(origen, destino, fechaSalida, fechaRegreso, enableReturn.checked);
 
-      const url = `${API_URL}?${params.toString()}`;
-      console.log('🔎 Consultando:', url);
-
-      const response = await fetch(url, {
-        method: 'GET',
-        headers: {
-          'accept': '*/*'
-        }
-      });
-
-      if (!response.ok) {
-        throw new Error(`Error HTTP ${response.status}`);
-      }
-
-      const vuelos = await response.json();
-      const vuelosArray = Array.isArray(vuelos) ? vuelos : [vuelos];
-
-      if (vuelosArray.length === 0) {
+      if (vuelosFiltrados.length === 0) {
         contenedor.innerHTML = `
           <div class="text-center py-8">
             <p class="text-gray-600 font-medium">No se encontraron vuelos con esos filtros.</p>
@@ -443,27 +452,12 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
-      // Renderizar los vuelos filtrados
-      renderVuelosPaginados(contenedor, vuelosArray, PAGE_SIZE);
-
-    } catch (error) {
-      console.error('❌ Error al buscar vuelos:', error);
-      contenedor.innerHTML = `
-        <div class="text-center py-8 bg-red-50 rounded-lg">
-          <p class="text-red-600 font-medium">Error al buscar los vuelos</p>
-          <p class="text-sm text-gray-600 mt-2">${error.message}</p>
-          <button onclick="cargarVuelos()" class="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-            Reintentar
-          </button>
-        </div>
-      `;
-    }
+      renderVuelosPaginados(contenedor, vuelosFiltrados, PAGE_SIZE);
+    }, 500);
   });
 });
 
-
-// autocompletado de ciudades y aeropuertos
-
+// Autocompletado usando datos locales
 document.addEventListener('DOMContentLoaded', () => {
   const origenInput = document.getElementById('origen');
   const destinoInput = document.getElementById('destino');
@@ -473,67 +467,65 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let selectedOrigen = '';
 
-  // ----------------------
   // Autocomplete Origen
-  // ----------------------
-  origenInput.addEventListener('input', async () => {
+  origenInput.addEventListener('input', () => {
     const query = origenInput.value.trim();
+    selectedOrigen = '';
+    destinoInput.value = '';
+    destinoInput.disabled = true;
+    destinoSuggestions.innerHTML = '';
+
     if (!query) {
       origenSuggestions.innerHTML = '';
       return;
     }
 
-    try {
-      const res = await fetch(`${API_URL}/aeropuertos?search=${encodeURIComponent(query)}`);
-      const data = await res.json();
+    const opciones = obtenerOrigenes(query);
 
-      origenSuggestions.innerHTML = data
-        .map(item => `<div data-value="${item.codigo}">${item.ciudad} (${item.codigo})</div>`)
-        .join('');
-
-      // click en sugerencia
-      origenSuggestions.querySelectorAll('div').forEach(div => {
-        div.addEventListener('click', () => {
-          origenInput.value = div.dataset.value;
-          selectedOrigen = div.dataset.value; // guardamos para filtrar destinos
-          origenSuggestions.innerHTML = '';
-          destinoInput.disabled = false; // habilitar destino
-        });
-      });
-
-    } catch (error) {
-      console.error(error);
+    if (opciones.length === 0) {
+      origenSuggestions.innerHTML = `<div class="no-results">No se encontraron opciones</div>`;
+      return;
     }
+
+    origenSuggestions.innerHTML = opciones
+      .map(item => `<div data-value="${item.codigo}">${item.ciudad} (${item.codigo})</div>`)
+      .join('');
+
+    origenSuggestions.querySelectorAll('div').forEach(div => {
+      div.addEventListener('click', () => {
+        origenInput.value = div.dataset.value;
+        selectedOrigen = div.dataset.value;
+        origenSuggestions.innerHTML = '';
+        destinoInput.disabled = false;
+        destinoInput.focus();
+      });
+    });
   });
 
-  // ----------------------
   // Autocomplete Destino
-  // ----------------------
-  destinoInput.addEventListener('input', async () => {
+  destinoInput.addEventListener('input', () => {
     const query = destinoInput.value.trim();
     if (!query || !selectedOrigen) {
       destinoSuggestions.innerHTML = '';
       return;
     }
 
-    try {
-      const res = await fetch(`${API_URL}/destinos?origen=${encodeURIComponent(selectedOrigen)}&search=${encodeURIComponent(query)}`);
-      const data = await res.json();
+    const opciones = obtenerDestinos(selectedOrigen, query);
 
-      destinoSuggestions.innerHTML = data
-        .map(item => `<div data-value="${item.codigo}">${item.ciudad} (${item.codigo})</div>`)
-        .join('');
-
-      destinoSuggestions.querySelectorAll('div').forEach(div => {
-        div.addEventListener('click', () => {
-          destinoInput.value = div.dataset.value;
-          destinoSuggestions.innerHTML = '';
-        });
-      });
-
-    } catch (error) {
-      console.error(error);
+    if (opciones.length === 0) {
+      destinoSuggestions.innerHTML = `<div class="no-results">No se encontraron opciones</div>`;
+      return;
     }
+
+    destinoSuggestions.innerHTML = opciones
+      .map(item => `<div data-value="${item.codigo}">${item.ciudad} (${item.codigo})</div>`)
+      .join('');
+
+    destinoSuggestions.querySelectorAll('div').forEach(div => {
+      div.addEventListener('click', () => {
+        destinoInput.value = div.dataset.value;
+        destinoSuggestions.innerHTML = '';
+      });
+    });
   });
 });
-
