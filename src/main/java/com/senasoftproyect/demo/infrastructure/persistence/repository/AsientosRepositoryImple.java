@@ -12,6 +12,11 @@ import java.util.Optional;
 @Repository
 public class AsientosRepositoryImple implements AsientosRepository {
 
+    @Override
+    public List<AsientosEntity> saveAll(List<AsientosEntity> asientos) {
+        return asientosCrudRepository.saveAll(asientos);
+    }
+
     private final AsientosCrudRepository asientosCrudRepository;
 
     @Autowired

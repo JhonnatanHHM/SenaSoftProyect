@@ -45,4 +45,9 @@ public class ReservasRepositoryImple implements ReservasRepository {
         return reservasCrudRepository.findById(idReserva);
     }
 
+    @Override
+    public Optional<ReservasEntity> findByPago_IdPago(Long idPago) {
+        return reservasCrudRepository.findByPago_IdPago(idPago);
+    }
+
 }

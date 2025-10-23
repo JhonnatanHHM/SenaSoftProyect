@@ -18,4 +18,6 @@ public interface AsientosRepository {
 
     Optional<AsientosEntity> getByIdAsiento(Long idAsiento);
 
+    List<AsientosEntity> saveAll(List<AsientosEntity> asientos);
+
 }

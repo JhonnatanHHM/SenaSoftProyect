@@ -6,7 +6,10 @@ import com.senasoftproyect.demo.domain.repository.AsientosRepository;
 import com.senasoftproyect.demo.domain.repository.UsuariosRepository;
 import com.senasoftproyect.demo.domain.service.AsientosService;
 import jakarta.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,6 +18,9 @@ import java.util.stream.Collectors;
 
 @Service
 public class AsientosServiceImple implements AsientosService {
+
+
+    private static final Logger logger = LoggerFactory.getLogger(AsientosServiceImple.class);
 
     private final UsuariosRepository usuariosRepository;
     private final AsientosRepository asientosRepository;
@@ -117,5 +123,31 @@ public class AsientosServiceImple implements AsientosService {
         }
         entity.setUsuarioReservado(dto.getUsuarioReservado());
         return entity;
+    }
+
+    /**
+     * Cron que se ejecuta cada 10 minutos
+     * para liberar los asientos en estado SELECCIONADO.
+     */
+    @Scheduled(fixedRate = 600000) // 600000 ms = 10 minutos
+    @Transactional
+    public void liberarAsientosSeleccionados() {
+        logger.info("Ejecutando tarea programada: liberación de asientos seleccionados...");
+
+        List<AsientosEntity> asientosSeleccionados = asientosRepository.getAll().stream()
+                .filter(a -> a.getEstado() == AsientosEntity.AsientoStatus.SELECCIONADO)
+                .collect(Collectors.toList());
+
+        for (AsientosEntity asiento : asientosSeleccionados) {
+            asiento.setEstado(AsientosEntity.AsientoStatus.DISPONIBLE);
+            asiento.setUsuarioReservado(null);
+        }
+
+        if (!asientosSeleccionados.isEmpty()) {
+            asientosRepository.saveAll(asientosSeleccionados);
+            logger.info("Se liberaron {} asientos seleccionados.", asientosSeleccionados.size());
+        } else {
+            logger.info("ℹNo hay asientos seleccionados para liberar.");
+        }
     }
 }

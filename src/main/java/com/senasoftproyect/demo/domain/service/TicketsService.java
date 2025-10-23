@@ -1,5 +1,6 @@
 package com.senasoftproyect.demo.domain.service;
 
+import com.senasoftproyect.demo.application.dtos.TicketsDTO;
 import com.senasoftproyect.demo.domain.entitys.TicketsEntity;
 
 import java.util.List;
@@ -7,15 +8,15 @@ import java.util.Optional;
 
 public interface TicketsService {
 
-    List<TicketsEntity> getAll();
+    List<TicketsDTO> getAll();
 
-    Optional<TicketsEntity> getByIdTicket(Long idTicket);
+    Optional<TicketsDTO> getByIdTicket(Long idTicket);
 
-    TicketsEntity save(TicketsEntity ticket);
+    TicketsDTO save(TicketsDTO ticket);
 
-    TicketsEntity update(TicketsEntity ticket);
+    TicketsDTO update(TicketsDTO ticket);
 
     void delete(Long idTicket);
 
-    List<TicketsEntity> getByUsuarioIdUsuario(Long idUsuario);
+    List<TicketsDTO> getByUsuarioIdUsuario(Long idUsuario);
 }

@@ -17,4 +17,6 @@ public interface ReservasRepository {
 
     Optional<ReservasEntity> getByIdReserva(Long idReserva);
 
+    Optional<ReservasEntity> findByPago_IdPago(Long idPago);
+
 }

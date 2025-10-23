@@ -41,8 +41,26 @@ public class PasajerosServiceImpl implements PasajerosService {
     @Override
     public PasajerosDTO save(PasajerosDTO pasajero) {
         PasajerosEntity entity = mapToEntity(pasajero);
-        return mapToDTO(pasajerosRepository.save(entity));
+
+        if (entity.getAsiento() != null) {
+            AsientosEntity asiento = entity.getAsiento();
+
+            // Cambiamos su estado a OCUPADO solo si está DISPONIBLE o SELECCIONADO
+            if (asiento.getEstado() == AsientosEntity.AsientoStatus.DISPONIBLE ||
+                    asiento.getEstado() == AsientosEntity.AsientoStatus.SELECCIONADO) {
+
+                asiento.setEstado(AsientosEntity.AsientoStatus.OCUPADO);
+                asientosRepository.save(asiento); // Guardamos el cambio de estado en el asiento
+            } else {
+                throw new RuntimeException("El asiento seleccionado ya está ocupado.");
+            }
+        }
+
+        PasajerosEntity guardado = pasajerosRepository.save(entity);
+
+        return mapToDTO(guardado);
     }
+
 
     @Override
     public PasajerosDTO update(PasajerosDTO pasajero) {

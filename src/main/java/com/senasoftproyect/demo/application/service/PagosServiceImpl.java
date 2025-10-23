@@ -1,11 +1,10 @@
 package com.senasoftproyect.demo.application.service;
 
 import com.senasoftproyect.demo.application.dtos.PagosDTO;
-import com.senasoftproyect.demo.domain.entitys.PagosEntity;
-import com.senasoftproyect.demo.domain.entitys.UsuariosEntity;
-import com.senasoftproyect.demo.domain.repository.PagosRepository;
-import com.senasoftproyect.demo.domain.repository.UsuariosRepository;
+import com.senasoftproyect.demo.domain.entitys.*;
+import com.senasoftproyect.demo.domain.repository.*;
 import com.senasoftproyect.demo.domain.service.PagosService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,15 +15,22 @@ import java.util.stream.Collectors;
 @Service
 public class PagosServiceImpl implements PagosService {
 
-
     private final PagosRepository pagosRepository;
-
     private final UsuariosRepository usuariosRepository;
+    private final ReservasRepository reservasRepository;
+    private final TicketsRepository ticketsRepository;
 
     @Autowired
-    public PagosServiceImpl(PagosRepository pagosRepository, UsuariosRepository usuariosRepository) {
+    public PagosServiceImpl(
+            PagosRepository pagosRepository,
+            UsuariosRepository usuariosRepository,
+            ReservasRepository reservasRepository,
+            TicketsRepository ticketsRepository
+    ) {
         this.pagosRepository = pagosRepository;
         this.usuariosRepository = usuariosRepository;
+        this.reservasRepository = reservasRepository;
+        this.ticketsRepository = ticketsRepository;
     }
 
     @Override
@@ -40,26 +46,58 @@ public class PagosServiceImpl implements PagosService {
                 .map(this::convertToDTO);
     }
 
+    @Transactional
     @Override
     public PagosDTO save(PagosDTO pagoDTO) {
         PagosEntity pagoEntity = convertToEntity(pagoDTO);
+
+
+        if (pagoDTO.getUsuario() != null) {
+            usuariosRepository.getByIdUsuario(pagoDTO.getUsuario())
+                    .ifPresent(usuario -> pagoEntity.setUsuario(usuario.getIdUsuario()));
+        }
+
         PagosEntity saved = pagosRepository.save(pagoEntity);
+
+        if (saved.getEstado() == PagosEntity.PagoStatus.PAGADO) {
+            procesarReservaPorPagoAprobado(saved.getIdPago());
+        }
+
         return convertToDTO(saved);
     }
 
+    @Transactional
     @Override
     public PagosDTO update(PagosDTO pagoDTO) {
         if (pagoDTO.getIdPago() == null) {
             throw new IllegalArgumentException("El ID del pago no puede ser nulo para actualizar.");
         }
 
-        Optional<PagosEntity> optionalPago = pagosRepository.getByIdPago(pagoDTO.getIdPago());
-        if (optionalPago.isEmpty()) {
-            throw new RuntimeException("No se encontró el pago con ID: " + pagoDTO.getIdPago());
+        PagosEntity pagoEntity = pagosRepository.getByIdPago(pagoDTO.getIdPago())
+                .orElseThrow(() -> new RuntimeException("No se encontró el pago con ID: " + pagoDTO.getIdPago()));
+
+        pagoEntity.setMetodo(convertToMetodoStatus(String.valueOf(pagoDTO.getMetodo())));
+        pagoEntity.setTotal(pagoDTO.getTotal());
+        pagoEntity.setEstado(convertToPagoStatus(String.valueOf(pagoDTO.getEstado())));
+        pagoEntity.setFechaPago(pagoDTO.getFechaPago());
+        pagoEntity.setNombresPagador(pagoDTO.getNombresPagador());
+        pagoEntity.setTipoDocumento(pagoDTO.getTipoDocumento());
+        pagoEntity.setNumeroDocumento(pagoDTO.getNumeroDocumento());
+        pagoEntity.setEmail(pagoDTO.getEmail());
+        pagoEntity.setTelefono(pagoDTO.getTelefono());
+
+        if (pagoDTO.getUsuario() != null) {
+            usuariosRepository.getByIdUsuario(pagoDTO.getUsuario())
+                    .ifPresent(usuario -> pagoEntity.setUsuario(usuario.getIdUsuario()));
         }
 
-        PagosEntity pagoEntity = convertToEntity(pagoDTO);
         PagosEntity updated = pagosRepository.save(pagoEntity);
+
+
+        if (updated.getEstado() == PagosEntity.PagoStatus.PAGADO) {
+            procesarReservaPorPagoAprobado(updated.getIdPago());
+        }
+
         return convertToDTO(updated);
     }
 
@@ -71,15 +109,25 @@ public class PagosServiceImpl implements PagosService {
         pagosRepository.delete(idPago);
     }
 
-    private PagosDTO convertToDTO(PagosEntity entity) {
-        Long usuarioId = null;
 
-        if (entity.getUsuario() != null) {
-            Optional<UsuariosEntity> usuarioOpt = usuariosRepository.getByIdUsuario(entity.getUsuario());
-            if (usuarioOpt.isPresent()) {
-                usuarioId = usuarioOpt.get().getIdUsuario();
-            }
-        }
+    private void procesarReservaPorPagoAprobado(Long pago) {
+        reservasRepository.findByPago_IdPago(pago).ifPresent(reserva -> {
+
+            reserva.setEstado(ReservasEntity.ReservaEstado.CONFIRMADO);
+            reservasRepository.save(reserva);
+
+
+            TicketsEntity ticket = new TicketsEntity();
+            ticket.setReserva(reserva);
+            ticket.setUsuario(reserva.getUsuario());
+
+            ticketsRepository.save(ticket);
+        });
+    }
+
+
+    private PagosDTO convertToDTO(PagosEntity entity) {
+        Long usuarioId = entity.getUsuario() != null ? entity.getUsuario() : null;
 
         return new PagosDTO(
                 entity.getIdPago(),
@@ -114,11 +162,12 @@ public class PagosServiceImpl implements PagosService {
         return entity;
     }
 
+
     private PagosEntity.MetodoStatus convertToMetodoStatus(String metodo) {
         try {
             return metodo != null ? PagosEntity.MetodoStatus.valueOf(metodo.toUpperCase()) : PagosEntity.MetodoStatus.CREDITO;
         } catch (IllegalArgumentException e) {
-            return PagosEntity.MetodoStatus.CREDITO; // Valor por defecto seguro
+            return PagosEntity.MetodoStatus.CREDITO;
         }
     }
 
@@ -126,7 +175,7 @@ public class PagosServiceImpl implements PagosService {
         try {
             return estado != null ? PagosEntity.PagoStatus.valueOf(estado.toUpperCase()) : PagosEntity.PagoStatus.PENDIENTE;
         } catch (IllegalArgumentException e) {
-            return PagosEntity.PagoStatus.PENDIENTE; // Valor por defecto seguro
+            return PagosEntity.PagoStatus.PENDIENTE;
         }
     }
 }
