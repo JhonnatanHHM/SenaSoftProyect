@@ -482,8 +482,10 @@ function toggleSeatSelection(seat) {
   }
 
   // Find the seat element by data-id attribute
-  const seatElement = document.querySelector(`.seat[data-id="${seat.idAsiento}"]`);
-  
+  const seatElement = document.querySelector(
+    `.seat[data-id="${seat.idAsiento}"]`
+  );
+
   if (!seatElement) {
     console.log("Seat element not found for seat ID:", seat.idAsiento);
     return;
@@ -532,10 +534,36 @@ function toggleSeatSelection(seat) {
     updateSeatStatusOnServer(seat.idAsiento, "SELECCIONADO");
   }
 
+  // Save selected seats to localStorage
+  saveSelectedSeatsToLocalStorage();
+
   // Update summary
   updateSummary();
   console.log("Updated selected seats:", selectedSeats);
 }
+
+// Function to save selected seats to localStorage
+function saveSelectedSeatsToLocalStorage() {
+  try {
+    localStorage.setItem("selectedSeats", JSON.stringify(selectedSeats));
+    console.log("Selected seats saved to localStorage:", selectedSeats);
+
+    // Also save with a flight-specific key for better organization
+    const flightId = sessionStorage.getItem("selectedFlightId");
+    if (flightId) {
+      localStorage.setItem(
+        `selectedSeats_flight_${flightId}`,
+        JSON.stringify(selectedSeats)
+      );
+      console.log(
+        `Selected seats saved to localStorage with flight key: selectedSeats_flight_${flightId}`
+      );
+    }
+  } catch (e) {
+    console.error("Error saving selected seats to localStorage:", e);
+  }
+}
+
 // Function to update seat status on server (single robust implementation)
 async function updateSeatStatusOnServer(seatId, status) {
   // Get token and userId from storage (with safe defaults)
@@ -566,7 +594,10 @@ async function updateSeatStatusOnServer(seatId, status) {
   try {
     // Prepare fetch options
     const url = `http://localhost:8080/api/asientos/estado/${seatId}/${userId}`;
-    const body = JSON.stringify({ estado: status, usuarioReservado: idUsuario });
+    const body = JSON.stringify({
+      estado: status,
+      usuarioReservado: idUsuario,
+    });
 
     const options = {
       method: "PATCH",
@@ -587,7 +618,10 @@ async function updateSeatStatusOnServer(seatId, status) {
       response = await fetch(url, options);
     } catch (networkErr) {
       // Network errors (including CORS preflight failures) will be caught here
-      console.error("Network error during fetch (possible CORS/preflight issue):", networkErr);
+      console.error(
+        "Network error during fetch (possible CORS/preflight issue):",
+        networkErr
+      );
       throw networkErr; // rethrow to be handled by outer catch
     }
 
@@ -613,7 +647,10 @@ async function updateSeatStatusOnServer(seatId, status) {
       nombre: index !== -1 ? seatsData[index].nombre : `S${seatId}`,
       precio: index !== -1 ? seatsData[index].precio || 0 : 0,
       estado: status,
-      idAvion: currentFlight && currentFlight.avion ? currentFlight.avion.idAvion : null,
+      idAvion:
+        currentFlight && currentFlight.avion
+          ? currentFlight.avion.idAvion
+          : null,
       usuarioReservado: userId,
     };
 
@@ -661,9 +698,6 @@ async function updateSeatStatusOnServer(seatId, status) {
   }
 }
 
-
-
-
 // Function to remove a seat from selection
 function removeSeat(seatId) {
   // Find the seat in selectedSeats array
@@ -703,7 +737,9 @@ function updateSummary() {
   if (selectedSeatsContainer) {
     selectedSeatsContainer.innerHTML = "";
   } else {
-    console.warn("updateSummary: #selectedSeatsContainer no encontrado en el DOM");
+    console.warn(
+      "updateSummary: #selectedSeatsContainer no encontrado en el DOM"
+    );
   }
 
   if (selectedSeats.length === 0) {
@@ -775,13 +811,15 @@ document.addEventListener("DOMContentLoaded", function () {
   if (confirmButton) {
     confirmButton.addEventListener("click", function () {
       if (selectedSeats.length > 0) {
+        // Save selected seats to localStorage before redirecting
+        saveSelectedSeatsToLocalStorage();
+
         // Here you would typically send the selected seats to your backend
         // For now, we'll just redirect to the confirmation page
-        alert(
-          "Asientos seleccionados: " +
-            selectedSeats.map((s) => s.nombre).join(", ")
-        );
+        console.log("Selected seats:", selectedSeats);
         window.location.href = "confimacion_de_vuelo.html";
+      } else {
+        alert("Por favor, selecciona al menos un asiento antes de continuar.");
       }
     });
   } else {
@@ -801,7 +839,8 @@ document.addEventListener("DOMContentLoaded", function () {
   // Fetch seats when page loads
   // Diagnostic: print token and userId so developer can verify Authorization is sent
   const diagnosticToken = getToken();
-  const diagnosticUserId = sessionStorage.getItem("id") || sessionStorage.getItem("userId") || null;
+  const diagnosticUserId =
+    sessionStorage.getItem("id") || sessionStorage.getItem("userId") || null;
   console.log("Diagnostic - token (sessionStorage):", diagnosticToken);
   console.log("Diagnostic - userId (sessionStorage):", diagnosticUserId);
 
