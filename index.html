@@ -1,389 +1,582 @@
 <!DOCTYPE html>
 
 <html class="light" lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Búsqueda de Vuelos</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./css/index.css" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  </head>
 
-<head>
-  <meta charset="utf-8" />
-  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-  <title>Búsqueda de Vuelos</title>
-  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap"
-    rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
-  <link rel="stylesheet" href="./css/index.css">
-</head>
+  <body
+    class="bg-background-light dark:bg-background-dark font-display text-text-dark dark:text-gray-200"
+  >
+    <!-- Video Background (fijo y detrás) -->
+    <div class="fixed inset-0 -z-10 pointer-events-none">
+      <video autoplay muted loop class="w-full h-full object-cover">
+        <source src="./img/video.mp4" type="video/mp4" />
+        Tu navegador no soporta videos.
+      </video>
+      <div class="absolute inset-0 bg-black opacity-40"></div>
+    </div>
 
-<body class="bg-background-light dark:bg-background-dark font-display text-text-dark dark:text-gray-200">
-  <!-- Video Background (fijo y detrás) -->
-  <div class="fixed inset-0 -z-10 pointer-events-none">
-    <video autoplay muted loop class="w-full h-full object-cover">
-      <source src="./img/video.mp4" type="video/mp4">
-      Tu navegador no soporta videos.
-    </video>
-    <div class="absolute inset-0 bg-black opacity-40"></div>
-  </div>
+    <div
+      class="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden"
+    >
+      <div class="layout-container flex h-full grow flex-col">
+        <header
+          id="main-header"
+          class="bg-white/20 dark:bg-background-dark/60 backdrop-blur-md sticky top-0 z-50 shadow-sm transition-colors duration-300"
+        >
+          <div class="container mx-auto px-4">
+            <div
+              class="flex items-center justify-between whitespace-nowrap h-20"
+            >
+              <div class="flex items-center gap-4 text-white">
+                <span class="material-symbols-outlined text-3xl">flight</span>
+                <h2 class="text-xl font-bold leading-tight tracking-[-0.015em]">
+                  Airline
+                </h2>
+              </div>
 
-  <div class="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden">
-    <div class="layout-container flex h-full grow flex-col">
-      <header id="main-header"
-        class="bg-white/20 dark:bg-background-dark/60 backdrop-blur-md sticky top-0 z-50 shadow-sm transition-colors duration-300">
-        <div class="container mx-auto px-4">
-          <div class="flex items-center justify-between whitespace-nowrap h-20">
-            <div class="flex items-center gap-4 text-white">
-              <span class="material-symbols-outlined text-3xl">flight</span>
-              <h2 class="text-xl font-bold leading-tight tracking-[-0.015em]">
-                Airline
-              </h2>
-            </div>
-
-            <div class="hidden md:flex items-center gap-9"></div>
-            <div class="flex gap-2">
-              <button
-                class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-secondary dark:bg-gray-700 text-text-dark dark:text-gray-200 text-sm font-bold leading-normal tracking-[0.015em] transition-colors hover:bg-gray-200 dark:hover:bg-gray-600">
-                <span class="truncate"><a href="vuelos.html">Mis Vuelos</a></span>
-              </button>
-              <button
-                class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-secondary dark:bg-gray-700 text-text-dark dark:text-gray-200 text-sm font-bold leading-normal tracking-[0.015em] transition-colors hover:bg-gray-200 dark:hover:bg-gray-600">
-                <span class="truncate"><a href="login.html">Iniciar Sesión</a></span>
-              </button>
+              <div class="hidden md:flex items-center gap-9"></div>
+              <div class="flex gap-2">
+                <button
+                  class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-secondary dark:bg-gray-700 text-text-dark dark:text-gray-200 text-sm font-bold leading-normal tracking-[0.015em] transition-colors hover:bg-gray-200 dark:hover:bg-gray-600"
+                >
+                  <span class="truncate"
+                    ><a href="vuelos.html">Mis Vuelos</a></span
+                  >
+                </button>
+                <button
+                  class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-secondary dark:bg-gray-700 text-text-dark dark:text-gray-200 text-sm font-bold leading-normal tracking-[0.015em] transition-colors hover:bg-gray-200 dark:hover:bg-gray-600"
+                >
+                  <span class="truncate"
+                    ><a href="login.html">Iniciar Sesión</a></span
+                  >
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      </header>
-      <main class="flex-1">
-        <section class="relative bg-white dark:bg-background-dark min-h-screen overflow-visible">
-          <!-- Video Background -->
-          <div class="absolute inset-0 z-0">
-            <video autoplay muted loop class="w-full h-full object-cover">
-              <source src="./img/video.mp4" type="video/mp4">
-              Tu navegador no soporta videos.
-            </video>
-            <div class="absolute inset-0 bg-black opacity-40"></div>
-          </div>
+        </header>
+        <main class="flex-1">
+          <section
+            class="relative bg-white dark:bg-background-dark min-h-screen overflow-visible"
+          >
+            <!-- Video Background -->
+            <div class="absolute inset-0 z-0">
+              <video autoplay muted loop class="w-full h-full object-cover">
+                <source src="./img/video.mp4" type="video/mp4" />
+                Tu navegador no soporta videos.
+              </video>
+              <div class="absolute inset-0 bg-black opacity-40"></div>
+            </div>
 
-          <div class="container mx-auto px-4 relative z-10 pt-28 md:pt-56 pb-12">
-            <div class="flex flex-col gap-8">
-              <div class="text-center -mt-10 md:mt-[-40px]">
-                <p
-                  class="text-5xl md:text-6xl font-black leading-tight tracking-[-0.033em] text-sky-500 dark:text-white animated-heading">
-                  Encuentra tu próximo vuelo
-                </p>
-                <p class="text-white dark:text-gray-400 text-lg font-normal leading-normal mt-2 animated-subtitle">
-                  Busca las mejores ofertas en vuelos a tus destinos favoritos.
-                </p>
+            <div
+              class="container mx-auto px-4 relative z-10 pt-28 md:pt-56 pb-12"
+            >
+              <div class="flex flex-col gap-8">
+                <div class="text-center -mt-10 md:mt-[-40px]">
+                  <p
+                    class="text-5xl md:text-6xl font-black leading-tight tracking-[-0.033em] text-sky-500 dark:text-white animated-heading"
+                  >
+                    Encuentra tu próximo vuelo
+                  </p>
+                  <p
+                    class="text-white dark:text-gray-400 text-lg font-normal leading-normal mt-2 animated-subtitle"
+                  >
+                    Busca las mejores ofertas en vuelos a tus destinos
+                    favoritos.
+                  </p>
+                </div>
+
+                <div
+                  class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm p-6 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700"
+                >
+                  <!-- Ajustes: items-start en móviles, padding extra y overflow-visible -->
+                  <form
+                    id="formBusqueda"
+                    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 items-start md:items-end"
+                  >
+                    <div class="col-span-full flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        id="enable-return"
+                        class="mr-2"
+                        checked
+                      />
+                      <label for="enable-return" class="text-sm"
+                        >Habilitar fecha de regreso</label
+                      >
+                    </div>
+
+                    <div class="relative input-wrapper">
+                      <span class="material-symbols-outlined input-icon"
+                        >flight_takeoff</span
+                      >
+                      <input
+                        id="origen"
+                        placeholder="Ciudad o aeropuerto"
+                        autocomplete="off"
+                      />
+                      <div id="origen-suggestions" class="suggestions"></div>
+                    </div>
+
+                    <div class="relative input-wrapper">
+                      <span class="material-symbols-outlined input-icon"
+                        >flight_land</span
+                      >
+                      <input
+                        id="destino"
+                        placeholder="Ciudad o aeropuerto"
+                        autocomplete="off"
+                        disabled
+                      />
+                      <div id="destino-suggestions" class="suggestions"></div>
+                    </div>
+
+                    <div class="relative input-wrapper">
+                      <span class="material-symbols-outlined input-icon"
+                        >calendar_month</span
+                      >
+                      <input
+                        id="departure-date"
+                        type="date"
+                        placeholder="Seleccionar fecha"
+                      />
+                    </div>
+
+                    <div class="relative input-wrapper">
+                      <span class="material-symbols-outlined input-icon"
+                        >calendar_month</span
+                      >
+                      <input
+                        id="return-date"
+                        type="date"
+                        placeholder="Seleccionar fecha"
+                      />
+                    </div>
+
+                    <div class="w-full lg:col-span-1 flex gap-2 items-center">
+                      <button type="submit">Buscar</button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </section>
+          <section class="bg-secondary dark:bg-background-dark/90 py-12">
+            <div class="container mx-auto px-4">
+              <div class="flex flex-col lg:flex-row gap-8">
+                <!-- Flight Results -->
+                <div class="w-full">
+                  <!-- Resultados de vuelos -->
+                  <div class="w-full">
+                    <div class="flex justify-between items-center mb-6">
+                      <h2 class="text-2xl font-bold">Vuelos encontrados</h2>
+                    </div>
+                    <div id="contenedor-vuelos" class="space-y-4 w-full">
+                      <!-- contenido aquí -->
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Secciones comerciales y footer añadidos -->
+          <section class="bg-transparent relative z-10 py-16">
+            <div class="container mx-auto px-4">
+              <!-- Ofertas destacadas -->
+              <h3
+                class="text-3xl font-extrabold text-white dark:text-white mb-6 text-center"
+              >
+                Ofertas destacadas
+              </h3>
+              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <article
+                  class="rounded-xl overflow-hidden shadow-lg bg-white/80 dark:bg-gray-800/70 p-4"
+                >
+                  <div class="flex items-start justify-between">
+                    <div>
+                      <h4
+                        class="text-xl font-bold text-text-dark dark:text-gray-200"
+                      >
+                        Nueva York — Londres
+                      </h4>
+                      <p class="text-sm text-gray-600 dark:text-gray-300 mt-1">
+                        Ida y vuelta desde
+                        <span class="font-extrabold text-sky-600">$399</span>
+                      </p>
+                    </div>
+                    <div class="text-sm text-gray-500">Directo • 7h</div>
+                  </div>
+                  <p class="mt-4 text-sm text-gray-600 dark:text-gray-300">
+                    Reserva hoy y obtén prioridad de embarque gratis. Asientos
+                    limitados.
+                  </p>
+                  <div class="mt-4 flex gap-2">
+                    <button
+                      class="px-4 py-2 rounded-lg bg-sky-500 text-white font-bold hover:bg-sky-600"
+                    >
+                      Reservar
+                    </button>
+                    <button
+                      class="px-3 py-2 rounded-lg border border-gray-300 text-sm"
+                    >
+                      Detalles
+                    </button>
+                  </div>
+                </article>
+
+                <article
+                  class="rounded-xl overflow-hidden shadow-lg bg-white/80 dark:bg-gray-800/70 p-4"
+                >
+                  <div class="flex items-start justify-between">
+                    <div>
+                      <h4
+                        class="text-xl font-bold text-text-dark dark:text-gray-200"
+                      >
+                        Bogotá — Miami
+                      </h4>
+                      <p class="text-sm text-gray-600 dark:text-gray-300 mt-1">
+                        Solo ida desde
+                        <span class="font-extrabold text-sky-600">$129</span>
+                      </p>
+                    </div>
+                    <div class="text-sm text-gray-500">2h 45m</div>
+                  </div>
+                  <p class="mt-4 text-sm text-gray-600 dark:text-gray-300">
+                    Promoción de verano: equipaje de mano incluido.
+                  </p>
+                  <div class="mt-4 flex gap-2">
+                    <button
+                      class="px-4 py-2 rounded-lg bg-sky-500 text-white font-bold hover:bg-sky-600"
+                    >
+                      Reservar
+                    </button>
+                    <button
+                      class="px-3 py-2 rounded-lg border border-gray-300 text-sm"
+                    >
+                      Detalles
+                    </button>
+                  </div>
+                </article>
+
+                <article
+                  class="rounded-xl overflow-hidden shadow-lg bg-white/80 dark:bg-gray-800/70 p-4"
+                >
+                  <div class="flex items-start justify-between">
+                    <div>
+                      <h4
+                        class="text-xl font-bold text-text-dark dark:text-gray-200"
+                      >
+                        Santiago — Madrid
+                      </h4>
+                      <p class="text-sm text-gray-600 dark:text-gray-300 mt-1">
+                        Ida y vuelta desde
+                        <span class="font-extrabold text-sky-600">$459</span>
+                      </p>
+                    </div>
+                    <div class="text-sm text-gray-500">11h</div>
+                  </div>
+                  <p class="mt-4 text-sm text-gray-600 dark:text-gray-300">
+                    Cancelación flexible disponible.
+                  </p>
+                  <div class="mt-4 flex gap-2">
+                    <button
+                      class="px-4 py-2 rounded-lg bg-sky-500 text-white font-bold hover:bg-sky-600"
+                    >
+                      Reservar
+                    </button>
+                    <button
+                      class="px-3 py-2 rounded-lg border border-gray-300 text-sm"
+                    >
+                      Detalles
+                    </button>
+                  </div>
+                </article>
+              </div>
+
+              <!-- Características -->
+              <div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div
+                  class="text-center p-6 rounded-xl bg-white/80 dark:bg-gray-800/70 shadow"
+                >
+                  <span class="material-symbols-outlined text-4xl text-sky-500"
+                    >support_agent</span
+                  >
+                  <h5 class="mt-4 font-bold text-text-dark dark:text-gray-100">
+                    Atención 24/7
+                  </h5>
+                  <p class="mt-2 text-sm text-gray-600 dark:text-gray-300">
+                    Soporte siempre disponible antes, durante y después del
+                    vuelo.
+                  </p>
+                </div>
+                <div
+                  class="text-center p-6 rounded-xl bg-white/80 dark:bg-gray-800/70 shadow"
+                >
+                  <span class="material-symbols-outlined text-4xl text-sky-500"
+                    >local_offer</span
+                  >
+                  <h5 class="mt-4 font-bold text-text-dark dark:text-gray-100">
+                    Mejores precios
+                  </h5>
+                  <p class="mt-2 text-sm text-gray-600 dark:text-gray-300">
+                    Comparación automática para darte la tarifa más competitiva.
+                  </p>
+                </div>
+                <div
+                  class="text-center p-6 rounded-xl bg-white/80 dark:bg-gray-800/70 shadow"
+                >
+                  <span class="material-symbols-outlined text-4xl text-sky-500"
+                    >verified</span
+                  >
+                  <h5 class="mt-4 font-bold text-text-dark dark:text-gray-100">
+                    Viaja seguro
+                  </h5>
+                  <p class="mt-2 text-sm text-gray-600 dark:text-gray-300">
+                    Protocolos de limpieza y flexibilidad en cambios de fecha.
+                  </p>
+                </div>
+              </div>
+
+              <!-- Testimonios (carrusel continuo) -->
+              <div class="mt-12">
+                <h3
+                  class="text-2xl font-bold text-white dark:text-white mb-4 text-center"
+                >
+                  Lo que dicen nuestros clientes
+                </h3>
+                <div class="overflow-hidden">
+                  <div
+                    class="marquee"
+                    role="region"
+                    aria-label="Testimonios de clientes"
+                  >
+                    <!-- track contiene el set de testimonios duplicado para loop continuo -->
+                    <div
+                      class="marquee-track"
+                      id="marqueeTrack"
+                      aria-hidden="false"
+                    >
+                      <!-- bloque 1 -->
+                      <blockquote class="marquee-card rounded-lg">
+                        <p class="text-sm">
+                          "Excelente servicio, vuelo puntual y personal muy
+                          atento. Volveré a reservar con Airline."
+                        </p>
+                        <footer>— María G.</footer>
+                      </blockquote>
+
+                      <!-- bloque 2 -->
+                      <blockquote class="marquee-card rounded-lg">
+                        <p class="text-sm">
+                          "Gran precio y experiencia cómoda. La app facilitó
+                          todo el proceso."
+                        </p>
+                        <footer>— Carlos R.</footer>
+                      </blockquote>
+
+                      <!-- bloque 3 -->
+                      <blockquote class="marquee-card rounded-lg">
+                        <p class="text-sm">
+                          "Asistencia rápida al cambiar mi vuelo. Muy
+                          profesionales."
+                        </p>
+                        <footer>— Laura P.</footer>
+                      </blockquote>
+
+                      <!-- bloque 4 -->
+                      <blockquote class="marquee-card rounded-lg">
+                        <p class="text-sm">
+                          "Rápido, fácil y con buen soporte. Recomendado."
+                        </p>
+                        <footer>— Andrés M.</footer>
+                      </blockquote>
+
+                      <!-- duplicados para loop -->
+                      <blockquote class="marquee-card rounded-lg">
+                        <p class="text-sm">
+                          "Excelente servicio, vuelo puntual y personal muy
+                          atento. Volveré a reservar con Airline."
+                        </p>
+                        <footer>— María G.</footer>
+                      </blockquote>
+                      <blockquote class="marquee-card rounded-lg">
+                        <p class="text-sm">
+                          "Gran precio y experiencia cómoda. La app facilitó
+                          todo el proceso."
+                        </p>
+                        <footer>— Carlos R.</footer>
+                      </blockquote>
+                      <blockquote class="marquee-card rounded-lg">
+                        <p class="text-sm">
+                          "Asistencia rápida al cambiar mi vuelo. Muy
+                          profesionales."
+                        </p>
+                        <footer>— Laura P.</footer>
+                      </blockquote>
+                      <blockquote class="marquee-card rounded-lg">
+                        <p class="text-sm">
+                          "Rápido, fácil y con buen soporte. Recomendado."
+                        </p>
+                        <footer>— Andrés M.</footer>
+                      </blockquote>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <script>
+                // Ajusta la duración de la animación para que la velocidad en px/s sea constante
+                (function () {
+                  const track = document.getElementById("marqueeTrack");
+                  if (!track) return;
+                  // Esperar a que el layout esté listo
+                  requestAnimationFrame(() => {
+                    // ancho total del track (incluye duplicado)
+                    const totalWidth = track.scrollWidth;
+                    // queremos desplazar la mitad (porque duplicamos contenido)
+                    const distance = totalWidth / 2;
+                    // velocidad en px por segundo (ajusta para más lento/rápido)
+                    const pxPerSecond = 80; // 80 px/s por defecto
+                    let duration = Math.max(8, distance / pxPerSecond); // mínimo 8s
+                    // aplicar duración calculada
+                    track.style.animationDuration = duration + "s";
+                  });
+                })();
+              </script>
+
+              <!-- Llamada a la acción -->
+              <div
+                class="mt-12 rounded-xl p-8 bg-gradient-to-r from-sky-600 to-sky-400 text-white shadow-lg flex flex-col md:flex-row items-center justify-between"
+              >
+                <div>
+                  <h4 class="text-2xl font-extrabold">Listo para volar?</h4>
+                  <p class="mt-2 text-sm opacity-90">
+                    Encuentra tu vuelo ideal y aprovecha nuestras promociones
+                    exclusivas.
+                  </p>
+                </div>
+                <div class="mt-4 md:mt-0">
+                  <a
+                    href="vuelos.html"
+                    class="inline-block px-6 py-3 bg-white text-sky-600 font-bold rounded-lg hover:opacity-95"
+                    >Buscar vuelos</a
+                  >
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Footer -->
+          <footer
+            class="relative z-20 bg-white/90 dark:bg-gray-900/90 border-t border-gray-200 dark:border-gray-800"
+          >
+            <div class="container mx-auto px-4 py-10">
+              <div class="flex flex-col md:flex-row md:justify-between gap-6">
+                <div>
+                  <h5 class="text-2xl font-bold text-text-dark dark:text-white">
+                    Airline
+                  </h5>
+                  <p class="mt-2 text-sm text-gray-600 dark:text-gray-300">
+                    Conecta con los mejores destinos. Soporte 24/7 y ofertas
+                    exclusivas.
+                  </p>
+                </div>
+
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-6">
+                  <div>
+                    <h6
+                      class="font-semibold text-sm text-text-dark dark:text-white"
+                    >
+                      Empresa
+                    </h6>
+                    <ul class="mt-2 text-sm text-gray-600 dark:text-gray-300">
+                      <li>
+                        <a href="#" class="hover:underline">Sobre nosotros</a>
+                      </li>
+                      <li><a href="#" class="hover:underline">Carreras</a></li>
+                    </ul>
+                  </div>
+                  <div>
+                    <h6
+                      class="font-semibold text-sm text-text-dark dark:text-white"
+                    >
+                      Ayuda
+                    </h6>
+                    <ul class="mt-2 text-sm text-gray-600 dark:text-gray-300">
+                      <li><a href="#" class="hover:underline">Contacto</a></li>
+                      <li>
+                        <a href="#" class="hover:underline"
+                          >Preguntas frecuentes</a
+                        >
+                      </li>
+                    </ul>
+                  </div>
+                  <div>
+                    <h6
+                      class="font-semibold text-sm text-text-dark dark:text-white"
+                    >
+                      Legal
+                    </h6>
+                    <ul class="mt-2 text-sm text-gray-600 dark:text-gray-300">
+                      <li><a href="#" class="hover:underline">Términos</a></li>
+                      <li>
+                        <a href="#" class="hover:underline">Privacidad</a>
+                      </li>
+                    </ul>
+                  </div>
+                  <div>
+                    <h6
+                      class="font-semibold text-sm text-text-dark dark:text-white"
+                    >
+                      Síguenos
+                    </h6>
+                    <div class="flex gap-3 mt-2">
+                      <a
+                        href="#"
+                        class="text-gray-600 dark:text-gray-300 hover:text-sky-500"
+                        >Twitter</a
+                      >
+                      <a
+                        href="#"
+                        class="text-gray-600 dark:text-gray-300 hover:text-sky-500"
+                        >Instagram</a
+                      >
+                      <a
+                        href="#"
+                        class="text-gray-600 dark:text-gray-300 hover:text-sky-500"
+                        >Facebook</a
+                      >
+                    </div>
+                  </div>
+                </div>
               </div>
 
               <div
-                class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm p-6 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
-                <!-- Ajustes: items-start en móviles, padding extra y overflow-visible -->
-                <form id="formBusqueda"
-                  class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 items-start md:items-end">
-
-                  <div class="col-span-full flex items-center gap-2">
-                    <input type="checkbox" id="enable-return" class="mr-2" checked />
-                    <label for="enable-return" class="text-sm">Habilitar fecha de regreso</label>
-                  </div>
-
-                  <label class="flex flex-col w-full relative">
-                    <p class="text-text-dark dark:text-gray-300 text-sm font-medium leading-normal pb-2">Origen</p>
-                    <span class="material-symbols-outlined absolute left-3 top-10 text-gray-400">flight_takeoff</span>
-                    <input id="origen" placeholder="Ciudad o aeropuerto" autocomplete="off" class="pl-10" />
-                    <div id="origen-suggestions"
-                      class="suggestions absolute z-10 bg-white dark:bg-gray-700 w-full mt-1 rounded shadow-md max-h-48 overflow-y-auto">
-                    </div>
-                  </label>
-
-                  <label class="flex flex-col w-full relative">
-                    <p class="text-text-dark dark:text-gray-300 text-sm font-medium leading-normal pb-2">Destino</p>
-                    <span class="material-symbols-outlined absolute left-3 top-10 text-gray-400">flight_land</span>
-                    <input id="destino" placeholder="Ciudad o aeropuerto" autocomplete="off" class="pl-10" disabled />
-                    <div id="destino-suggestions"
-                      class="suggestions absolute z-10 bg-white dark:bg-gray-700 w-full mt-1 rounded shadow-md max-h-48 overflow-y-auto">
-                    </div>
-                  </label>
-
-                  <label class="flex flex-col w-full relative">
-                    <p class="text-text-dark dark:text-gray-300 text-sm font-medium leading-normal pb-2">Salida</p>
-                    <span class="material-symbols-outlined absolute left-3 top-10 text-gray-400">calendar_month</span>
-                    <input id="departure-date" type="date" placeholder="Seleccionar fecha"
-                      class="form-input block w-full min-w-0 rounded-lg text-text-dark dark:text-gray-200 pl-10 p-3.5 h-14" />
-                  </label>
-
-                  <label class="flex flex-col w-full relative">
-                    <p class="text-text-dark dark:text-gray-300 text-sm font-medium leading-normal pb-2">Regreso</p>
-                    <span class="material-symbols-outlined absolute left-3 top-10 text-gray-400">calendar_month</span>
-                    <input id="return-date" type="date" placeholder="Seleccionar fecha"
-                      class="form-input block w-full min-w-0 rounded-lg text-text-dark dark:text-gray-200 pl-10 p-3.5 h-14" />
-                  </label>
-
-                  <div class="w-full lg:col-span-1 flex gap-2 items-center">
-                    <button type="submit"
-                      class="w-full px-4 py-3 rounded-lg bg-sky-600 text-white font-bold hover:bg-sky-700">Buscar</button>
-                  </div>
-
-                </form>
-
+                class="mt-8 border-t border-gray-200 dark:border-gray-800 pt-6 text-sm text-gray-600 dark:text-gray-300 text-center"
+              >
+                © <span id="year"></span> Airline. Todos los derechos
+                reservados.
               </div>
             </div>
-          </div>
-        </section>
-        <section class="bg-secondary dark:bg-background-dark/90 py-12">
-          <div class="container mx-auto px-4">
-            <div class="flex flex-col lg:flex-row gap-8">
-              <!-- Flight Results -->
-              <div class="w-full lg:w-3/4">
-                <div class="flex justify-between items-center mb-6">
-                  <div class="flex items-center gap-2">
-                    <select
-                      class="form-select rounded-lg border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-text-dark dark:text-gray-200 focus:ring-primary focus:border-primary text-sm">
-                      <option>Precio (más bajo)</option>
-                      <option>Duración</option>
-                      <option>Salida</option>
-                    </select>
-                  </div>
-                </div>
-                <!-- Resultados de vuelos -->
-                <div class="w-full lg:w-3/4">
-                  <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-2xl font-bold">Vuelos encontrados</h2>
-                  </div>
-                  <div id="contenedor-vuelos" class="space-y-4">
-                    <!-- Aquí se insertarán los vuelos dinámicamente -->
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- Secciones comerciales y footer añadidos -->
-        <section class="bg-transparent relative z-10 py-16">
-          <div class="container mx-auto px-4">
-            <!-- Ofertas destacadas -->
-            <h3 class="text-3xl font-extrabold text-white dark:text-white mb-6 text-center">Ofertas destacadas</h3>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              <article class="rounded-xl overflow-hidden shadow-lg bg-white/80 dark:bg-gray-800/70 p-4">
-                <div class="flex items-start justify-between">
-                  <div>
-                    <h4 class="text-xl font-bold text-text-dark dark:text-gray-200">Nueva York — Londres</h4>
-                    <p class="text-sm text-gray-600 dark:text-gray-300 mt-1">Ida y vuelta desde <span
-                        class="font-extrabold text-sky-600">$399</span></p>
-                  </div>
-                  <div class="text-sm text-gray-500">Directo • 7h</div>
-                </div>
-                <p class="mt-4 text-sm text-gray-600 dark:text-gray-300">Reserva hoy y obtén prioridad de embarque
-                  gratis. Asientos limitados.</p>
-                <div class="mt-4 flex gap-2">
-                  <button
-                    class="px-4 py-2 rounded-lg bg-sky-500 text-white font-bold hover:bg-sky-600">Reservar</button>
-                  <button class="px-3 py-2 rounded-lg border border-gray-300 text-sm">Detalles</button>
-                </div>
-              </article>
-
-              <article class="rounded-xl overflow-hidden shadow-lg bg-white/80 dark:bg-gray-800/70 p-4">
-                <div class="flex items-start justify-between">
-                  <div>
-                    <h4 class="text-xl font-bold text-text-dark dark:text-gray-200">Bogotá — Miami</h4>
-                    <p class="text-sm text-gray-600 dark:text-gray-300 mt-1">Solo ida desde <span
-                        class="font-extrabold text-sky-600">$129</span></p>
-                  </div>
-                  <div class="text-sm text-gray-500">2h 45m</div>
-                </div>
-                <p class="mt-4 text-sm text-gray-600 dark:text-gray-300">Promoción de verano: equipaje de mano incluido.
-                </p>
-                <div class="mt-4 flex gap-2">
-                  <button
-                    class="px-4 py-2 rounded-lg bg-sky-500 text-white font-bold hover:bg-sky-600">Reservar</button>
-                  <button class="px-3 py-2 rounded-lg border border-gray-300 text-sm">Detalles</button>
-                </div>
-              </article>
-
-              <article class="rounded-xl overflow-hidden shadow-lg bg-white/80 dark:bg-gray-800/70 p-4">
-                <div class="flex items-start justify-between">
-                  <div>
-                    <h4 class="text-xl font-bold text-text-dark dark:text-gray-200">Santiago — Madrid</h4>
-                    <p class="text-sm text-gray-600 dark:text-gray-300 mt-1">Ida y vuelta desde <span
-                        class="font-extrabold text-sky-600">$459</span></p>
-                  </div>
-                  <div class="text-sm text-gray-500">11h</div>
-                </div>
-                <p class="mt-4 text-sm text-gray-600 dark:text-gray-300">Cancelación flexible disponible.</p>
-                <div class="mt-4 flex gap-2">
-                  <button
-                    class="px-4 py-2 rounded-lg bg-sky-500 text-white font-bold hover:bg-sky-600">Reservar</button>
-                  <button class="px-3 py-2 rounded-lg border border-gray-300 text-sm">Detalles</button>
-                </div>
-              </article>
-            </div>
-
-            <!-- Características -->
-            <div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div class="text-center p-6 rounded-xl bg-white/80 dark:bg-gray-800/70 shadow">
-                <span class="material-symbols-outlined text-4xl text-sky-500">support_agent</span>
-                <h5 class="mt-4 font-bold text-text-dark dark:text-gray-100">Atención 24/7</h5>
-                <p class="mt-2 text-sm text-gray-600 dark:text-gray-300">Soporte siempre disponible antes, durante y
-                  después del vuelo.</p>
-              </div>
-              <div class="text-center p-6 rounded-xl bg-white/80 dark:bg-gray-800/70 shadow">
-                <span class="material-symbols-outlined text-4xl text-sky-500">local_offer</span>
-                <h5 class="mt-4 font-bold text-text-dark dark:text-gray-100">Mejores precios</h5>
-                <p class="mt-2 text-sm text-gray-600 dark:text-gray-300">Comparación automática para darte la tarifa más
-                  competitiva.</p>
-              </div>
-              <div class="text-center p-6 rounded-xl bg-white/80 dark:bg-gray-800/70 shadow">
-                <span class="material-symbols-outlined text-4xl text-sky-500">verified</span>
-                <h5 class="mt-4 font-bold text-text-dark dark:text-gray-100">Viaja seguro</h5>
-                <p class="mt-2 text-sm text-gray-600 dark:text-gray-300">Protocolos de limpieza y flexibilidad en
-                  cambios de fecha.</p>
-              </div>
-            </div>
-
-            <!-- Testimonios (carrusel continuo) -->
-            <div class="mt-12">
-              <h3 class="text-2xl font-bold text-white dark:text-white mb-4 text-center">Lo que dicen nuestros clientes
-              </h3>
-              <div class="overflow-hidden">
-                <div class="marquee" role="region" aria-label="Testimonios de clientes">
-                  <!-- track contiene el set de testimonios duplicado para loop continuo -->
-                  <div class="marquee-track" id="marqueeTrack" aria-hidden="false">
-                    <!-- bloque 1 -->
-                    <blockquote class="marquee-card rounded-lg">
-                      <p class="text-sm">"Excelente servicio, vuelo puntual y personal muy atento. Volveré a reservar
-                        con Airline."</p>
-                      <footer>— María G.</footer>
-                    </blockquote>
-
-                    <!-- bloque 2 -->
-                    <blockquote class="marquee-card rounded-lg">
-                      <p class="text-sm">"Gran precio y experiencia cómoda. La app facilitó todo el proceso."</p>
-                      <footer>— Carlos R.</footer>
-                    </blockquote>
-
-                    <!-- bloque 3 -->
-                    <blockquote class="marquee-card rounded-lg">
-                      <p class="text-sm">"Asistencia rápida al cambiar mi vuelo. Muy profesionales."</p>
-                      <footer>— Laura P.</footer>
-                    </blockquote>
-
-                    <!-- bloque 4 -->
-                    <blockquote class="marquee-card rounded-lg">
-                      <p class="text-sm">"Rápido, fácil y con buen soporte. Recomendado."</p>
-                      <footer>— Andrés M.</footer>
-                    </blockquote>
-
-                    <!-- duplicados para loop -->
-                    <blockquote class="marquee-card rounded-lg">
-                      <p class="text-sm">"Excelente servicio, vuelo puntual y personal muy atento. Volveré a reservar
-                        con Airline."</p>
-                      <footer>— María G.</footer>
-                    </blockquote>
-                    <blockquote class="marquee-card rounded-lg">
-                      <p class="text-sm">"Gran precio y experiencia cómoda. La app facilitó todo el proceso."</p>
-                      <footer>— Carlos R.</footer>
-                    </blockquote>
-                    <blockquote class="marquee-card rounded-lg">
-                      <p class="text-sm">"Asistencia rápida al cambiar mi vuelo. Muy profesionales."</p>
-                      <footer>— Laura P.</footer>
-                    </blockquote>
-                    <blockquote class="marquee-card rounded-lg">
-                      <p class="text-sm">"Rápido, fácil y con buen soporte. Recomendado."</p>
-                      <footer>— Andrés M.</footer>
-                    </blockquote>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <script>
-              // Ajusta la duración de la animación para que la velocidad en px/s sea constante
-              (function () {
-                const track = document.getElementById('marqueeTrack');
-                if (!track) return;
-                // Esperar a que el layout esté listo
-                requestAnimationFrame(() => {
-                  // ancho total del track (incluye duplicado)
-                  const totalWidth = track.scrollWidth;
-                  // queremos desplazar la mitad (porque duplicamos contenido)
-                  const distance = totalWidth / 2;
-                  // velocidad en px por segundo (ajusta para más lento/rápido)
-                  const pxPerSecond = 80; // 80 px/s por defecto
-                  let duration = Math.max(8, distance / pxPerSecond); // mínimo 8s
-                  // aplicar duración calculada
-                  track.style.animationDuration = duration + 's';
-                });
-              })();
-            </script>
-
-            <!-- Llamada a la acción -->
-            <div
-              class="mt-12 rounded-xl p-8 bg-gradient-to-r from-sky-600 to-sky-400 text-white shadow-lg flex flex-col md:flex-row items-center justify-between">
-              <div>
-                <h4 class="text-2xl font-extrabold">Listo para volar?</h4>
-                <p class="mt-2 text-sm opacity-90">Encuentra tu vuelo ideal y aprovecha nuestras promociones exclusivas.
-                </p>
-              </div>
-              <div class="mt-4 md:mt-0">
-                <a href="vuelos.html"
-                  class="inline-block px-6 py-3 bg-white text-sky-600 font-bold rounded-lg hover:opacity-95">Buscar
-                  vuelos</a>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- Footer -->
-        <footer class="relative z-20 bg-white/90 dark:bg-gray-900/90 border-t border-gray-200 dark:border-gray-800">
-          <div class="container mx-auto px-4 py-10">
-            <div class="flex flex-col md:flex-row md:justify-between gap-6">
-              <div>
-                <h5 class="text-2xl font-bold text-text-dark dark:text-white">Airline</h5>
-                <p class="mt-2 text-sm text-gray-600 dark:text-gray-300">Conecta con los mejores destinos. Soporte 24/7
-                  y ofertas exclusivas.</p>
-              </div>
-
-              <div class="grid grid-cols-2 sm:grid-cols-4 gap-6">
-                <div>
-                  <h6 class="font-semibold text-sm text-text-dark dark:text-white">Empresa</h6>
-                  <ul class="mt-2 text-sm text-gray-600 dark:text-gray-300">
-                    <li><a href="#" class="hover:underline">Sobre nosotros</a></li>
-                    <li><a href="#" class="hover:underline">Carreras</a></li>
-                  </ul>
-                </div>
-                <div>
-                  <h6 class="font-semibold text-sm text-text-dark dark:text-white">Ayuda</h6>
-                  <ul class="mt-2 text-sm text-gray-600 dark:text-gray-300">
-                    <li><a href="#" class="hover:underline">Contacto</a></li>
-                    <li><a href="#" class="hover:underline">Preguntas frecuentes</a></li>
-                  </ul>
-                </div>
-                <div>
-                  <h6 class="font-semibold text-sm text-text-dark dark:text-white">Legal</h6>
-                  <ul class="mt-2 text-sm text-gray-600 dark:text-gray-300">
-                    <li><a href="#" class="hover:underline">Términos</a></li>
-                    <li><a href="#" class="hover:underline">Privacidad</a></li>
-                  </ul>
-                </div>
-                <div>
-                  <h6 class="font-semibold text-sm text-text-dark dark:text-white">Síguenos</h6>
-                  <div class="flex gap-3 mt-2">
-                    <a href="#" class="text-gray-600 dark:text-gray-300 hover:text-sky-500">Twitter</a>
-                    <a href="#" class="text-gray-600 dark:text-gray-300 hover:text-sky-500">Instagram</a>
-                    <a href="#" class="text-gray-600 dark:text-gray-300 hover:text-sky-500">Facebook</a>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div
-              class="mt-8 border-t border-gray-200 dark:border-gray-800 pt-6 text-sm text-gray-600 dark:text-gray-300 text-center">
-              © <span id="year"></span> Airline. Todos los derechos reservados.
-            </div>
-          </div>
-        </footer>
-        <script src="./js/index.js"></script>
-      </main>
+          </footer>
+          <script src="./js/index.js"></script>
+        </main>
+      </div>
     </div>
-  </div>
-</body>
-
+  </body>
 </html>

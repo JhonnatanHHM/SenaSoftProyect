@@ -1,5 +1,5 @@
 // Configuración de la API
-const API_URL = 'http://localhost:8080/api/vuelos/all';
+const API_URL = "http://localhost:8080/api/vuelos/all";
 
 // Tamaño de página (máximo de vuelos por página)
 const PAGE_SIZE = 5;
@@ -8,13 +8,13 @@ const PAGE_SIZE = 5;
 function formatearFechaHora(fechaISO) {
   const fecha = new Date(fechaISO);
   const opciones = {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
   };
-  return fecha.toLocaleDateString('es-ES', opciones);
+  return fecha.toLocaleDateString("es-ES", opciones);
 }
 
 // Función para calcular duración del vuelo
@@ -29,26 +29,128 @@ function calcularDuracion(salida, llegada) {
 
 // Función para contar asientos por estado
 function contarAsientos(asientos = []) {
-  const disponibles = asientos.filter(a => a.estado === 'DISPONIBLE').length;
-  const ocupados = asientos.filter(a => a.estado === 'OCUPADO').length;
-  const seleccionados = asientos.filter(a => a.estado === 'SELECCIONADO').length;
+  const disponibles = asientos.filter((a) => a.estado === "DISPONIBLE").length;
+  const ocupados = asientos.filter((a) => a.estado === "OCUPADO").length;
+  const seleccionados = asientos.filter(
+    (a) => a.estado === "SELECCIONADO"
+  ).length;
 
   return { disponibles, ocupados, seleccionados };
 }
 
 // Inyectar estilos para forzar ancho completo de las tarjetas y evitar overflow lateral
 (function () {
-  const style = document.createElement('style');
+  const style = document.createElement("style");
   style.innerHTML = `
     /* Asegura que el contenedor y las tarjetas usen 100% del ancho disponible */
-    #contenedor-vuelos, #vuelos-list { width: 100%; max-width: 100%; box-sizing: border-box; }
-    .flight-card { width: 100% !important; max-width: 100% !important; box-sizing: border-box; margin: 0; }
-    .flight-card > .card-inner { width: 100%; box-sizing: border-box; }
+    #contenedor-vuelos, #vuelos-list { width: 100% !important; max-width: 100% !important; box-sizing: border-box; }
+    .flight-card { width: 100% !important; max-width: 100% !important; box-sizing: border-box; margin: 0 0 1rem 0; }
+    .flight-card > .card-inner { width: 100% !important; box-sizing: border-box; }
     /* Evita que imágenes u otros elementos provoquen overflow */
     .flight-card img { max-width: 48px; height: auto; display: block; }
     /* En mobiles asegurar padding interno y que no se desborde */
     @media (max-width: 640px) {
       .flight-card { padding-left: 0; padding-right: 0; }
+    }
+    /* Asegurar que las tarjetas ocupen el ancho completo en todos los dispositivos */
+    .w-full { width: 100% !important; }
+    .max-w-full { max-width: 100% !important; }
+    .box-border { box-sizing: border-box; }
+    /* Forzar ancho completo en elementos anidados */
+    .flight-card * { max-width: 100% !important; }
+    
+    /* Estilos uniformes para todos los inputs */
+    input[type="text"],
+    input[type="date"],
+    #origen,
+    #destino,
+    #departure-date,
+    #return-date {
+      border: 2px solid #e5e7eb;
+      border-radius: 0.5rem;
+      padding: 0.75rem 1rem 0.75rem 2.5rem;
+      font-size: 1rem;
+      transition: all 0.2s ease;
+      background-color: #ffffff;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    
+    input[type="text"]:focus,
+    input[type="date"]:focus,
+    #origen:focus,
+    #destino:focus,
+    #departure-date:focus,
+    #return-date:focus {
+      outline: none;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    }
+    
+    input[type="text"]::placeholder,
+    input[type="date"]::placeholder {
+      color: #9ca3af;
+    }
+    
+    /* Estilos para los iconos de los inputs */
+    .input-wrapper {
+      position: relative;
+    }
+    
+    .input-icon {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #9ca3af;
+      z-index: 1;
+    }
+    
+    /* Botón de búsqueda uniforme */
+    button[type="submit"] {
+      background-color: #3b82f6;
+      color: white;
+      border: none;
+      border-radius: 0.5rem;
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      font-weight: 600;
+      transition: background-color 0.2s ease;
+      width: 100%;
+      cursor: pointer;
+    }
+    
+    button[type="submit"]:hover {
+      background-color: #2563eb;
+    }
+    
+    /* Estilo para las sugerencias de autocompletado */
+    .suggestions {
+      position: absolute;
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 0.5rem;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      z-index: 100;
+      width: 100%;
+      max-height: 200px;
+      overflow-y: auto;
+      margin-top: 0.25rem;
+    }
+    
+    .suggestions div {
+      padding: 0.75rem 1rem;
+      cursor: pointer;
+      transition: background-color 0.1s ease;
+    }
+    
+    .suggestions div:hover {
+      background-color: #f9fafb;
+    }
+    
+    .no-results {
+      padding: 0.75rem 1rem;
+      color: #9ca3af;
     }
   `;
   document.head.appendChild(style);
@@ -56,38 +158,49 @@ function contarAsientos(asientos = []) {
 
 // Función para crear la tarjeta de vuelo (asegura ancho completo)
 function crearTarjetaVuelo(vuelo) {
-  const { disponibles, ocupados, seleccionados } = contarAsientos(vuelo.avion?.asientos || []);
+  const { disponibles, ocupados, seleccionados } = contarAsientos(
+    vuelo.avion?.asientos || []
+  );
   const duracion = calcularDuracion(vuelo.horaSalida, vuelo.horaLlegada);
   const precio = vuelo.avion?.asientos?.[0]?.precio || 150;
-  const imagen = vuelo.aerolinea?.imagen?.keyR2 || '';
+  const imagen = vuelo.aerolinea?.imagen?.keyR2 || "";
 
   return `
     <div class="flight-card w-full max-w-full box-border">
       <div class="card-inner w-full bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
         <!-- Header con aerolínea -->
-        <div class="flex items-center justify-between mb-4">
-          <div class="flex items-center gap-3">
+        <div class="flex flex-wrap items-center justify-between mb-4">
+          <div class="flex items-center gap-4">
             <img src="${imagen}"
-                 alt="${vuelo.aerolinea?.nombre || 'Aerolínea'}"
-                 class="w-12 h-12 object-contain rounded max-w-full" />
+                 alt="${vuelo.aerolinea?.nombre || "Aerolínea"}"
+                 class="w-20 h-20 object-contain rounded max-w-full" 
+                 onerror="this.src='https://via.placeholder.com/80x80?text=No+Image'" />
             <div>
-              <h3 class="font-bold text-lg">${vuelo.aerolinea?.nombre || 'Aerolínea'}</h3>
-              <p class="text-sm text-gray-600">${vuelo.avion?.modelo || ''}</p>
+              <h3 class="font-bold text-lg">${
+                vuelo.aerolinea?.nombre || "Aerolínea"
+              }</h3>
+              <p class="text-sm text-gray-600">${vuelo.avion?.modelo || ""}</p>
             </div>
           </div>
-          <div class="text-right">
+          <div class="text-right mt-2 md:mt-0">
             <p class="text-xs text-gray-500">Vuelo #${vuelo.idVuelo}</p>
-            <p class="text-xs text-gray-500">Capacidad: ${vuelo.avion?.capacidad || '-'}</p>
+            <p class="text-xs text-gray-500">Capacidad: ${
+              vuelo.avion?.capacidad || "-"
+            }</p>
           </div>
         </div>
 
         <!-- Ruta de vuelo -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center mb-4">
           <!-- Origen -->
-          <div>
-            <p class="text-2xl font-bold">${vuelo.ciudadSalida?.nombre || ''}</p>
-            <p class="text-sm text-gray-600">${vuelo.lugarSalida || ''}</p>
-            <p class="text-sm font-medium mt-1">${formatearFechaHora(vuelo.horaSalida)}</p>
+          <div class="text-center md:text-left">
+            <p class="text-2xl font-bold">${
+              vuelo.ciudadSalida?.nombre || ""
+            }</p>
+            <p class="text-sm text-gray-600">${vuelo.lugarSalida || ""}</p>
+            <p class="text-sm font-medium mt-1">${formatearFechaHora(
+              vuelo.horaSalida
+            )}</p>
           </div>
 
           <!-- Duración y línea -->
@@ -104,17 +217,21 @@ function crearTarjetaVuelo(vuelo) {
           </div>
 
           <!-- Destino -->
-          <div class="text-right">
-            <p class="text-2xl font-bold">${vuelo.ciudadLlegada?.nombre || ''}</p>
-            <p class="text-sm text-gray-600">${vuelo.lugarLlegada || ''}</p>
-            <p class="text-sm font-medium mt-1">${formatearFechaHora(vuelo.horaLlegada)}</p>
+          <div class="text-center md:text-right">
+            <p class="text-2xl font-bold">${
+              vuelo.ciudadLlegada?.nombre || ""
+            }</p>
+            <p class="text-sm text-gray-600">${vuelo.lugarLlegada || ""}</p>
+            <p class="text-sm font-medium mt-1">${formatearFechaHora(
+              vuelo.horaLlegada
+            )}</p>
           </div>
         </div>
 
         <!-- Información de asientos -->
         <div class="border-t pt-4 mt-4">
           <div class="flex flex-col md:flex-row md:justify-between items-center gap-4">
-            <div class="flex gap-4 text-sm">
+            <div class="flex flex-wrap gap-4 text-sm justify-center md:justify-start">
               <div class="flex items-center gap-2">
                 <span class="w-3 h-3 bg-green-500 rounded-full"></span>
                 <span>${disponibles} Disponibles</span>
@@ -132,7 +249,7 @@ function crearTarjetaVuelo(vuelo) {
             <div class="flex items-center gap-3">
               <p class="text-2xl font-bold text-blue-600">$${precio}</p>
               <button onclick="seleccionarVuelo(${vuelo.idVuelo})"
-                      class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                      class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors whitespace-nowrap">
                 Seleccionar
               </button>
             </div>
@@ -140,9 +257,9 @@ function crearTarjetaVuelo(vuelo) {
         </div>
 
         <!-- Contacto aerolínea -->
-        <div class="mt-3 text-xs text-gray-500 flex gap-4">
-          <span>📧 ${vuelo.aerolinea?.email || '-'}</span>
-          <span>📱 ${vuelo.aerolinea?.celular || '-'}</span>
+        <div class="mt-3 text-xs text-gray-500 flex flex-wrap gap-4 justify-center md:justify-start">
+          <span>📧 ${vuelo.aerolinea?.email || "-"}</span>
+          <span>📱 ${vuelo.aerolinea?.celular || "-"}</span>
         </div>
       </div>
     </div>
@@ -151,7 +268,7 @@ function crearTarjetaVuelo(vuelo) {
 
 // Función para cargar los vuelos
 async function cargarVuelos() {
-  const contenedor = document.getElementById('contenedor-vuelos');
+  const contenedor = document.getElementById("contenedor-vuelos");
 
   contenedor.innerHTML = `
     <div class="text-center py-8">
@@ -162,10 +279,10 @@ async function cargarVuelos() {
 
   try {
     const response = await fetch(API_URL, {
-      method: 'GET',
+      method: "GET",
       headers: {
-        'accept': '*/*'
-      }
+        accept: "*/*",
+      },
     });
 
     if (!response.ok) {
@@ -173,7 +290,17 @@ async function cargarVuelos() {
     }
 
     const vuelos = await response.json();
-    vuelosCache = Array.isArray(vuelos) ? vuelos : [vuelos];  // Guardamos globalmente
+    vuelosCache = Array.isArray(vuelos) ? vuelos : [vuelos]; // Guardamos globalmente
+
+    // Guardar vuelos en localStorage
+    try {
+      localStorage.setItem("vuelosCache", JSON.stringify(vuelosCache));
+    } catch (storageError) {
+      console.warn(
+        "No se pudo guardar los vuelos en localStorage:",
+        storageError
+      );
+    }
 
     if (vuelosCache.length === 0) {
       contenedor.innerHTML = `
@@ -185,9 +312,31 @@ async function cargarVuelos() {
     }
 
     renderVuelosPaginados(contenedor, vuelosCache, PAGE_SIZE);
-
   } catch (error) {
-    console.error('Error al cargar vuelos:', error);
+    console.error("Error al cargar vuelos:", error);
+
+    // Intentar cargar vuelos desde localStorage como fallback
+    try {
+      const storedVuelos = localStorage.getItem("vuelosCache");
+      if (storedVuelos) {
+        vuelosCache = JSON.parse(storedVuelos);
+        if (vuelosCache.length > 0) {
+          contenedor.innerHTML = `
+            <div class="text-center py-8 bg-yellow-50 rounded-lg">
+              <p class="text-yellow-700 font-medium">Mostrando datos guardados. Conéctate a internet para obtener datos actualizados.</p>
+            </div>
+          `;
+          renderVuelosPaginados(contenedor, vuelosCache, PAGE_SIZE);
+          return;
+        }
+      }
+    } catch (parseError) {
+      console.warn(
+        "No se pudieron cargar los vuelos desde localStorage:",
+        parseError
+      );
+    }
+
     contenedor.innerHTML = `
       <div class="text-center py-8 bg-red-50 rounded-lg">
         <p class="text-red-600 font-medium">Error al cargar los vuelos</p>
@@ -210,35 +359,42 @@ function renderVuelosPaginados(rootEl, vuelos, pageSize = PAGE_SIZE) {
   // contenedor base
   rootEl.innerHTML = `
     <div id="vuelos-list" class="flex flex-col gap-6 w-full"></div>
-    <div id="vuelos-pagination" class="mt-6 flex items-center justify-center gap-2"></div>
+    <div id="vuelos-pagination" class="mt-6 flex flex-wrap items-center justify-center gap-2 w-full"></div>
   `;
 
-  const listEl = document.getElementById('vuelos-list');
-  const pagEl = document.getElementById('vuelos-pagination');
+  const listEl = document.getElementById("vuelos-list");
+  const pagEl = document.getElementById("vuelos-pagination");
 
   function renderPage(page) {
     currentPage = Math.min(Math.max(1, page), totalPages);
     const start = (currentPage - 1) * pageSize;
     const pageItems = vuelos.slice(start, start + pageSize);
 
-    listEl.innerHTML = pageItems.map(v => crearTarjetaVuelo(v)).join('');
+    listEl.innerHTML = pageItems.map((v) => crearTarjetaVuelo(v)).join("");
 
     renderPagination();
-    // mover foco al primer botón de la primera tarjeta por accesibilidad (si existe)
-    const firstSelect = listEl.querySelector('button[onclick^="seleccionarVuelo"]');
-    if (firstSelect) firstSelect.setAttribute('aria-label', `Seleccionar vuelo página ${currentPage}`);
+    // Scroll to top of flight results container
+    document
+      .getElementById("contenedor-vuelos")
+      .scrollIntoView({ behavior: "smooth" });
   }
 
   function renderPagination() {
-    pagEl.innerHTML = '';
+    pagEl.innerHTML = "";
 
     // Prev
-    const prev = document.createElement('button');
-    prev.type = 'button';
-    prev.className = `px-3 py-2 rounded ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : 'bg-gray-100 hover:bg-gray-200'}`;
-    prev.innerText = 'Anterior';
+    const prev = document.createElement("button");
+    prev.type = "button";
+    prev.className = `px-3 py-2 rounded ${
+      currentPage === 1
+        ? "opacity-50 cursor-not-allowed"
+        : "bg-gray-100 hover:bg-gray-200"
+    }`;
+    prev.innerText = "Anterior";
     prev.disabled = currentPage === 1;
-    prev.addEventListener('click', () => renderPage(currentPage - 1));
+    prev.addEventListener("click", () => {
+      renderPage(currentPage - 1);
+    });
     pagEl.appendChild(prev);
 
     // Páginas (mostrar máximo 7 botones con truncamiento si es necesario)
@@ -250,27 +406,42 @@ function renderVuelosPaginados(rootEl, vuelos, pageSize = PAGE_SIZE) {
     }
 
     for (let p = startPage; p <= endPage; p++) {
-      const btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = `px-3 py-2 rounded ${p === currentPage ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`;
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = `px-3 py-2 rounded ${
+        p === currentPage
+          ? "bg-blue-600 text-white"
+          : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+      }`;
       btn.innerText = p;
-      btn.addEventListener('click', () => renderPage(p));
+      btn.addEventListener("click", () => {
+        renderPage(p);
+      });
       pagEl.appendChild(btn);
     }
 
     // Next
-    const next = document.createElement('button');
-    next.type = 'button';
-    next.className = `px-3 py-2 rounded ${currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : 'bg-gray-100 hover:bg-gray-200'}`;
-    next.innerText = 'Siguiente';
+    const next = document.createElement("button");
+    next.type = "button";
+    next.className = `px-3 py-2 rounded ${
+      currentPage === totalPages
+        ? "opacity-50 cursor-not-allowed"
+        : "bg-gray-100 hover:bg-gray-200"
+    }`;
+    next.innerText = "Siguiente";
     next.disabled = currentPage === totalPages;
-    next.addEventListener('click', () => renderPage(currentPage + 1));
+    next.addEventListener("click", () => {
+      renderPage(currentPage + 1);
+    });
     pagEl.appendChild(next);
 
     // info resumen
-    const info = document.createElement('div');
-    info.className = 'ml-4 text-sm text-gray-600';
-    info.innerText = `Mostrando ${Math.min(pageSize, totalItems - (currentPage - 1) * pageSize)} de ${totalItems} vuelos`;
+    const info = document.createElement("div");
+    info.className = "ml-4 text-sm text-gray-600";
+    info.innerText = `Mostrando ${Math.min(
+      pageSize,
+      totalItems - (currentPage - 1) * pageSize
+    )} de ${totalItems} vuelos`;
     pagEl.appendChild(info);
   }
 
@@ -280,54 +451,105 @@ function renderVuelosPaginados(rootEl, vuelos, pageSize = PAGE_SIZE) {
 
 // Función para manejar la selección de vuelo
 function seleccionarVuelo(idVuelo) {
-  console.log('Vuelo seleccionado:', idVuelo);
-  alert(`Vuelo #${idVuelo} seleccionado`);
-  // lógica adicional aquí
+  console.log("Vuelo seleccionado:", idVuelo);
+
+  // Verificar si el usuario está logueado
+  const token = sessionStorage.getItem("token");
+
+  if (!token) {
+    // Si no está logueado, mostrar mensaje y redirigir al login
+    Swal.fire({
+      title: "Acceso requerido",
+      text: "Debes iniciar sesión para seleccionar un vuelo.",
+      icon: "warning",
+      confirmButtonText: "Iniciar sesión",
+      showCancelButton: true,
+      cancelButtonText: "Cancelar",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        window.location.href = "login.html";
+      }
+    });
+    return;
+  }
+
+  // Si está logueado, proceder con la selección del vuelo
+  // Guardar el ID del vuelo en sessionStorage
+  sessionStorage.setItem("selectedFlightId", idVuelo);
+
+  // Redirigir a la página de asientos
+  window.location.href = "asientos.html";
 }
 
+// Variable global para guardar vuelos
+let vuelosCache = [];
+
 // Cargar vuelos cuando el DOM esté listo
-document.addEventListener('DOMContentLoaded', cargarVuelos);
+document.addEventListener("DOMContentLoaded", () => {
+  // Intentar cargar vuelos desde localStorage primero para una carga más rápida
+  try {
+    const storedVuelos = localStorage.getItem("vuelosCache");
+    if (storedVuelos) {
+      vuelosCache = JSON.parse(storedVuelos);
+      if (vuelosCache.length > 0) {
+        const contenedor = document.getElementById("contenedor-vuelos");
+        renderVuelosPaginados(contenedor, vuelosCache, PAGE_SIZE);
+        // Aún así, cargar vuelos actualizados desde la API
+        setTimeout(cargarVuelos, 1000);
+        return;
+      }
+    }
+  } catch (error) {
+    console.warn(
+      "No se pudieron cargar los vuelos desde localStorage al inicio:",
+      error
+    );
+  }
+
+  // Si no hay vuelos en localStorage, cargar desde la API
+  cargarVuelos();
+});
 
 // Opcional: Recargar vuelos cada 30 segundos
 // setInterval(cargarVuelos, 30000);
-      tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    colors: {
-                        "primary": "#00529B",
-                        "secondary": "#F0F2F5",
-                        "accent": {
-                            "orange": "#FF6B00",
-                            "green": "#00BFA5"
-                        },
-                        "text-dark": "#333333",
-                        "background-light": "#f6f7f8",
-                        "background-dark": "#101c22",
-                    },
-                    fontFamily: {
-                        "display": ["Plus Jakarta Sans", "sans-serif"]
-                    },
-                    borderRadius: {
-                        "DEFAULT": "0.25rem",
-                        "lg": "0.5rem",
-                        "xl": "0.75rem",
-                        "full": "9999px"
-                    },
-                },
-            },
-        }
+tailwind.config = {
+  darkMode: "class",
+  theme: {
+    extend: {
+      colors: {
+        primary: "#00529B",
+        secondary: "#F0F2F5",
+        accent: {
+          orange: "#FF6B00",
+          green: "#00BFA5",
+        },
+        "text-dark": "#333333",
+        "background-light": "#f6f7f8",
+        "background-dark": "#101c22",
+      },
+      fontFamily: {
+        display: ["Plus Jakarta Sans", "sans-serif"],
+      },
+      borderRadius: {
+        DEFAULT: "0.25rem",
+        lg: "0.5rem",
+        xl: "0.75rem",
+        full: "9999px",
+      },
+    },
+  },
+};
 
 // 🧠 Función para decodificar el JWT
 function parseJwt(token) {
   try {
-    const base64Url = token.split('.')[1];
-    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const base64Url = token.split(".")[1];
+    const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
     const jsonPayload = decodeURIComponent(
       atob(base64)
-        .split('')
-        .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
-        .join('')
+        .split("")
+        .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
+        .join("")
     );
     return JSON.parse(jsonPayload);
   } catch (e) {
@@ -361,30 +583,75 @@ if (token) {
 
         // (Opcional) añadir acción para cerrar sesión
         loginButton.addEventListener("click", () => {
-          if (confirm("¿Deseas cerrar sesión?")) {
-            sessionStorage.clear();
-            window.location.reload();
-          }
+          Swal.fire({
+            title: "¿Cerrar sesión?",
+            text: "¿Estás seguro de que deseas cerrar sesión?",
+            icon: "question",
+            showCancelButton: true,
+            confirmButtonText: "Sí, cerrar sesión",
+            cancelButtonText: "Cancelar",
+            reverseButtons: true,
+          }).then((result) => {
+            if (result.isConfirmed) {
+              sessionStorage.clear();
+              Swal.fire({
+                title: "Sesión cerrada",
+                text: "Tu sesión se ha cerrado correctamente.",
+                icon: "success",
+                confirmButtonText: "Aceptar",
+              }).then(() => {
+                window.location.reload();
+              });
+            }
+          });
         });
       }
     }
   }
 }
 
-// Variable global para guardar vuelos
-let vuelosCache = [];
-
 // Función para filtrar vuelos en memoria según filtros
-function filtrarVuelosLocal(origen, destino, fechaSalida, fechaRegreso, enableReturn) {
-  return vuelosCache.filter(vuelo => {
+function filtrarVuelosLocal(
+  origen,
+  destino,
+  fechaSalida,
+  fechaRegreso,
+  enableReturn
+) {
+  return vuelosCache.filter((vuelo) => {
     // Ajusta aquí según tu estructura real de vuelo y campos de fecha
-    const matchOrigen = origen ? vuelo.origen.toLowerCase().includes(origen.toLowerCase()) : true;
-    const matchDestino = destino ? vuelo.destino.toLowerCase().includes(destino.toLowerCase()) : true;
-    const matchFechaSalida = fechaSalida ? vuelo.fechaSalida === fechaSalida : true;
+    const matchOrigen = origen
+      ? vuelo.ciudadSalida?.nombre
+          ?.toLowerCase()
+          .includes(origen.toLowerCase()) ||
+        vuelo.lugarSalida?.toLowerCase().includes(origen.toLowerCase())
+      : true;
+    const matchDestino = destino
+      ? vuelo.ciudadLlegada?.nombre
+          ?.toLowerCase()
+          .includes(destino.toLowerCase()) ||
+        vuelo.lugarLlegada?.toLowerCase().includes(destino.toLowerCase())
+      : true;
+
+    // Para las fechas, comparamos solo la parte de la fecha (sin hora)
+    let matchFechaSalida = true;
+    if (fechaSalida) {
+      const vueloFechaSalida = new Date(vuelo.horaSalida);
+      const filtroFechaSalida = new Date(fechaSalida);
+      vueloFechaSalida.setHours(0, 0, 0, 0);
+      filtroFechaSalida.setHours(0, 0, 0, 0);
+      matchFechaSalida =
+        vueloFechaSalida.getTime() === filtroFechaSalida.getTime();
+    }
 
     let matchFechaRegreso = true;
     if (enableReturn && fechaRegreso) {
-      matchFechaRegreso = vuelo.fechaRegreso === fechaRegreso;
+      const vueloFechaRegreso = new Date(vuelo.horaLlegada);
+      const filtroFechaRegreso = new Date(fechaRegreso);
+      vueloFechaRegreso.setHours(0, 0, 0, 0);
+      filtroFechaRegreso.setHours(0, 0, 0, 0);
+      matchFechaRegreso =
+        vueloFechaRegreso.getTime() === filtroFechaRegreso.getTime();
     }
 
     return matchOrigen && matchDestino && matchFechaSalida && matchFechaRegreso;
@@ -392,45 +659,86 @@ function filtrarVuelosLocal(origen, destino, fechaSalida, fechaRegreso, enableRe
 }
 
 // Funciones para obtener orígenes y destinos únicos para autocompletar
-function obtenerOrigenes(query = '') {
+function obtenerOrigenes(query = "") {
   const lowerQuery = query.toLowerCase();
-  const origenes = [...new Set(vuelosCache.map(v => v.origen))];
+  const origenes = [
+    ...new Set(
+      vuelosCache
+        .map((v) => v.ciudadSalida?.nombre || v.lugarSalida)
+        .filter(Boolean)
+    ),
+  ];
   return origenes
-    .filter(o => o.toLowerCase().includes(lowerQuery))
-    .map(codigo => ({ codigo, ciudad: codigo })); // Ajusta según datos reales
+    .filter((o) => o.toLowerCase().includes(lowerQuery))
+    .map((nombre) => ({ codigo: nombre, ciudad: nombre }));
 }
 
-function obtenerDestinos(origen, query = '') {
+function obtenerDestinos(query = "") {
   const lowerQuery = query.toLowerCase();
-  const destinos = [...new Set(vuelosCache.filter(v => v.origen === origen).map(v => v.destino))];
+  const destinos = [
+    ...new Set(
+      vuelosCache
+        .map((v) => v.ciudadLlegada?.nombre || v.lugarLlegada)
+        .filter(Boolean)
+    ),
+  ];
   return destinos
-    .filter(d => d.toLowerCase().includes(lowerQuery))
-    .map(codigo => ({ codigo, ciudad: codigo })); // Ajusta según datos reales
+    .filter((d) => d.toLowerCase().includes(lowerQuery))
+    .map((nombre) => ({ codigo: nombre, ciudad: nombre }));
 }
 
 // Escuchar el formulario y manejar el filtro local
-document.addEventListener('DOMContentLoaded', () => {
-  const form = document.getElementById('formBusqueda');
-  const enableReturn = document.getElementById('enable-return');
-  const returnDateInput = document.getElementById('return-date');
-  const contenedor = document.getElementById('contenedor-vuelos');
+document.addEventListener("DOMContentLoaded", () => {
+  const form = document.getElementById("formBusqueda");
+  const enableReturn = document.getElementById("enable-return");
+  const returnDateInput = document.getElementById("return-date");
+  const contenedor = document.getElementById("contenedor-vuelos");
+  const origenInput = document.getElementById("origen");
+  const destinoInput = document.getElementById("destino");
+  const departureDateInput = document.getElementById("departure-date");
+  const returnDate = document.getElementById("return-date");
 
   // Deshabilitar fecha de regreso si el checkbox está desmarcado
-  enableReturn.addEventListener('change', () => {
+  enableReturn.addEventListener("change", () => {
     returnDateInput.disabled = !enableReturn.checked;
     if (!enableReturn.checked) {
-      returnDateInput.value = '';
+      returnDateInput.value = "";
     }
   });
 
   // Al enviar formulario, filtrar vuelos en memoria
-  form.addEventListener('submit', (e) => {
+  form.addEventListener("submit", (e) => {
     e.preventDefault();
+    filtrarVuelos();
+  });
 
-    const origen = form.querySelector('input[placeholder="Ciudad o aeropuerto"]').value.trim();
-    const destino = form.querySelectorAll('input[placeholder="Ciudad o aeropuerto"]')[1].value.trim();
-    const fechaSalida = document.getElementById('departure-date').value;
-    const fechaRegreso = document.getElementById('return-date').value;
+  // Mostrar todos los vuelos cuando se limpian los campos de búsqueda
+  origenInput.addEventListener("input", () => {
+    if (
+      !origenInput.value.trim() &&
+      !destinoInput.value.trim() &&
+      !departureDateInput.value
+    ) {
+      renderVuelosPaginados(contenedor, vuelosCache, PAGE_SIZE);
+    }
+  });
+
+  destinoInput.addEventListener("input", () => {
+    if (
+      !origenInput.value.trim() &&
+      !destinoInput.value.trim() &&
+      !departureDateInput.value
+    ) {
+      renderVuelosPaginados(contenedor, vuelosCache, PAGE_SIZE);
+    }
+  });
+
+  // Función para filtrar vuelos
+  function filtrarVuelos() {
+    const origen = origenInput.value.trim();
+    const destino = destinoInput.value.trim();
+    const fechaSalida = departureDateInput.value;
+    const fechaRegreso = returnDate.value;
 
     contenedor.innerHTML = `
       <div class="text-center py-8">
@@ -440,8 +748,21 @@ document.addEventListener('DOMContentLoaded', () => {
     `;
 
     // Filtrar vuelos desde vuelosCache
-    setTimeout(() => { // simular async para mostrar loading
-      const vuelosFiltrados = filtrarVuelosLocal(origen, destino, fechaSalida, fechaRegreso, enableReturn.checked);
+    setTimeout(() => {
+      // simular async para mostrar loading
+      // Si todos los campos están vacíos, mostrar todos los vuelos
+      if (!origen && !destino && !fechaSalida && !fechaRegreso) {
+        renderVuelosPaginados(contenedor, vuelosCache, PAGE_SIZE);
+        return;
+      }
+
+      const vuelosFiltrados = filtrarVuelosLocal(
+        origen,
+        destino,
+        fechaSalida,
+        fechaRegreso,
+        enableReturn.checked
+      );
 
       if (vuelosFiltrados.length === 0) {
         contenedor.innerHTML = `
@@ -454,48 +775,51 @@ document.addEventListener('DOMContentLoaded', () => {
 
       renderVuelosPaginados(contenedor, vuelosFiltrados, PAGE_SIZE);
     }, 500);
-  });
+  }
 });
 
 // Autocompletado usando datos locales
-document.addEventListener('DOMContentLoaded', () => {
-  const origenInput = document.getElementById('origen');
-  const destinoInput = document.getElementById('destino');
+document.addEventListener("DOMContentLoaded", () => {
+  const origenInput = document.getElementById("origen");
+  const destinoInput = document.getElementById("destino");
 
-  const origenSuggestions = document.getElementById('origen-suggestions');
-  const destinoSuggestions = document.getElementById('destino-suggestions');
+  const origenSuggestions = document.getElementById("origen-suggestions");
+  const destinoSuggestions = document.getElementById("destino-suggestions");
 
-  let selectedOrigen = '';
+  let selectedOrigen = "";
 
   // Autocomplete Origen
-  origenInput.addEventListener('input', () => {
+  origenInput.addEventListener("input", () => {
     const query = origenInput.value.trim();
-    selectedOrigen = '';
-    destinoInput.value = '';
+    selectedOrigen = "";
+    destinoInput.value = "";
     destinoInput.disabled = true;
-    destinoSuggestions.innerHTML = '';
+    destinoSuggestions.innerHTML = "";
 
     if (!query) {
-      origenSuggestions.innerHTML = '';
+      origenSuggestions.innerHTML = "";
       return;
     }
 
     const opciones = obtenerOrigenes(query);
 
     if (opciones.length === 0) {
-      origenSuggestions.innerHTML = `<div class="no-results">No se encontraron opciones</div>`;
+      origenSuggestions.innerHTML = `<div class="no-results p-2 text-gray-500">No se encontraron opciones</div>`;
       return;
     }
 
     origenSuggestions.innerHTML = opciones
-      .map(item => `<div data-value="${item.codigo}">${item.ciudad} (${item.codigo})</div>`)
-      .join('');
+      .map(
+        (item) =>
+          `<div class="p-2 hover:bg-gray-100 cursor-pointer" data-value="${item.codigo}">${item.ciudad}</div>`
+      )
+      .join("");
 
-    origenSuggestions.querySelectorAll('div').forEach(div => {
-      div.addEventListener('click', () => {
+    origenSuggestions.querySelectorAll("div").forEach((div) => {
+      div.addEventListener("click", () => {
         origenInput.value = div.dataset.value;
         selectedOrigen = div.dataset.value;
-        origenSuggestions.innerHTML = '';
+        origenSuggestions.innerHTML = "";
         destinoInput.disabled = false;
         destinoInput.focus();
       });
@@ -503,29 +827,73 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // Autocomplete Destino
-  destinoInput.addEventListener('input', () => {
+  destinoInput.addEventListener("input", () => {
     const query = destinoInput.value.trim();
     if (!query || !selectedOrigen) {
-      destinoSuggestions.innerHTML = '';
+      destinoSuggestions.innerHTML = "";
       return;
     }
 
-    const opciones = obtenerDestinos(selectedOrigen, query);
+    const opciones = obtenerDestinosPorOrigen(selectedOrigen, query);
 
     if (opciones.length === 0) {
-      destinoSuggestions.innerHTML = `<div class="no-results">No se encontraron opciones</div>`;
+      destinoSuggestions.innerHTML = `<div class="no-results p-2 text-gray-500">No se encontraron opciones</div>`;
       return;
     }
 
     destinoSuggestions.innerHTML = opciones
-      .map(item => `<div data-value="${item.codigo}">${item.ciudad} (${item.codigo})</div>`)
-      .join('');
+      .map(
+        (item) =>
+          `<div class="p-2 hover:bg-gray-100 cursor-pointer" data-value="${item.codigo}">${item.ciudad}</div>`
+      )
+      .join("");
 
-    destinoSuggestions.querySelectorAll('div').forEach(div => {
-      div.addEventListener('click', () => {
+    destinoSuggestions.querySelectorAll("div").forEach((div) => {
+      div.addEventListener("click", () => {
         destinoInput.value = div.dataset.value;
-        destinoSuggestions.innerHTML = '';
+        destinoSuggestions.innerHTML = "";
       });
     });
   });
+
+  // Cerrar sugerencias al hacer clic fuera
+  document.addEventListener("click", (e) => {
+    if (
+      !origenInput.contains(e.target) &&
+      !origenSuggestions.contains(e.target)
+    ) {
+      origenSuggestions.innerHTML = "";
+    }
+    if (
+      !destinoInput.contains(e.target) &&
+      !destinoSuggestions.contains(e.target)
+    ) {
+      destinoSuggestions.innerHTML = "";
+    }
+  });
 });
+
+// Función para obtener destinos disponibles para un origen específico
+function obtenerDestinosPorOrigen(origen, query = "") {
+  const lowerQuery = query.toLowerCase();
+
+  // Filtrar vuelos por el origen seleccionado
+  const vuelosDesdeOrigen = vuelosCache.filter(
+    (vuelo) =>
+      vuelo.ciudadSalida?.nombre === origen || vuelo.lugarSalida === origen
+  );
+
+  // Obtener destinos únicos de esos vuelos
+  const destinos = [
+    ...new Set(
+      vuelosDesdeOrigen
+        .map((v) => v.ciudadLlegada?.nombre || v.lugarLlegada)
+        .filter(Boolean)
+    ),
+  ];
+
+  // Filtrar por la consulta si existe
+  return destinos
+    .filter((d) => d.toLowerCase().includes(lowerQuery))
+    .map((nombre) => ({ codigo: nombre, ciudad: nombre }));
+}
