@@ -116,39 +116,83 @@
   }
 }
 
-/* Selected seat item in summary */
+/* Add custom scrollbar styles for the selected seats container */
+#selectedSeatsContainer::-webkit-scrollbar {
+  width: 6px;
+}
+
+#selectedSeatsContainer::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+#selectedSeatsContainer::-webkit-scrollbar-thumb {
+  background: #c5c5c5;
+  border-radius: 10px;
+}
+
+#selectedSeatsContainer::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* Ensure the container shows exactly two seats */
+#selectedSeatsContainer {
+  scrollbar-width: thin;
+  scrollbar-color: #c5c5c5 #f1f1f1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Style for individual seat items in the carousel */
 .selected-seat-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.75rem;
-  background-color: #f8fafc;
-  border-radius: 0.5rem;
-  border: 1px solid #e2e8f0;
-  margin-bottom: 0.5rem;
-  transition: all 0.2s ease;
+  padding: 10px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
 }
 
 .selected-seat-item:hover {
-  background-color: #f1f5f9;
-  transform: translateY(-1px);
+  background-color: #e9ecef;
+  transform: translateX(5px);
 }
 
+/* Remove button style */
 .remove-seat-btn {
-  background: #fee2e2;
-  color: #ef4444;
+  background-color: #ff4d4d;
+  color: white;
   border: none;
-  border-radius: 0.375rem;
+  border-radius: 50%;
   width: 24px;
   height: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: background-color 0.3s ease;
 }
 
 .remove-seat-btn:hover {
-  background: #fecaca;
-  transform: scale(1.1);
+  background-color: #ff1a1a;
+}
+
+/* Animation for new items entering the carousel */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.selected-seat-item {
+  animation: slideIn 0.3s ease forwards;
 }

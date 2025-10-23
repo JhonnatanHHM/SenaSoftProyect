@@ -82,6 +82,39 @@ const maxSeats = 5;
 let seatsData = [];
 let currentFlight = null;
 
+// Function to load selected seats from localStorage when page loads
+function loadSelectedSeatsFromLocalStorage() {
+  try {
+    // Get selected flight ID from sessionStorage
+    const flightId = sessionStorage.getItem("selectedFlightId");
+
+    // Try to get selected seats from flight-specific key first
+    if (flightId) {
+      const savedSeats = localStorage.getItem(
+        `selectedSeats_flight_${flightId}`
+      );
+      if (savedSeats) {
+        selectedSeats = JSON.parse(savedSeats);
+        console.log(
+          "Loaded selected seats from flight-specific key:",
+          selectedSeats
+        );
+        return;
+      }
+    }
+
+    // Fallback to generic key
+    const savedSeats = localStorage.getItem("selectedSeats");
+    if (savedSeats) {
+      selectedSeats = JSON.parse(savedSeats);
+      console.log("Loaded selected seats from generic key:", selectedSeats);
+    }
+  } catch (e) {
+    console.error("Error loading selected seats from localStorage:", e);
+    selectedSeats = [];
+  }
+}
+
 // Helper to read token from sessionStorage (centralizado)
 function getToken() {
   try {
@@ -113,6 +146,9 @@ async function fetchSeats() {
     if (!flightId) {
       throw new Error("No se ha seleccionado un vuelo válido.");
     }
+
+    // Load previously selected seats
+    loadSelectedSeatsFromLocalStorage();
 
     // Try to get flight data from cache first
     let flightData = null;
@@ -150,6 +186,9 @@ async function fetchSeats() {
 
       // Update flight information in the header
       updateFlightInfo(flightData);
+
+      // Restore selected seats UI
+      restoreSelectedSeatsUI();
       return;
     }
 
@@ -192,6 +231,9 @@ async function fetchSeats() {
 
     // Update flight information in the header
     updateFlightInfoFromId(flightId);
+
+    // Restore selected seats UI
+    restoreSelectedSeatsUI();
   } catch (error) {
     console.error("Error fetching seats:", error);
     loadingIndicator.classList.add("hidden");
@@ -214,6 +256,9 @@ async function fetchSeats() {
       console.log("Showing sample seats:", sampleSeats);
       renderSeats(sampleSeats);
       seatsContent.classList.remove("hidden");
+
+      // Restore selected seats UI
+      restoreSelectedSeatsUI();
     } else {
       errorMessageText.innerHTML = error.message;
     }
@@ -236,30 +281,37 @@ function updateFlightInfo(flightData) {
 
   if (flightRouteElement) {
     const origin =
-      flightData.ciudadSalida?.nombre || flightData.lugarSalida || "Origen";
+      flightData.ciudadSalida?.nombre ||
+      flightData.lugarSalida ||
+      flightData.ciudad_salida ||
+      "Origen";
     const destination =
-      flightData.ciudadLlegada?.nombre || flightData.lugarLlegada || "Destino";
+      flightData.ciudadLlegada?.nombre ||
+      flightData.lugarLlegada ||
+      flightData.ciudad_llegada ||
+      "Destino";
     flightRouteElement.textContent = `${origin} a ${destination}`;
   }
 
   // Format and display departure time
   if (departureTimeElement) {
-    if (flightData.fechaSalida && flightData.horaSalida) {
-      // Combine date and time
-      const departureDateTime = new Date(
+    let departureDateTime = null;
+    if (flightData.fechaHoraSalida) {
+      departureDateTime = new Date(flightData.fechaHoraSalida);
+    } else if (flightData.fechaSalida && flightData.horaSalida) {
+      departureDateTime = new Date(
         `${flightData.fechaSalida}T${flightData.horaSalida}`
       );
-      if (!isNaN(departureDateTime.getTime())) {
-        // Format time as HH:MM
-        const hours = departureDateTime.getHours().toString().padStart(2, "0");
-        const minutes = departureDateTime
-          .getMinutes()
-          .toString()
-          .padStart(2, "0");
-        departureTimeElement.textContent = `${hours}:${minutes}`;
-      } else {
-        departureTimeElement.textContent = "--:--";
-      }
+    }
+
+    if (departureDateTime && !isNaN(departureDateTime.getTime())) {
+      // Format time as HH:MM
+      const hours = departureDateTime.getHours().toString().padStart(2, "0");
+      const minutes = departureDateTime
+        .getMinutes()
+        .toString()
+        .padStart(2, "0");
+      departureTimeElement.textContent = `${hours}:${minutes}`;
     } else {
       departureTimeElement.textContent = "--:--";
     }
@@ -267,22 +319,20 @@ function updateFlightInfo(flightData) {
 
   // Format and display arrival time
   if (arrivalTimeElement) {
-    if (flightData.fechaLlegada && flightData.horaLlegada) {
-      // Combine date and time
-      const arrivalDateTime = new Date(
+    let arrivalDateTime = null;
+    if (flightData.fechaHoraLlegada) {
+      arrivalDateTime = new Date(flightData.fechaHoraLlegada);
+    } else if (flightData.fechaLlegada && flightData.horaLlegada) {
+      arrivalDateTime = new Date(
         `${flightData.fechaLlegada}T${flightData.horaLlegada}`
       );
-      if (!isNaN(arrivalDateTime.getTime())) {
-        // Format time as HH:MM
-        const hours = arrivalDateTime.getHours().toString().padStart(2, "0");
-        const minutes = arrivalDateTime
-          .getMinutes()
-          .toString()
-          .padStart(2, "0");
-        arrivalTimeElement.textContent = `${hours}:${minutes}`;
-      } else {
-        arrivalTimeElement.textContent = "--:--";
-      }
+    }
+
+    if (arrivalDateTime && !isNaN(arrivalDateTime.getTime())) {
+      // Format time as HH:MM
+      const hours = arrivalDateTime.getHours().toString().padStart(2, "0");
+      const minutes = arrivalDateTime.getMinutes().toString().padStart(2, "0");
+      arrivalTimeElement.textContent = `${hours}:${minutes}`;
     } else {
       arrivalTimeElement.textContent = "--:--";
     }
@@ -290,36 +340,44 @@ function updateFlightInfo(flightData) {
 
   // Calculate and display flight duration
   if (flightDurationElement) {
-    if (
-      flightData.fechaSalida &&
-      flightData.horaSalida &&
-      flightData.fechaLlegada &&
-      flightData.horaLlegada
-    ) {
-      const departureDateTime = new Date(
+    let departureDateTime = null;
+    let arrivalDateTime = null;
+
+    if (flightData.fechaHoraSalida) {
+      departureDateTime = new Date(flightData.fechaHoraSalida);
+    } else if (flightData.fechaSalida && flightData.horaSalida) {
+      departureDateTime = new Date(
         `${flightData.fechaSalida}T${flightData.horaSalida}`
       );
-      const arrivalDateTime = new Date(
+    }
+
+    if (flightData.fechaHoraLlegada) {
+      arrivalDateTime = new Date(flightData.fechaHoraLlegada);
+    } else if (flightData.fechaLlegada && flightData.horaLlegada) {
+      arrivalDateTime = new Date(
         `${flightData.fechaLlegada}T${flightData.horaLlegada}`
       );
+    }
 
-      if (
-        !isNaN(departureDateTime.getTime()) &&
-        !isNaN(arrivalDateTime.getTime())
-      ) {
-        const durationMs = arrivalDateTime - departureDateTime;
-        const durationHours = Math.floor(durationMs / (1000 * 60 * 60));
-        const durationMinutes = Math.floor(
-          (durationMs % (1000 * 60 * 60)) / (1000 * 60)
-        );
-        flightDurationElement.textContent = `${durationHours}h ${durationMinutes}m`;
-      } else {
-        flightDurationElement.textContent = "--h --m";
-      }
+    if (
+      departureDateTime &&
+      arrivalDateTime &&
+      !isNaN(departureDateTime.getTime()) &&
+      !isNaN(arrivalDateTime.getTime())
+    ) {
+      const durationMs = arrivalDateTime - departureDateTime;
+      const durationHours = Math.floor(durationMs / (1000 * 60 * 60));
+      const durationMinutes = Math.floor(
+        (durationMs % (1000 * 60 * 60)) / (1000 * 60)
+      );
+      flightDurationElement.textContent = `${durationHours}h ${durationMinutes}m`;
     } else {
       flightDurationElement.textContent = "--h --m";
     }
   }
+
+  // Save flight data to localStorage so confirmation page can access it
+  localStorage.setItem("currentFlight", JSON.stringify(flightData));
 }
 
 // Function to update flight information when we only have the ID
@@ -471,6 +529,26 @@ function renderSeats(seats) {
   });
 }
 
+// New function to restore selected seats UI after rendering
+function restoreSelectedSeatsUI() {
+  console.log("Restoring selected seats UI:", selectedSeats);
+
+  selectedSeats.forEach((seat) => {
+    const seatElement = document.querySelector(
+      `.seat[data-id="${seat.idAsiento}"]`
+    );
+    if (seatElement) {
+      // Remove all state classes first
+      seatElement.classList.remove("available", "occupied", "emergency");
+      // Add selected class
+      seatElement.classList.add("selected");
+    }
+  });
+
+  // Update summary
+  updateSummary();
+}
+
 // Function to toggle seat selection
 function toggleSeatSelection(seat) {
   console.log("Toggle seat selection called for seat:", seat);
@@ -559,6 +637,14 @@ function saveSelectedSeatsToLocalStorage() {
         `Selected seats saved to localStorage with flight key: selectedSeats_flight_${flightId}`
       );
     }
+
+    // Save the complete reservation data
+    const reservationData = {
+      selectedSeats: selectedSeats,
+      flightId: flightId,
+      timestamp: new Date().toISOString(),
+    };
+    localStorage.setItem("currentReservation", JSON.stringify(reservationData));
   } catch (e) {
     console.error("Error saving selected seats to localStorage:", e);
   }
@@ -760,6 +846,9 @@ function updateSummary() {
       const seatItem = document.createElement("div");
       seatItem.className = "selected-seat-item";
 
+      // Add animation class for carousel effect
+      seatItem.style.animation = "slideIn 0.3s ease forwards";
+
       const price = parseFloat(seat.precio) || 0;
 
       seatItem.innerHTML = `
@@ -814,6 +903,11 @@ document.addEventListener("DOMContentLoaded", function () {
         // Save selected seats to localStorage before redirecting
         saveSelectedSeatsToLocalStorage();
 
+        // Save flight data to localStorage as well
+        if (currentFlight) {
+          localStorage.setItem("currentFlight", JSON.stringify(currentFlight));
+        }
+
         // Here you would typically send the selected seats to your backend
         // For now, we'll just redirect to the confirmation page
         console.log("Selected seats:", selectedSeats);
@@ -830,10 +924,23 @@ document.addEventListener("DOMContentLoaded", function () {
   const backButton = document.getElementById("backButton");
   if (backButton) {
     backButton.addEventListener("click", function () {
+      // Deselect seats visually when returning to index
+      deselectSeatsVisually();
       window.location.href = "index.html";
     });
   } else {
     console.warn("DOMContentLoaded: #backButton no encontrado en el DOM");
+  }
+
+  // Add event listener to home link
+  const homeLink = document.getElementById("homeLink");
+  if (homeLink) {
+    homeLink.addEventListener("click", function (e) {
+      e.preventDefault();
+      // Deselect seats visually when returning to index
+      deselectSeatsVisually();
+      window.location.href = "index.html";
+    });
   }
 
   // Fetch seats when page loads
@@ -845,4 +952,86 @@ document.addEventListener("DOMContentLoaded", function () {
   console.log("Diagnostic - userId (sessionStorage):", diagnosticUserId);
 
   fetchSeats();
+});
+
+// New function to deselect seats visually when returning to index
+function deselectSeatsVisually() {
+  // Get selected seats from localStorage
+  const flightId = sessionStorage.getItem("selectedFlightId");
+  let selectedSeatsData = [];
+
+  // Try to get selected seats from flight-specific key first
+  if (flightId) {
+    const savedSeats = localStorage.getItem(`selectedSeats_flight_${flightId}`);
+    if (savedSeats) {
+      selectedSeatsData = JSON.parse(savedSeats);
+    }
+  }
+
+  // Fallback to generic key
+  if (selectedSeatsData.length === 0) {
+    const savedSeats = localStorage.getItem("selectedSeats");
+    if (savedSeats) {
+      selectedSeatsData = JSON.parse(savedSeats);
+    }
+  }
+
+  // If we have selected seats data, deselect them visually
+  if (selectedSeatsData.length > 0) {
+    selectedSeatsData.forEach((seat) => {
+      const seatElement = document.querySelector(
+        `.seat[data-id="${seat.idAsiento}"]`
+      );
+      if (seatElement) {
+        // Remove selected class and add available class
+        seatElement.classList.remove("selected");
+        seatElement.classList.add("available");
+      }
+    });
+  } else if (selectedSeats.length > 0) {
+    // Fallback: if no data in localStorage, use the current selectedSeats array
+    selectedSeats.forEach((seat) => {
+      const seatElement = document.querySelector(
+        `.seat[data-id="${seat.idAsiento}"]`
+      );
+      if (seatElement) {
+        // Remove selected class and add available class
+        seatElement.classList.remove("selected");
+        seatElement.classList.add("available");
+      }
+    });
+  }
+
+  // Clear the selectedSeats array
+  selectedSeats = [];
+
+  // Remove from localStorage
+  localStorage.removeItem("selectedSeats");
+
+  // Try to remove flight-specific key as well
+  if (flightId) {
+    localStorage.removeItem(`selectedSeats_flight_${flightId}`);
+  }
+
+  // Remove current reservation data
+  localStorage.removeItem("currentReservation");
+
+  // Also clear the currentFlight data
+  localStorage.removeItem("currentFlight");
+
+  // Update the summary panel to reflect no seats selected
+  updateSummary();
+
+  console.log(
+    "Seats visually deselected and data cleared from memory and localStorage"
+  );
+}
+
+// Add event listener for when the user leaves the page
+window.addEventListener("beforeunload", function (e) {
+  // Check if we're navigating away from the seat selection page
+  // If the user is leaving without confirming, we might want to clear the seats
+  // But we'll only do this if they're going to index.html or another main page
+  // For now, we'll just log the event
+  console.log("User is leaving the seat selection page");
 });

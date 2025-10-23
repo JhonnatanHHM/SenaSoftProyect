@@ -41,45 +41,60 @@ async function fetchReservationData() {
     // Get selected flight ID from sessionStorage
     const selectedFlightId = sessionStorage.getItem("selectedFlightId");
 
-    // Candidate keys to look for in localStorage (ordered)
-    const candidateKeys = [];
-    if (reservationId) {
-      candidateKeys.push(`reserva_${reservationId}`);
-      candidateKeys.push(`reservation_${reservationId}`);
-      candidateKeys.push(`reservation-${reservationId}`);
-    }
-    // generic fallbacks
-    candidateKeys.push("currentReservation");
-    candidateKeys.push("currentReservationData");
-    candidateKeys.push("reservation");
-    candidateKeys.push("reserva");
-    candidateKeys.push("selectedSeats");
-    candidateKeys.push("seatsFallback");
-
     let reserva = null;
-    for (const key of candidateKeys) {
-      const raw = localStorage.getItem(key);
-      if (!raw) continue;
+
+    // Try to get the most recent reservation data
+    const currentReservation = localStorage.getItem("currentReservation");
+    if (currentReservation) {
       try {
-        const parsed = JSON.parse(raw);
-        // Heurística simple: debe tener al menos alguno de estos campos
-        if (
-          parsed &&
-          (parsed.vuelos || parsed.pasajeros || Array.isArray(parsed))
-        ) {
-          reserva = parsed;
-          console.log(`Loaded reservation from localStorage key: ${key}`);
-          break;
-        }
-        // Special case: if it's just an array of seats
-        if (Array.isArray(parsed)) {
-          reserva = { selectedSeats: parsed };
-          console.log(`Loaded seats array from localStorage key: ${key}`);
-          break;
-        }
+        reserva = JSON.parse(currentReservation);
+        console.log("Loaded current reservation from localStorage");
       } catch (e) {
-        // If parsing fails, but raw contains seat array, try to wrap
-        console.warn(`Could not parse localStorage key ${key}:`, e);
+        console.warn("Error parsing currentReservation:", e);
+      }
+    }
+
+    // If no reservation found, try other keys
+    if (!reserva) {
+      // Candidate keys to look for in localStorage (ordered)
+      const candidateKeys = [];
+      if (reservationId) {
+        candidateKeys.push(`reserva_${reservationId}`);
+        candidateKeys.push(`reservation_${reservationId}`);
+        candidateKeys.push(`reservation-${reservationId}`);
+      }
+      // generic fallbacks
+      candidateKeys.push("currentReservationData");
+      candidateKeys.push("reservation");
+      candidateKeys.push("reserva");
+
+      for (const key of candidateKeys) {
+        const raw = localStorage.getItem(key);
+        if (!raw) continue;
+        try {
+          const parsed = JSON.parse(raw);
+          // Heurística simple: debe tener al menos alguno de estos campos
+          if (
+            parsed &&
+            (parsed.vuelos ||
+              parsed.pasajeros ||
+              Array.isArray(parsed) ||
+              parsed.selectedSeats)
+          ) {
+            reserva = parsed;
+            console.log(`Loaded reservation from localStorage key: ${key}`);
+            break;
+          }
+          // Special case: if it's just an array of seats
+          if (Array.isArray(parsed)) {
+            reserva = { selectedSeats: parsed };
+            console.log(`Loaded seats array from localStorage key: ${key}`);
+            break;
+          }
+        } catch (e) {
+          // If parsing fails, but raw contains seat array, try to wrap
+          console.warn(`Could not parse localStorage key ${key}:`, e);
+        }
       }
     }
 
@@ -113,6 +128,18 @@ async function fetchReservationData() {
         }
       }
 
+      // Try to get from currentFlight key (saved by asientos.js)
+      if (!vuelo) {
+        const currentFlightData = localStorage.getItem("currentFlight");
+        if (currentFlightData) {
+          try {
+            vuelo = JSON.parse(currentFlightData);
+          } catch (e) {
+            console.warn("Error parsing currentFlight:", e);
+          }
+        }
+      }
+
       // Try to get passenger data
       const passengersData = localStorage.getItem("passengersData");
 
@@ -127,6 +154,33 @@ async function fetchReservationData() {
       };
 
       console.log("Created reservation from available data:", reserva);
+    }
+
+    // Ensure selectedSeats is properly populated
+    if (
+      (!reserva.selectedSeats || reserva.selectedSeats.length === 0) &&
+      selectedFlightId
+    ) {
+      const selectedSeatsData = getSavedSeatsForFlight(selectedFlightId, null);
+      if (selectedSeatsData && selectedSeatsData.length > 0) {
+        reserva.selectedSeats = selectedSeatsData;
+      }
+    }
+
+    // Ensure vuelos is properly populated
+    if ((!reserva.vuelos || reserva.vuelos.length === 0) && reserva.flightId) {
+      const vuelosCache = localStorage.getItem("vuelosCache");
+      if (vuelosCache) {
+        try {
+          const vuelos = JSON.parse(vuelosCache);
+          const vuelo = vuelos.find((v) => v.idVuelo == reserva.flightId);
+          if (vuelo) {
+            reserva.vuelos = [vuelo];
+          }
+        } catch (e) {
+          console.warn("Error parsing vuelosCache:", e);
+        }
+      }
     }
 
     // Hide loading indicator
@@ -260,10 +314,9 @@ function renderSavedSelections(reserva) {
         </p>
       </div>
       <button class="px-6 py-2.5 rounded-lg text-base font-semibold bg-primary/10 dark:bg-primary/20 text-primary hover:bg-primary/20 dark:hover:bg-primary/30 transition-colors">
-        <a href="asientos.html">Editar</a>
+        <a href="asientos.html">Cambiar o Añadir</a>
       </button>
     `;
-    seatsList.appendChild(seatElement);
   });
 
   console.log("Rendered saved seats in confirmation view:", savedSeats.length);
@@ -271,84 +324,57 @@ function renderSavedSelections(reserva) {
 
 // Function to populate the page with reservation data
 function populateReservationData(reserva) {
+  console.log("Populating reservation data:", reserva);
+
   // Populate flight details
   if (reserva.vuelos && reserva.vuelos.length > 0) {
     const vuelo = reserva.vuelos[0]; // Assuming one flight per reservation
-
-    // Flight route
-    document.getElementById("flightRoute").textContent = `Vuelo de ${
-      vuelo.ciudad_salida || vuelo.origen || "Ciudad"
-    } a ${vuelo.ciudad_llegada || vuelo.destino || "Ciudad"}`;
-
-    // Airport codes
-    document.getElementById("flightAirports").innerHTML = `<strong>${
-      vuelo.lugar_salida || vuelo.codigo_origen || "COD"
-    } - ${vuelo.lugar_llegada || vuelo.codigo_destino || "COD"}</strong>`;
-
-    // Departure info
-    const departureDate = new Date(
-      vuelo.hora_salida || vuelo.fecha_salida || vuelo.fechaSalida || new Date()
-    );
-    document.getElementById(
-      "departureInfo"
-    ).innerHTML = `<strong>Salida:</strong> ${departureDate.toLocaleDateString(
-      "es-ES"
-    )} a las ${departureDate.toLocaleTimeString("es-ES", {
-      hour: "2-digit",
-      minute: "2-digit",
-    })}`;
-
-    // Arrival info
-    const arrivalDate = new Date(
-      vuelo.hora_llegada ||
-        vuelo.fecha_llegada ||
-        vuelo.fechaLlegada ||
-        new Date()
-    );
-    document.getElementById(
-      "arrivalInfo"
-    ).innerHTML = `<strong>Llegada:</strong> ${arrivalDate.toLocaleDateString(
-      "es-ES"
-    )} a las ${arrivalDate.toLocaleTimeString("es-ES", {
-      hour: "2-digit",
-      minute: "2-digit",
-    })}`;
-
-    // Duration info
-    const duration = calculateDuration(
-      vuelo.hora_salida || vuelo.fecha_salida || vuelo.fechaSalida,
-      vuelo.hora_llegada || vuelo.fecha_llegada || vuelo.fechaLlegada
-    );
-    document.getElementById(
-      "durationInfo"
-    ).innerHTML = `<strong>Duración:</strong> ${duration}, Vuelo Directo`;
-
-    // Airline info
-    document.getElementById(
-      "airlineInfo"
-    ).innerHTML = `<strong>Aerolínea:</strong> ${
-      vuelo.aerolinea?.nombre || vuelo.aerolinea || "N/A"
-    }`;
-
-    // Flight image (using a placeholder based on airline)
-    const flightImage = document.getElementById("flightImage");
-    const airlineName =
-      vuelo.aerolinea?.nombre || vuelo.aerolinea || "Aerolínea";
-    flightImage.style.backgroundImage = `url('https://placehold.co/600x400?text=${encodeURIComponent(
-      airlineName
-    )}')`;
+    populateFlightDetails(vuelo);
+  } else if (reserva.flightId) {
+    // Try to get flight data from localStorage using flightId
+    const vuelosCache = localStorage.getItem("vuelosCache");
+    if (vuelosCache) {
+      try {
+        const vuelos = JSON.parse(vuelosCache);
+        const vuelo = vuelos.find((v) => v.idVuelo == reserva.flightId);
+        if (vuelo) {
+          populateFlightDetails(vuelo);
+        }
+      } catch (e) {
+        console.warn("Error parsing vuelosCache:", e);
+      }
+    }
+  } else {
+    // Try to get flight data from currentFlight key
+    const currentFlightData = localStorage.getItem("currentFlight");
+    if (currentFlightData) {
+      try {
+        const vuelo = JSON.parse(currentFlightData);
+        populateFlightDetails(vuelo);
+      } catch (e) {
+        console.warn("Error parsing currentFlight:", e);
+      }
+    }
   }
 
   // Populate passenger seats
   const passengersContainer = document.getElementById("passengersContainer");
   if (passengersContainer) {
     // First, display selected seats
-    const savedSeats = getSavedSeatsForFlight(
-      vuelo ? vuelo.idVuelo || vuelo.id || vuelo.id_vuelo : null,
+    const vuelo =
+      reserva.vuelos && reserva.vuelos.length > 0 ? reserva.vuelos[0] : null;
+    const flightId = vuelo ? vuelo.idVuelo || vuelo.id || vuelo.id_vuelo : null;
+    const idAvion =
       vuelo && vuelo.avion
         ? vuelo.avion.idAvion || vuelo.avion.id || vuelo.avion.id_avion
-        : null
-    );
+        : null;
+
+    let savedSeats = [];
+    if (reserva.selectedSeats && reserva.selectedSeats.length > 0) {
+      savedSeats = reserva.selectedSeats;
+    } else {
+      savedSeats = getSavedSeatsForFlight(flightId, idAvion) || [];
+    }
 
     // Clear the container
     passengersContainer.innerHTML = "";
@@ -380,7 +406,7 @@ function populateReservationData(reserva) {
             </p>
           </div>
           <button class="px-6 py-2.5 rounded-lg text-base font-semibold bg-primary/10 dark:bg-primary/20 text-primary hover:bg-primary/20 dark:hover:bg-primary/30 transition-colors">
-            <a href="asientos.html">Editar</a>
+            <a href="asientos.html">Editar o Añadir</a>
           </button>
         `;
         seatsList.appendChild(seatElement);
@@ -413,27 +439,13 @@ function populateReservationData(reserva) {
           <button class="px-6 py-2.5 rounded-lg text-base font-semibold bg-primary/10 dark:bg-primary/20 text-primary hover:bg-primary/20 dark:hover:bg-primary/30 transition-colors">
             <a href="añadir_pasajeros.html?id=${
               pasajero.id_pasajero || pasajero.id || ""
-            }">Editar</a>
+            }">Editar o Añadir</a>
           </button>
         `;
 
         passengersContainer.appendChild(passengerElement);
       });
     } else {
-      // Show empty state if no passengers
-      passengersContainer.innerHTML += `
-        <div class="flex items-center gap-4 bg-white dark:bg-slate-800 p-4 rounded-lg shadow-[0_0_4px_rgba(0,0,0,0.1)]">
-          <div class="shrink-0">
-            <span class="material-symbols-outlined text-primary text-3xl">warning</span>
-          </div>
-          <p class="text-[#0d171b] dark:text-white text-base font-normal leading-normal flex-1">
-            No hay pasajeros registrados
-          </p>
-          <button class="px-6 py-2.5 rounded-lg text-base font-semibold bg-primary text-white hover:bg-opacity-90 transition-colors">
-            <a href="añadir_pasajeros.html">Agregar Pasajero</a>
-          </button>
-        </div>
-      `;
     }
   }
 
@@ -476,6 +488,126 @@ function populateReservationData(reserva) {
     )}`;
     document.getElementById("totalAmount").textContent = `€${total.toFixed(2)}`;
   }
+}
+
+// New function to populate flight details
+function populateFlightDetails(vuelo) {
+  if (!vuelo) return;
+
+  // Flight route
+  const origin =
+    vuelo.ciudad_salida ||
+    vuelo.origen ||
+    vuelo.ciudadSalida?.nombre ||
+    vuelo.lugarSalida ||
+    "Origen";
+  const destination =
+    vuelo.ciudad_llegada ||
+    vuelo.destino ||
+    vuelo.ciudadLlegada?.nombre ||
+    vuelo.lugarLlegada ||
+    "Destino";
+  document.getElementById(
+    "flightRoute"
+  ).textContent = `Vuelo de ${origin} a ${destination}`;
+
+  // Airport codes
+  const originCode =
+    vuelo.codigo_origen || vuelo.lugar_salida || vuelo.lugarSalida || "COD";
+  const destinationCode =
+    vuelo.codigo_destino || vuelo.lugar_llegada || vuelo.lugarLlegada || "COD";
+  document.getElementById(
+    "flightAirports"
+  ).innerHTML = `<strong>${originCode} - ${destinationCode}</strong>`;
+
+  // Departure info
+  let departureDate = null;
+  if (vuelo.fechaHoraSalida) {
+    departureDate = new Date(vuelo.fechaHoraSalida);
+  } else if (vuelo.fechaSalida && vuelo.horaSalida) {
+    departureDate = new Date(`${vuelo.fechaSalida}T${vuelo.horaSalida}`);
+  } else if (vuelo.fecha_salida) {
+    departureDate = new Date(vuelo.fecha_salida);
+  } else {
+    departureDate = new Date();
+  }
+
+  document.getElementById(
+    "departureInfo"
+  ).innerHTML = `<strong>Salida:</strong> ${departureDate.toLocaleDateString(
+    "es-ES"
+  )} a las ${departureDate.toLocaleTimeString("es-ES", {
+    hour: "2-digit",
+    minute: "2-digit",
+  })}`;
+
+  // Arrival info
+  let arrivalDate = null;
+  if (vuelo.fechaHoraLlegada) {
+    arrivalDate = new Date(vuelo.fechaHoraLlegada);
+  } else if (vuelo.fechaLlegada && vuelo.horaLlegada) {
+    arrivalDate = new Date(`${vuelo.fechaLlegada}T${vuelo.horaLlegada}`);
+  } else if (vuelo.fecha_llegada) {
+    arrivalDate = new Date(vuelo.fecha_llegada);
+  } else {
+    arrivalDate = new Date();
+  }
+
+  document.getElementById(
+    "arrivalInfo"
+  ).innerHTML = `<strong>Llegada:</strong> ${arrivalDate.toLocaleDateString(
+    "es-ES"
+  )} a las ${arrivalDate.toLocaleTimeString("es-ES", {
+    hour: "2-digit",
+    minute: "2-digit",
+  })}`;
+
+  // Duration info
+  const duration = calculateDuration(
+    vuelo.fechaHoraSalida || (vuelo.fechaSalida && vuelo.horaSalida)
+      ? `${vuelo.fechaSalida}T${vuelo.horaSalida}`
+      : vuelo.fecha_salida,
+    vuelo.fechaHoraLlegada || (vuelo.fechaLlegada && vuelo.horaLlegada)
+      ? `${vuelo.fechaLlegada}T${vuelo.horaLlegada}`
+      : vuelo.fecha_llegada
+  );
+  document.getElementById(
+    "durationInfo"
+  ).innerHTML = `<strong>Duración:</strong> ${duration}, Vuelo Directo`;
+
+  // Airline info
+  const airlineName =
+    vuelo.aerolinea?.nombre ||
+    vuelo.aerolinea ||
+    vuelo.nombreAerolinea ||
+    "Aerolínea";
+  document.getElementById(
+    "airlineInfo"
+  ).innerHTML = `<strong>Aerolínea:</strong> ${airlineName}`;
+
+  // Flight image
+  const flightImage = document.getElementById("flightImage");
+
+  // Check if the flight data contains an image URL
+  if (vuelo.imagen || vuelo.imageUrl || vuelo.imagenUrl) {
+    // Use the actual image if available
+    const imageUrl = vuelo.imagen || vuelo.imageUrl || vuelo.imagenUrl;
+    flightImage.style.backgroundImage = `url('${imageUrl}')`;
+  } else if (vuelo.aerolinea?.imagen || vuelo.aerolinea?.imageUrl) {
+    // Use airline image if available
+    const airlineImage = vuelo.aerolinea.imagen || vuelo.aerolinea.imageUrl;
+    flightImage.style.backgroundImage = `url('${airlineImage}')`;
+  } else {
+    // Fallback to placeholder with airline name
+    flightImage.style.backgroundImage = `url('https://placehold.co/600x400?text=${encodeURIComponent(
+      airlineName
+    )}')`;
+  }
+
+  // Ensure background properties are set correctly
+  flightImage.style.backgroundSize = "cover";
+  flightImage.style.backgroundPosition = "center";
+  flightImage.style.backgroundRepeat = "no-repeat";
 }
 
 // Helper function to calculate duration between two dates
