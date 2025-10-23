@@ -374,3 +374,166 @@ if (token) {
     }
   }
 }
+
+// 🧠 filtro
+
+// Escuchar el formulario de búsqueda
+document.addEventListener('DOMContentLoaded', () => {
+  const form = document.getElementById('formBusqueda');
+  const enableReturn = document.getElementById('enable-return');
+  const returnDateInput = document.getElementById('return-date');
+
+  // Deshabilitar fecha de regreso si el checkbox está desmarcado
+  enableReturn.addEventListener('change', () => {
+    returnDateInput.disabled = !enableReturn.checked;
+    if (!enableReturn.checked) {
+      returnDateInput.value = '';
+    }
+  });
+
+  // Cuando el usuario envía el formulario
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const origen = form.querySelector('input[placeholder="Ciudad o aeropuerto"]').value.trim();
+    const destino = form.querySelectorAll('input[placeholder="Ciudad o aeropuerto"]')[1].value.trim();
+    const fechaSalida = document.getElementById('departure-date').value;
+    const fechaRegreso = document.getElementById('return-date').value;
+
+    // Mostrar loading mientras busca
+    const contenedor = document.getElementById('contenedor-vuelos');
+    contenedor.innerHTML = `
+      <div class="text-center py-8">
+        <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <p class="mt-4 text-gray-600">Buscando vuelos...</p>
+      </div>
+    `;
+
+    try {
+      // Construir la URL con parámetros
+      const params = new URLSearchParams();
+      if (origen) params.append('origen', origen);
+      if (destino) params.append('destino', destino);
+      if (fechaSalida) params.append('fechaSalida', fechaSalida);
+      if (enableReturn.checked && fechaRegreso) params.append('fechaRegreso', fechaRegreso);
+
+      const url = `${API_URL}?${params.toString()}`;
+      console.log('🔎 Consultando:', url);
+
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'accept': '*/*'
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error HTTP ${response.status}`);
+      }
+
+      const vuelos = await response.json();
+      const vuelosArray = Array.isArray(vuelos) ? vuelos : [vuelos];
+
+      if (vuelosArray.length === 0) {
+        contenedor.innerHTML = `
+          <div class="text-center py-8">
+            <p class="text-gray-600 font-medium">No se encontraron vuelos con esos filtros.</p>
+          </div>
+        `;
+        return;
+      }
+
+      // Renderizar los vuelos filtrados
+      renderVuelosPaginados(contenedor, vuelosArray, PAGE_SIZE);
+
+    } catch (error) {
+      console.error('❌ Error al buscar vuelos:', error);
+      contenedor.innerHTML = `
+        <div class="text-center py-8 bg-red-50 rounded-lg">
+          <p class="text-red-600 font-medium">Error al buscar los vuelos</p>
+          <p class="text-sm text-gray-600 mt-2">${error.message}</p>
+          <button onclick="cargarVuelos()" class="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+            Reintentar
+          </button>
+        </div>
+      `;
+    }
+  });
+});
+
+
+// autocompletado de ciudades y aeropuertos
+
+document.addEventListener('DOMContentLoaded', () => {
+  const origenInput = document.getElementById('origen');
+  const destinoInput = document.getElementById('destino');
+
+  const origenSuggestions = document.getElementById('origen-suggestions');
+  const destinoSuggestions = document.getElementById('destino-suggestions');
+
+  let selectedOrigen = '';
+
+  // ----------------------
+  // Autocomplete Origen
+  // ----------------------
+  origenInput.addEventListener('input', async () => {
+    const query = origenInput.value.trim();
+    if (!query) {
+      origenSuggestions.innerHTML = '';
+      return;
+    }
+
+    try {
+      const res = await fetch(`${API_URL}/aeropuertos?search=${encodeURIComponent(query)}`);
+      const data = await res.json();
+
+      origenSuggestions.innerHTML = data
+        .map(item => `<div data-value="${item.codigo}">${item.ciudad} (${item.codigo})</div>`)
+        .join('');
+
+      // click en sugerencia
+      origenSuggestions.querySelectorAll('div').forEach(div => {
+        div.addEventListener('click', () => {
+          origenInput.value = div.dataset.value;
+          selectedOrigen = div.dataset.value; // guardamos para filtrar destinos
+          origenSuggestions.innerHTML = '';
+          destinoInput.disabled = false; // habilitar destino
+        });
+      });
+
+    } catch (error) {
+      console.error(error);
+    }
+  });
+
+  // ----------------------
+  // Autocomplete Destino
+  // ----------------------
+  destinoInput.addEventListener('input', async () => {
+    const query = destinoInput.value.trim();
+    if (!query || !selectedOrigen) {
+      destinoSuggestions.innerHTML = '';
+      return;
+    }
+
+    try {
+      const res = await fetch(`${API_URL}/destinos?origen=${encodeURIComponent(selectedOrigen)}&search=${encodeURIComponent(query)}`);
+      const data = await res.json();
+
+      destinoSuggestions.innerHTML = data
+        .map(item => `<div data-value="${item.codigo}">${item.ciudad} (${item.codigo})</div>`)
+        .join('');
+
+      destinoSuggestions.querySelectorAll('div').forEach(div => {
+        div.addEventListener('click', () => {
+          destinoInput.value = div.dataset.value;
+          destinoSuggestions.innerHTML = '';
+        });
+      });
+
+    } catch (error) {
+      console.error(error);
+    }
+  });
+});
+

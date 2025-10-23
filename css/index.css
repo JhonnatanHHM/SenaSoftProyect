@@ -95,3 +95,22 @@ body {
       .marquee-track { gap: 0.75rem; }
       .marquee-card { min-width: 260px; padding: 1rem; }
     }
+
+    .suggestions {
+  position: absolute;
+  background: white;
+  border: 1px solid #ccc;
+  z-index: 100;
+  width: 100%;
+  max-height: 150px;
+  overflow-y: auto;
+}
+
+.suggestions div {
+  padding: 8px;
+  cursor: pointer;
+}
+
+.suggestions div:hover {
+  background: #f0f0f0;
+}
