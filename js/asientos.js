@@ -82,6 +82,16 @@ const maxSeats = 5;
 let seatsData = [];
 let currentFlight = null;
 
+// Helper to read token from sessionStorage (centralizado)
+function getToken() {
+  try {
+    return sessionStorage.getItem("token") || null;
+  } catch (e) {
+    console.warn("getToken: no se pudo leer sessionStorage:", e);
+    return null;
+  }
+}
+
 // Function to fetch seats from the API or cache
 async function fetchSeats() {
   const loadingIndicator = document.getElementById("loadingIndicator");
@@ -529,7 +539,7 @@ function toggleSeatSelection(seat) {
 // Function to update seat status on server (single robust implementation)
 async function updateSeatStatusOnServer(seatId, status) {
   // Get token and userId from storage (with safe defaults)
-  const token = localStorage.getItem("token") || null;
+  const token = getToken();
   const userId = parseInt(sessionStorage.getItem("id")) || 1;
 
   // Helper to find the seat element in the DOM
@@ -556,16 +566,30 @@ async function updateSeatStatusOnServer(seatId, status) {
   try {
     // Prepare fetch options
     const url = `http://localhost:8080/api/asientos/estado/${seatId}/${userId}`;
+    const body = JSON.stringify({ estado: status, usuarioReservado: idUsuario });
+
     const options = {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
       },
+      body,
+      // keep credentials omitted by default; if backend uses cookies consider adding credentials: 'include'
     };
 
     if (token) options.headers["Authorization"] = `Bearer ${token}`;
 
-    const response = await fetch(url, options);
+    console.log("PATCH options:", options, "url:", url);
+
+    // Perform fetch and capture network errors separately
+    let response;
+    try {
+      response = await fetch(url, options);
+    } catch (networkErr) {
+      // Network errors (including CORS preflight failures) will be caught here
+      console.error("Network error during fetch (possible CORS/preflight issue):", networkErr);
+      throw networkErr; // rethrow to be handled by outer catch
+    }
 
     if (!response.ok) {
       // If CORS blocks preflight, response may not be available; throw to go to catch
@@ -676,18 +700,24 @@ function updateSummary() {
   const confirmButton = document.getElementById("confirmButton");
 
   // Clear the container
-  selectedSeatsContainer.innerHTML = "";
+  if (selectedSeatsContainer) {
+    selectedSeatsContainer.innerHTML = "";
+  } else {
+    console.warn("updateSummary: #selectedSeatsContainer no encontrado en el DOM");
+  }
 
   if (selectedSeats.length === 0) {
     // Show "no seats selected" message
-    noSeatsSelected.style.display = "block";
-    seatPriceElement.textContent = "$0.00";
-    seatCountElement.textContent = "0";
-    totalCostElement.textContent = "$0.00";
-    confirmButton.disabled = true;
+    if (noSeatsSelected) noSeatsSelected.style.display = "block";
+    if (seatPriceElement) seatPriceElement.textContent = "$0.00";
+    if (seatCountElement) seatCountElement.textContent = "0";
+    if (totalCostElement) totalCostElement.textContent = "$0.00";
+    if (confirmButton) confirmButton.disabled = true;
   } else {
     // Hide "no seats selected" message
-    noSeatsSelected.style.display = "none";
+    if (noSeatsSelected) {
+      noSeatsSelected.style.display = "none";
+    }
 
     // Add each selected seat to the summary
     selectedSeats.forEach((seat) => {
@@ -735,24 +765,28 @@ function updateSummary() {
     totalCostElement.textContent = `$${totalPrice.toFixed(2)}`;
 
     // Enable confirm button
-    confirmButton.disabled = false;
+    if (confirmButton) confirmButton.disabled = false;
   }
 }
 
 // Add event listener to confirm button
 document.addEventListener("DOMContentLoaded", function () {
   const confirmButton = document.getElementById("confirmButton");
-  confirmButton.addEventListener("click", function () {
-    if (selectedSeats.length > 0) {
-      // Here you would typically send the selected seats to your backend
-      // For now, we'll just redirect to the confirmation page
-      alert(
-        "Asientos seleccionados: " +
-          selectedSeats.map((s) => s.nombre).join(", ")
-      );
-      window.location.href = "confimacion_de_vuelo.html";
-    }
-  });
+  if (confirmButton) {
+    confirmButton.addEventListener("click", function () {
+      if (selectedSeats.length > 0) {
+        // Here you would typically send the selected seats to your backend
+        // For now, we'll just redirect to the confirmation page
+        alert(
+          "Asientos seleccionados: " +
+            selectedSeats.map((s) => s.nombre).join(", ")
+        );
+        window.location.href = "confimacion_de_vuelo.html";
+      }
+    });
+  } else {
+    console.warn("DOMContentLoaded: #confirmButton no encontrado en el DOM");
+  }
 
   // Add event listener to back button in error message
   const backButton = document.getElementById("backButton");
@@ -760,8 +794,16 @@ document.addEventListener("DOMContentLoaded", function () {
     backButton.addEventListener("click", function () {
       window.location.href = "index.html";
     });
+  } else {
+    console.warn("DOMContentLoaded: #backButton no encontrado en el DOM");
   }
 
   // Fetch seats when page loads
+  // Diagnostic: print token and userId so developer can verify Authorization is sent
+  const diagnosticToken = getToken();
+  const diagnosticUserId = sessionStorage.getItem("id") || sessionStorage.getItem("userId") || null;
+  console.log("Diagnostic - token (sessionStorage):", diagnosticToken);
+  console.log("Diagnostic - userId (sessionStorage):", diagnosticUserId);
+
   fetchSeats();
 });
