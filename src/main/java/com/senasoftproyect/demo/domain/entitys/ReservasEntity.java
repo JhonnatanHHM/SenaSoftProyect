@@ -30,7 +30,7 @@ public class ReservasEntity {
     @Enumerated(EnumType.STRING)
     private ReservaEstado estado;
 
-    private enum ReservaEstado {
+    public enum ReservaEstado {
         CONFIRMADO,
         CANCELADO,
         PENDIENTE

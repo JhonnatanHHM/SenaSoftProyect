@@ -92,7 +92,7 @@ public class VuelosServiceImpl implements VuelosService {
     }
 
 
-    private VuelosCompleteDTO convertToCompleteDto(VuelosEntity entity) {
+    public VuelosCompleteDTO convertToCompleteDto(VuelosEntity entity) {
 
         List<AsientosDTO> asientosDto = entity.getAvion().getAsientos()
                 .stream()

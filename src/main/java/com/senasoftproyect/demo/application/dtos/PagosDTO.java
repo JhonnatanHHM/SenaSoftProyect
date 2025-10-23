@@ -1,5 +1,6 @@
 package com.senasoftproyect.demo.application.dtos;
 
+import com.senasoftproyect.demo.domain.entitys.PagosEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.math.BigDecimal;
@@ -16,7 +17,7 @@ public class PagosDTO {
             example = "CREDITO",
             allowableValues = {"CREDITO", "DEBITO", "PSE"}
     )
-    private String metodo;
+    private PagosEntity.MetodoStatus metodo;
 
     @Schema(description = "Monto total del pago", example = "125.50")
     private BigDecimal total;
@@ -26,7 +27,7 @@ public class PagosDTO {
             example = "PENDIENTE",
             allowableValues = {"PENDIENTE", "PAGADO", "CANCELADO"}
     )
-    private String estado;
+    private PagosEntity.PagoStatus estado;
 
     @Schema(description = "Fecha y hora en que se realizó el pago", example = "2025-10-22T14:30:00")
     private LocalDateTime fechaPago;
@@ -49,9 +50,7 @@ public class PagosDTO {
     public PagosDTO() {
     }
 
-    public PagosDTO(Long idPago, String metodo, BigDecimal total, String estado, LocalDateTime fechaPago,
-                    String nombresPagador, String tipoDocumento, String numeroDocumento,
-                    String email, String telefono) {
+    public PagosDTO(Long idPago, PagosEntity.MetodoStatus metodo, BigDecimal total, PagosEntity.PagoStatus estado, LocalDateTime fechaPago, String nombresPagador, String tipoDocumento, String numeroDocumento, String email, String telefono) {
         this.idPago = idPago;
         this.metodo = metodo;
         this.total = total;
@@ -72,12 +71,20 @@ public class PagosDTO {
         this.idPago = idPago;
     }
 
-    public String getMetodo() {
+    public PagosEntity.MetodoStatus getMetodo() {
         return metodo;
     }
 
-    public void setMetodo(String metodo) {
+    public void setMetodo(PagosEntity.MetodoStatus metodo) {
         this.metodo = metodo;
+    }
+
+    public PagosEntity.PagoStatus getEstado() {
+        return estado;
+    }
+
+    public void setEstado(PagosEntity.PagoStatus estado) {
+        this.estado = estado;
     }
 
     public BigDecimal getTotal() {
@@ -86,14 +93,6 @@ public class PagosDTO {
 
     public void setTotal(BigDecimal total) {
         this.total = total;
-    }
-
-    public String getEstado() {
-        return estado;
-    }
-
-    public void setEstado(String estado) {
-        this.estado = estado;
     }
 
     public LocalDateTime getFechaPago() {

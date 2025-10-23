@@ -15,21 +15,24 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 @Service
 public class ReservasServiceImpl implements ReservasService {
 
+    private final VuelosServiceImpl vuelosService;
     private final ReservasRepository reservasRepository;
     private final PasajerosRepository pasajerosRepository;
     private final PagosRepository pagosRepository;
     private final VuelosRepository vuelosRepository;
 
     @Autowired
-    public ReservasServiceImpl(ReservasRepository reservasRepository,
+    public ReservasServiceImpl(VuelosServiceImpl vuelosService, ReservasRepository reservasRepository,
                                PasajerosRepository pasajerosRepository,
                                PagosRepository pagosRepository,
                                VuelosRepository vuelosRepository) {
+        this.vuelosService = vuelosService;
         this.reservasRepository = reservasRepository;
         this.pasajerosRepository = pasajerosRepository;
         this.pagosRepository = pagosRepository;
@@ -106,10 +109,19 @@ public class ReservasServiceImpl implements ReservasService {
                         )).toList() : null;
 
         PagosDTO pagoDTO = entity.getPago() != null ?
-                new PagosDTO(entity.getPago().getIdPago(), entity.getPago().getTotal(), entity.getPago().getMetodo()) : null;
+                new PagosDTO(entity.getPago().getIdPago(),
+                        entity.getPago().getMetodo(),
+                        entity.getPago().getTotal(),
+                        entity.getPago().getEstado(),
+                        entity.getPago().getFechaPago(),
+                        entity.getPago().getNombresPagador(),
+                        entity.getPago().getTipoDocumento(),
+                        entity.getPago().getNumeroDocumento(),
+                        entity.getPago().getEmail(),
+                        entity.getPago().getTelefono()) : null;
 
-        VuelosDTO vueloDTO = entity.getVuelo() != null ?
-                new VuelosDTO(entity.getVuelo().getIdVuelo(), entity.getVuelo().getIdVuelo(), entity.getVuelo().getOrigen(), entity.getVuelo().getDestino()) : null;
+        VuelosCompleteDTO vueloDTO = entity.getVuelo() != null ?
+                vuelosService.convertToCompleteDto(entity.getVuelo()) : null;
 
         return new ReservasCompleteDTO(
                 entity.getIdReserva(),
@@ -117,7 +129,7 @@ public class ReservasServiceImpl implements ReservasService {
                 pasajeros,
                 pagoDTO,
                 vueloDTO,
-                entity.getEstado().name()
+                entity.getEstado()
         );
     }
 
@@ -131,15 +143,24 @@ public class ReservasServiceImpl implements ReservasService {
         VuelosEntity vuelo = dto.getVueloId() != null ? vuelosRepository.getByIdVuelo(dto.getVueloId()).orElse(null) : null;
 
         ReservasEntity.ReservaEstado estado = dto.getEstado() != null ?
-                ReservasEntity.ReservaEstado.valueOf(dto.getEstado()) : ReservasEntity.ReservaEstado.PENDIENTE;
+                ReservasEntity.ReservaEstado.valueOf(String.valueOf(dto.getEstado())) : ReservasEntity.ReservaEstado.PENDIENTE;
+
+        String numeroReserva = generateToken();
 
         return new ReservasEntity(
                 dto.getIdReserva(),
-                dto.getNumeroReserva(),
+                numeroReserva,
                 pasajeros,
                 pago,
                 vuelo,
                 estado
         );
+    }
+
+    private String generateToken() {
+        Random random = new Random();
+        int parte1 = 100 + random.nextInt(900);
+        int parte2 = 100 + random.nextInt(900);
+        return parte1 + "-" + parte2;
     }
 }

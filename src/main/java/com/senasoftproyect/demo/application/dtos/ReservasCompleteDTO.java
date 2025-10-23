@@ -1,5 +1,7 @@
 package com.senasoftproyect.demo.application.dtos;
 
+import com.senasoftproyect.demo.domain.entitys.ReservasEntity;
+
 import java.util.List;
 
 public class ReservasCompleteDTO {
@@ -8,13 +10,13 @@ public class ReservasCompleteDTO {
     private String numeroReserva;
     private List<PasajerosDTO> pasajeros;
     private PagosDTO pago;
-    private VuelosDTO vuelo;
-    private String estado;
+    private VuelosCompleteDTO vuelo;
+    private ReservasEntity.ReservaEstado estado;
 
     public ReservasCompleteDTO() {
     }
 
-    public ReservasCompleteDTO(Long idReserva, String numeroReserva, List<PasajerosDTO> pasajeros, PagosDTO pago, VuelosDTO vuelo, String estado) {
+    public ReservasCompleteDTO(Long idReserva, String numeroReserva, List<PasajerosDTO> pasajeros, PagosDTO pago, VuelosCompleteDTO vuelo, ReservasEntity.ReservaEstado estado) {
         this.idReserva = idReserva;
         this.numeroReserva = numeroReserva;
         this.pasajeros = pasajeros;
@@ -22,7 +24,6 @@ public class ReservasCompleteDTO {
         this.vuelo = vuelo;
         this.estado = estado;
     }
-
 
     public Long getIdReserva() {
         return idReserva;
@@ -56,19 +57,19 @@ public class ReservasCompleteDTO {
         this.pago = pago;
     }
 
-    public VuelosDTO getVuelo() {
+    public VuelosCompleteDTO getVuelo() {
         return vuelo;
     }
 
-    public void setVuelo(VuelosDTO vuelo) {
+    public void setVuelo(VuelosCompleteDTO vuelo) {
         this.vuelo = vuelo;
     }
 
-    public String getEstado() {
+    public ReservasEntity.ReservaEstado getEstado() {
         return estado;
     }
 
-    public void setEstado(String estado) {
+    public void setEstado(ReservasEntity.ReservaEstado estado) {
         this.estado = estado;
     }
 }

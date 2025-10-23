@@ -64,9 +64,9 @@ public class PagosServiceImpl implements PagosService {
     private PagosDTO convertToDTO(PagosEntity entity) {
         return new PagosDTO(
                 entity.getIdPago(),
-                entity.getMetodo() != null ? entity.getMetodo().name() : null,
+                entity.getMetodo() != null ? entity.getMetodo() : null,
                 entity.getTotal(),
-                entity.getEstado() != null ? entity.getEstado().name() : null,
+                entity.getEstado() != null ? entity.getEstado() : null,
                 entity.getFechaPago(),
                 entity.getNombresPagador(),
                 entity.getTipoDocumento(),
@@ -80,9 +80,9 @@ public class PagosServiceImpl implements PagosService {
         PagosEntity entity = new PagosEntity();
 
         entity.setIdPago(dto.getIdPago());
-        entity.setMetodo(convertToMetodoStatus(dto.getMetodo()));
+        entity.setMetodo(convertToMetodoStatus(String.valueOf(dto.getMetodo())));
         entity.setTotal(dto.getTotal());
-        entity.setEstado(convertToPagoStatus(dto.getEstado()));
+        entity.setEstado(convertToPagoStatus(String.valueOf(dto.getEstado())));
         entity.setFechaPago(dto.getFechaPago());
         entity.setNombresPagador(dto.getNombresPagador());
         entity.setTipoDocumento(dto.getTipoDocumento());
