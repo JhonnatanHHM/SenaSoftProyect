@@ -1,19 +1,20 @@
 package com.senasoftproyect.demo.domain.service;
 
-import com.senasoftproyect.demo.domain.entitys.ReservasEntity;
+import com.senasoftproyect.demo.application.dtos.ReservasCompleteDTO;
+import com.senasoftproyect.demo.application.dtos.ReservasDTO;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface ReservasService {
 
-    List<ReservasEntity> getAll();
+    List<ReservasCompleteDTO> getAll();
 
-    Optional<ReservasEntity> getByIdReserva(Long idReserva);
+    Optional<ReservasCompleteDTO> getByIdReserva(Long idReserva);
 
-    ReservasEntity save(ReservasEntity reserva);
+    ReservasDTO save(ReservasDTO reserva);
 
-    ReservasEntity update(ReservasEntity reserva);
+    ReservasDTO update(ReservasDTO reserva);
 
     void delete(Long idReserva);
 }

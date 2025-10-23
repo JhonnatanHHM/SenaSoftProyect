@@ -16,7 +16,7 @@ public class ReservasEntity {
     private String numeroReserva;
 
     @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "reserva_id") // FK en tabla pasajeros
+    @JoinColumn(name = "reserva_id")
     private List<PasajerosEntity> pasajeros;
 
     @OneToOne(cascade = CascadeType.ALL)

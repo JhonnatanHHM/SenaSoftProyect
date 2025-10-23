@@ -1,19 +1,19 @@
 package com.senasoftproyect.demo.domain.service;
 
-import com.senasoftproyect.demo.domain.entitys.PasajerosEntity;
+import com.senasoftproyect.demo.application.dtos.PasajerosDTO;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface PasajerosService {
 
-    List<PasajerosEntity> getAll();
+    List<PasajerosDTO> getAll();
 
-    Optional<PasajerosEntity> getByIdPasajero(Long idPasajero);
+    Optional<PasajerosDTO> getByIdPasajero(Long idPasajero);
 
-    PasajerosEntity save(PasajerosEntity pasajero);
+    PasajerosDTO save(PasajerosDTO pasajero);
 
-    PasajerosEntity update(PasajerosEntity pasajero);
+    PasajerosDTO update(PasajerosDTO pasajero);
 
     void delete(Long idPasajero);
 }
